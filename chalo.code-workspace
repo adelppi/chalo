@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "docs",
+      "path": "./docs"
+    },
+    {
+      "name": "app",
+      "path": "./app"
+    }
+  ],
+  "settings": {},
+  "extensions": {
+    "recommendations": []
+  }
+}
