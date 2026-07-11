@@ -25,3 +25,6 @@ tmp/
 .env
 .env.local
 .env.*.local
+
+# Claude Code (個人設定のみ除外。settings.json と skills は共有する)
+.claude/settings.local.json

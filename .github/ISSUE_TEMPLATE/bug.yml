@@ -1,0 +1,43 @@
+name: バグ報告
+description: 期待と異なる挙動を報告する
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何がおかしいか。1〜2行で
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      placeholder: |
+        1. アプリを起動する
+        2. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する挙動
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の挙動
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 環境
+      description: 端末・iOS バージョン・アプリのビルド(分かる範囲で)
+      placeholder: iPhone 15 / iOS 18.5 / dev build
+  - type: textarea
+    id: evidence
+    attributes:
+      label: スクリーンショット・ログ

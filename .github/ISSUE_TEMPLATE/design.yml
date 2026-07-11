@@ -1,0 +1,36 @@
+name: 設計議論
+description: ADR 化する前の設計論点を議論する
+title: "[design] "
+labels: ["design"]
+body:
+  - type: textarea
+    id: topic
+    attributes:
+      label: 論点
+      description: 何を決めたいか
+    validations:
+      required: true
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: なぜ今決める必要があるか。きっかけ
+  - type: textarea
+    id: options
+    attributes:
+      label: 選択肢
+      placeholder: |
+        ### 案A: …
+        - 利点:
+        - 欠点:
+
+        ### 案B: …
+  - type: textarea
+    id: links
+    attributes:
+      label: 関連
+      description: docs/open-questions.md の該当項目、関連 ADR・ドキュメント
+  - type: markdown
+    attributes:
+      value: |
+        結論が出たら `/create-adr` で ADR 化し、`docs/open-questions.md` に項目があれば整理する。

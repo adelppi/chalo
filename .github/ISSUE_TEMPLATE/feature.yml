@@ -1,0 +1,41 @@
+name: 機能実装
+description: features.md / release-v1.md の機能を実装する
+title: "[feat] "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何を作るか。1〜3行で
+    validations:
+      required: true
+  - type: textarea
+    id: docs
+    attributes:
+      label: 関連ドキュメント
+      description: 対応する docs/domain/・adr/・features.md の該当箇所
+      placeholder: |
+        - docs/domain/plan-lifecycle.md
+        - docs/adr/0015-directory-structure.md
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件
+      description: この Issue が「完了」と言える条件をチェックボックスで列挙する
+      placeholder: |
+        - [ ] タイトルだけでプランを作成できる
+        - [ ] 日付を入れると「予定」になる
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: スコープ外
+      description: この Issue ではやらないこと(あれば)
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足
