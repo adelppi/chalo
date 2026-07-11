@@ -129,6 +129,7 @@ npx expo run:ios -d "<実機名>" # 例: -d "○○ の iPhone"
   ```bash
   npx expo run:ios -d "iPhone Air"   # 起動中のシミュレータ名を指定
   ```
+- **`Cannot find module 'react-refresh/babel'`**（Metro バンドル時）: `react-refresh` は react-native / expo の peer 依存で、`app/.npmrc` の `legacy-peer-deps=true` により自動導入されない。直接依存として追加済み（`react-refresh`）なので、`npm install` すれば入る。もし欠けていたら `npx expo install react-refresh`。
 
 ## 5. 動作確認
 
