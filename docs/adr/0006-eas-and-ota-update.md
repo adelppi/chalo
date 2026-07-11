@@ -33,8 +33,8 @@ EAS プロジェクトは `eas init` で作成・紐付け済み(`app.json` の 
 
 ```bash
 # 登録(プロジェクト単位・app/ ディレクトリで実行)
-npx eas-cli env:create production --name SUPABASE_URL --value "https://xxxx.supabase.co" --visibility plaintext --non-interactive
-npx eas-cli env:create production --name SUPABASE_ANON_KEY --value "xxxx" --visibility sensitive --non-interactive
+npx eas-cli env:create production --name EXPO_PUBLIC_SUPABASE_URL --value "https://xxxx.supabase.co" --visibility plaintext --non-interactive
+npx eas-cli env:create production --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "xxxx" --visibility sensitive --non-interactive
 # development・preview にも同様に登録する
 
 # 参照(値の確認。sensitive/secret はデフォルトで値がマスクされる)
@@ -42,7 +42,9 @@ npx eas-cli env:list production
 npx eas-cli env:list production --include-sensitive
 
 # 削除
-npx eas-cli env:delete production --variable-name SUPABASE_URL --variable-environment production --non-interactive
+npx eas-cli env:delete production --variable-name EXPO_PUBLIC_SUPABASE_URL --variable-environment production --non-interactive
 ```
 
-ローカル開発時は `npx eas-cli env:pull` で `.env.local` 等に書き出して読み込む(リポジトリにコミットしない。`.gitignore` 済み)。
+変数名は `EXPO_PUBLIC_` プレフィックス付き(`EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY`)とする。クライアントサイド(アプリの JS バンドル)から参照する値は Expo の規約上このプレフィックスが必須なため(`app/src/global/lib/supabase/client.ts` から `process.env.EXPO_PUBLIC_*` として参照)。
+
+ローカル開発時は `npx eas-cli env:pull development` で `.env.local` に書き出して読み込む(リポジトリにコミットしない。`.gitignore` 済み)。
