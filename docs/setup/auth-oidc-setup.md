@@ -115,6 +115,8 @@ npx expo run:ios -d "<実機名>" # 例: -d "○○ の iPhone"
 ```
 
 > `eas build` には Expo アカウントでのログイン（`eas login`）が必要。EAS プロジェクトは初期化済み（`app.json` の projectId）。ビルドプロファイルは `app/eas.json` に定義（`development` = 実機 dev client、`development-simulator` = シミュレータ dev client）。
+>
+> **`--local` を付けるとローカルビルドになり、Fastlane が必要**（未導入だと `spawn fastlane ENOENT`）。ローカルでやるなら `brew install fastlane` を先に。クラウドビルド（`--local` なし）なら Fastlane 不要でそのまま通る。
 
 ## 5. 動作確認
 
