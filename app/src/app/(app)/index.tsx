@@ -8,13 +8,17 @@ export default function Home() {
   const signOut = useSignOut();
 
   return (
-    <View className="flex-1 items-center justify-center bg-white px-8">
+    <View
+      testID="home-screen"
+      className="flex-1 items-center justify-center bg-white px-8"
+    >
       <Text className="text-2xl font-bold text-neutral-900">やりたい一覧</Text>
       <Text className="mt-3 text-center text-base text-neutral-500">
         ここに「いつか行きたい所・やりたい事」が並びます
       </Text>
 
       <Pressable
+        testID="home-sign-out-button"
         onPress={() =>
           signOut.mutate(undefined, {
             onError: (error) => {

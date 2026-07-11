@@ -28,3 +28,7 @@ tmp/
 
 # Claude Code (個人設定のみ除外。settings.json と skills は共有する)
 .claude/settings.local.json
+
+# Maestro E2E 実行動画（ローカル保存のみ。フロー・ディレクトリ構成は共有する）
+.maestro/recordings/*
+!.maestro/recordings/.gitkeep

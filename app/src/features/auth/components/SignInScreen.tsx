@@ -22,7 +22,10 @@ export function SignInScreen() {
   }, []);
 
   return (
-    <View className="flex-1 items-center justify-center bg-white px-8">
+    <View
+      testID="auth-sign-in-screen"
+      className="flex-1 items-center justify-center bg-white px-8"
+    >
       <View className="mb-16 items-center">
         <Text className="text-3xl font-bold text-neutral-900">chalo</Text>
         <Text className="mt-3 text-center text-base text-neutral-500">
