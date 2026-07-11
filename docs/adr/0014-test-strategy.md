@@ -20,6 +20,28 @@ AI駆動開発で実装が速く動く分、回帰を機械的に検知したい
 - **E2E は機能単位**で構成する。1機能につき、その機能の王道の使い方を通す正常系と、権限拒否・オフライン・入力不備などの異常系を両方カバーする。
 - **E2E は実行の動画を記録して格納する**。Maestro の録画を成果物として保存し、テスト失敗時に画面の動きから原因をたどれるようにする。
 
+## testID 命名規則 [提案]
+
+E2E（Maestro）の要素特定には `testID`（iOS の accessibility identifier）を使う。表示文言だけに頼ると、文言調整のたびにフローが壊れる。
+
+- 形式：`<screen>-<element>`（すべて小文字・ハイフン区切り）。`screen` は画面を表す短い語（例：`sign-in`）、`element` は要素の役割（例：`google-button`）。
+- 同名の画面が複数 feature にまたがりうる場合は `<feature>-<screen>-<element>` のように feature 名を先頭に付けて衝突を避ける（例：`auth-sign-in-google-button`）。1 feature に画面が1つしかない、または feature が未確定な暫定画面（例：ホーム）では feature 名を省略してよい（例：`home-screen`）。
+- 一覧の行など動的に繰り返す要素は末尾にIDを付ける（例：`plans-list-item-{planId}`）。
+- E2E が実際に操作・検証する要素にのみ付ける。装飾目的の要素には付けない。
+
+## `.maestro/` ディレクトリ構成 [提案]
+
+機能単位のサブフォルダに分ける（`src/features/` の機能名に対応させる。例：`auth/`）。
+
+```
+.maestro/
+├── auth/
+│   └── sign-in-screen-smoke.yaml
+└── recordings/        # 実行動画の出力先（.gitignore 対象、.gitkeep のみコミット）
+```
+
+実行動画は `maestro test --test-output-dir .maestro/recordings` でローカルに出力し、リポジトリにはコミットしない。
+
 ## 対象外
 
 - **ペア境界（RLS）の自動テストは持たない**。ペア境界のポリシーはレビューで担保する（`adr/0001`）。

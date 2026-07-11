@@ -1,0 +1,11 @@
+# サインイン画面の表示確認（動作確認用サンプルフロー）。
+# 実際のサインイン完了（Google/Apple の外部認証）までは行わない。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "auth-sign-in-screen"
+- assertVisible:
+    id: "auth-sign-in-google-button"
+- assertVisible:
+    id: "auth-sign-in-apple-button"
