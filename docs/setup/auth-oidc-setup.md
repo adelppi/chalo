@@ -63,21 +63,65 @@ Issue #8 で実装した認証を実際に動かすための、**コンソール
 
 `expo-apple-authentication` は Expo Go では動かない。config plugin を反映した **dev client** をビルドする。app 設定（`app.json`）は実装済み（`usesAppleSignIn: true`、config plugins 追加済み）。
 
+**コード署名の前提（重要）**
+
+- **シミュレータビルドは署名不要**（Apple アカウント不要）。Google の確認はこれで完結する。
+- **実機ビルドはコード署名が必要**＝ **Apple Developer Program（有料 / 年 US$99）** が要る。
+  - `npx expo run:ios` をプレーンに実行すると接続中の実機を掴み、`No code signing certificates are available` になる（今回のエラー）。実機なら Team 設定、シミュレータなら `-d` でシミュレータを明示する。
+  - **Sign in with Apple は無料の Personal Team では使えない**（有料メンバーシップ必須）。よって Apple サインインの実機確認には有料アカウントが要る。
+
+> どちらのパスでも、EAS を使えば **プロジェクトのローカル `ios/` 生成や pod install は自動**（クラウドで prebuild される）。ローカルビルドは自分の Mac + Xcode で完結するが署名の面倒を自分で見る。
+
+### パス A: シミュレータ（Google の確認用・署名不要）
+
+**A-1. ローカルビルド（Mac + Xcode）**
+
 ```bash
 cd app
-npx expo prebuild -p ios --clean   # config plugin を native へ反映（ios/ を再生成）
-npx pod-install                    # もしくは (cd ios && pod install)
-npx expo run:ios                   # dev client をビルド＆起動
+# 起動中のシミュレータ名を確認（例: "iPhone Air"）
+xcrun simctl list devices booted
+# シミュレータを明示してビルド（署名不要）。プレーン実行で実機を掴む場合はこれで回避。
+npx expo run:ios -d "iPhone Air"
 ```
 
-> `prebuild --clean` は `ios/` を再生成する。既存の手変更があれば退避してから実行する。
+**A-2. EAS ビルド（Mac / Xcode 不要）**
+
+```bash
+cd app
+eas build -p ios --profile development-simulator
+# 完了後に出る .tar.gz をダウンロード＆展開し、.app をシミュレータにドラッグ&ドロップ
+npx expo start --dev-client   # JS を配信して dev client を起動
+```
+
+### パス B: 実機（Apple の確認用・Apple Developer アカウント必須）
+
+**B-1. EAS ビルド（推奨。証明書を EAS が自動管理）**
+
+```bash
+cd app
+eas device:create                       # 実機を登録（案内の URL/QR からプロファイルを入れる）
+eas build -p ios --profile development   # Apple ログインを促され、証明書/プロファイルを自動発行
+# 完了後の QR / URL から実機にインストール
+npx expo start --dev-client
+```
+
+**B-2. ローカルビルド（Xcode で署名）**
+
+```bash
+cd app
+npx expo prebuild -p ios       # 初回のみ。config plugin を native へ反映（ios/ を生成）
+open ios/chalo.xcworkspace     # Signing & Capabilities で Team（有料）を選択
+npx expo run:ios -d "<実機名>" # 例: -d "○○ の iPhone"
+```
+
+> `eas build` には Expo アカウントでのログイン（`eas login`）が必要。EAS プロジェクトは初期化済み（`app.json` の projectId）。ビルドプロファイルは `app/eas.json` に定義（`development` = 実機 dev client、`development-simulator` = シミュレータ dev client）。
 
 ## 5. 動作確認
 
-| プロバイダ | 端末 | 確認内容 |
-|---|---|---|
-| Google | シミュレータ可 | サインイン → セッション確立 → `profiles` 行作成 → サインアウト |
-| Apple | **実機必須** | 同上（シミュレータでは Apple サインイン不可） |
+| プロバイダ | 端末 | ビルド | 確認内容 |
+|---|---|---|---|
+| Google | シミュレータ可 | パス A | サインイン → セッション確立 → `profiles` 行作成 → サインアウト |
+| Apple | **実機必須** | パス B | 同上（シミュレータでは Apple サインイン不可） |
 
 通し確認:
 
