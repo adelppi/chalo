@@ -118,6 +118,18 @@ npx expo run:ios -d "<実機名>" # 例: -d "○○ の iPhone"
 >
 > **`--local` を付けるとローカルビルドになり、Fastlane が必要**（未導入だと `spawn fastlane ENOENT`）。ローカルでやるなら `brew install fastlane` を先に。クラウドビルド（`--local` なし）なら Fastlane 不要でそのまま通る。
 
+### トラブルシュート
+
+- **`spawn fastlane ENOENT`**（`--local`）: Fastlane 未導入。`brew install fastlane`。
+- **`Distribution certificate ... hasn't been imported successfully`**（`--local` の実機ビルド）: ローカルの一時キーチェーンへの証明書取り込みが失敗する既知の問題（新しい macOS で起きやすい）。Expo 側の証明書は正常。**`--local` を外してクラウドビルド**にすると回避できる:
+  ```bash
+  eas build -p ios --profile development
+  ```
+- **とりあえず Google をシミュレータで確認したいだけ**なら、証明書は一切不要なので最短はこれ:
+  ```bash
+  npx expo run:ios -d "iPhone Air"   # 起動中のシミュレータ名を指定
+  ```
+
 ## 5. 動作確認
 
 | プロバイダ | 端末 | ビルド | 確認内容 |
