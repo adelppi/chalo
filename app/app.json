@@ -8,9 +8,15 @@
     "scheme": "chalo",
     "userInterfaceStyle": "light",
     "backgroundColor": "#ffffff",
-    "platforms": ["ios"],
+    "platforms": [
+      "ios"
+    ],
     "ios": {
-      "bundleIdentifier": "com.adelppi.chalo"
+      "bundleIdentifier": "com.adelppi.chalo",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "plugins": [
       "expo-router",
@@ -21,7 +27,10 @@
           "image": "./src/assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-apple-authentication",
+      "expo-web-browser",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

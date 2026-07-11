@@ -15,6 +15,7 @@
 - **まだ決まっていないこと（決定バックログ）** → `open-questions.md`
 - **初回リリース（v1）でどこまで作るか** → `release-v1.md`
 - **なぜその技術にしたか（意思決定の記録）** → `adr/`
+- **外部サービスの設定手順（Google/Apple サインイン等）** → `setup/`
 
 ## 構成
 
@@ -35,6 +36,8 @@ docs/
 │   ├── album.md           … 自動アルバムのルール
 │   ├── notifications.md   … 3種類の通知の仕様
 │   └── calendar.md        … 端末カレンダー連携の仕様
+├── setup/                 … 外部サービスの設定・実機検証の手順書（運用）
+│   └── auth-oidc-setup.md … Google/Apple サインインのコンソール設定・検証手順
 └── adr/
     ├── 0001-backend-supabase.md
     ├── 0002-navigation-expo-router.md
