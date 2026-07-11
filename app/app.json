@@ -8,10 +8,15 @@
     "scheme": "chalo",
     "userInterfaceStyle": "light",
     "backgroundColor": "#ffffff",
-    "platforms": ["ios"],
+    "platforms": [
+      "ios"
+    ],
     "ios": {
       "bundleIdentifier": "com.adelppi.chalo",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "plugins": [
       "expo-router",
