@@ -37,7 +37,7 @@ export function PairSuccessScreen() {
       />
 
       <ChaloFace width={128} />
-      <Text className="mt-[22px] text-center font-zen-black text-[28px] text-ink">
+      <Text className="mt-[22px] text-center text-[28px] font-black text-ink">
         つながりました！
       </Text>
 
@@ -45,13 +45,11 @@ export function PairSuccessScreen() {
         <View className="mt-[22px] flex-row items-center gap-3">
           <View className="flex-row items-center gap-2 rounded-full bg-paper px-4 py-2 shadow-card">
             <Avatar initial={names.mine.charAt(0)} size={26} />
-            <Text className="font-zen-bold text-sm text-ink">{names.mine}</Text>
+            <Text className="text-sm font-bold text-ink">{names.mine}</Text>
           </View>
           <View className="flex-row items-center gap-2 rounded-full bg-paper px-4 py-2 shadow-card">
             <Avatar initial={names.partner.charAt(0)} tone="plum" size={26} />
-            <Text className="font-zen-bold text-sm text-ink">
-              {names.partner}
-            </Text>
+            <Text className="text-sm font-bold text-ink">{names.partner}</Text>
           </View>
         </View>
       ) : null}

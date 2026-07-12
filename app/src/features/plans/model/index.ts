@@ -6,6 +6,7 @@ export {
   toDateString,
   type CalendarMonth,
 } from "./calendar";
+export { CLOSED_GREETINGS, pickClosedGreeting } from "./greeting";
 export {
   formatClosedLabel,
   formatCreatedByLabel,

@@ -12,7 +12,7 @@ export function GoogleSignInButton({ onPress, disabled, loading }: Props) {
       testID="auth-sign-in-google-button"
       onPress={onPress}
       disabled={disabled}
-      className="h-12 w-full flex-row items-center justify-center rounded-xl border border-neutral-300 bg-white active:opacity-70"
+      className="h-12 w-full flex-row items-center justify-center rounded-card border border-neutral-300 bg-white active:opacity-70"
       style={disabled ? { opacity: 0.5 } : undefined}
     >
       {loading ? (

@@ -61,7 +61,7 @@ export function SettingsScreen() {
       style={{ paddingTop: insets.top + 12 }}
     >
       <View className="px-6 pb-2">
-        <Text className="font-zen-black text-[28px] leading-tight text-ink">
+        <Text className="text-[28px] font-black leading-tight text-ink">
           設定
         </Text>
       </View>
@@ -72,7 +72,7 @@ export function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* プロフィール */}
-        <View className="overflow-hidden rounded-[18px] bg-paper shadow-card">
+        <View className="overflow-hidden rounded-card bg-paper shadow-card">
           <SettingsRow
             label="あなたの名前"
             value={profile?.displayName}
@@ -91,29 +91,29 @@ export function SettingsScreen() {
         {isSolo ? (
           <>
             <SectionLabel label="ペア" />
-            <View className="overflow-hidden rounded-[18px] bg-paper shadow-card">
+            <View className="overflow-hidden rounded-card bg-paper shadow-card">
               <Pressable
                 testID="settings-invite-code-button"
                 onPress={() => router.push("/pairing/invite")}
-                className="gap-0.5 border-b border-sand px-4 py-3 active:opacity-70"
+                className="gap-1 border-b border-sand px-[18px] py-4 active:opacity-70"
               >
                 <View className="flex-row items-center justify-between">
-                  <Text className="font-zen-bold text-sm text-ink">
+                  <Text className="text-[17px] font-medium text-ink">
                     招待コードを発行
                   </Text>
                   {inviteCode ? (
-                    <Text className="font-zen-black text-base tracking-[2.5px] text-plum">
+                    <Text className="text-[17px] font-black tracking-[2.5px] text-plum">
                       {inviteCode.code}
                     </Text>
                   ) : (
                     <Icon
                       name="chevron-right"
-                      size={12}
+                      size={13}
                       color={palette.latte}
                     />
                   )}
                 </View>
-                <Text className="font-zen text-[11px] text-stone">
+                <Text className="text-xs font-normal text-stone">
                   24時間有効・再発行すると前のコードは使えなくなります
                 </Text>
               </Pressable>
@@ -137,7 +137,7 @@ export function SettingsScreen() {
 
         {/* おしらせ・カレンダー（モック段階は表示のみ） */}
         <SectionLabel label="おしらせ・カレンダー" />
-        <View className="overflow-hidden rounded-[18px] bg-paper shadow-card">
+        <View className="overflow-hidden rounded-card bg-paper shadow-card">
           <PermissionRow label="通知" />
           <PermissionRow label="カレンダー" />
           <SettingsRow
@@ -150,7 +150,7 @@ export function SettingsScreen() {
 
         {/* そのほか */}
         <SectionLabel label="そのほか" />
-        <View className="overflow-hidden rounded-[18px] bg-paper shadow-card">
+        <View className="overflow-hidden rounded-card bg-paper shadow-card">
           <SettingsRow
             testID="settings-export-button"
             label="プランを書き出す"
@@ -181,7 +181,7 @@ export function SettingsScreen() {
           />
         </View>
 
-        <Text className="py-1.5 text-center font-zen-medium text-[11px] text-latte">
+        <Text className="py-1.5 text-center text-[11px] font-medium text-latte">
           chalo バージョン {appVersion}
         </Text>
       </ScrollView>
@@ -234,7 +234,7 @@ export function SettingsScreen() {
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <Text className="px-1.5 pt-1.5 font-zen-bold text-[11px] tracking-[1.5px] text-stone">
+    <Text className="px-2 pb-0.5 pt-2.5 text-xs font-bold tracking-[1.2px] text-stone">
       {label}
     </Text>
   );
@@ -264,21 +264,21 @@ function SettingsRow({
       testID={testID}
       onPress={onPress}
       disabled={!onPress}
-      className={`flex-row items-center justify-between gap-2.5 px-4 py-2.5 ${
+      className={`flex-row items-center justify-between gap-2.5 px-[18px] py-4 ${
         onPress ? "active:opacity-70" : ""
       } ${showSeparator ? "border-b border-sand" : ""}`}
     >
       <Text
-        className={`font-zen-bold text-sm ${destructive ? "text-rust" : "text-ink"}`}
+        className={`text-[17px] font-medium ${destructive ? "text-rust" : "text-ink"}`}
       >
         {label}
       </Text>
       <View className="flex-row items-center gap-2">
         {value ? (
-          <Text className="font-zen-bold text-[13px] text-stone">{value}</Text>
+          <Text className="text-base font-semibold text-stone">{value}</Text>
         ) : null}
         {chevron ? (
-          <Icon name="chevron-right" size={12} color={palette.latte} />
+          <Icon name="chevron-right" size={13} color={palette.latte} />
         ) : null}
       </View>
     </Pressable>
@@ -288,10 +288,10 @@ function SettingsRow({
 // 通知・カレンダーの許可行（E-1）。モック段階は「許可する」ピルの表示のみ。
 function PermissionRow({ label }: { label: string }) {
   return (
-    <View className="flex-row items-center justify-between border-b border-sand px-4 py-2">
-      <Text className="font-zen-bold text-sm text-ink">{label}</Text>
-      <View className="rounded-full bg-plum px-3 py-[5px]">
-        <Text className="font-zen-bold text-xs text-blush">許可する</Text>
+    <View className="flex-row items-center justify-between border-b border-sand px-[18px] py-3.5">
+      <Text className="text-[17px] font-medium text-ink">{label}</Text>
+      <View className="rounded-full bg-plum px-[15px] py-[7px]">
+        <Text className="text-[13px] font-semibold text-blush">許可する</Text>
       </View>
     </View>
   );

@@ -27,7 +27,7 @@ export function PlanListRow({
       }`}
     >
       <Text
-        className="mr-2 flex-1 font-zen-bold text-[17px] text-ink"
+        className="mr-2 flex-1 text-[17px] font-bold text-ink"
         numberOfLines={1}
       >
         {plan.title}

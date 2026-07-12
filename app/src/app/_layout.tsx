@@ -1,12 +1,5 @@
 import "../global.css";
 
-import {
-  useFonts,
-  ZenMaruGothic_400Regular,
-  ZenMaruGothic_500Medium,
-  ZenMaruGothic_700Bold,
-  ZenMaruGothic_900Black,
-} from "@expo-google-fonts/zen-maru-gothic";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -30,9 +23,9 @@ import {
 // セッション確認が終わるまでスプラッシュを保持する（Issue #8）。
 SplashScreen.preventAutoHideAsync();
 
-function RootNavigator({ fontsLoaded }: { fontsLoaded: boolean }) {
+function RootNavigator() {
   const status = useAuthStatus();
-  const ready = status !== "loading" && fontsLoaded;
+  const ready = status !== "loading";
 
   useEffect(() => {
     if (ready) {
@@ -60,14 +53,7 @@ function RootNavigator({ fontsLoaded }: { fontsLoaded: boolean }) {
 }
 
 export default function RootLayout() {
-  // デザイン全編で使う Zen Maru Gothic（tailwind.config の font-zen-* に対応）
-  const [fontsLoaded] = useFonts({
-    ZenMaruGothic_400Regular,
-    ZenMaruGothic_500Medium,
-    ZenMaruGothic_700Bold,
-    ZenMaruGothic_900Black,
-  });
-
+  // フォントは OS 標準（システムフォント）。読み込み待ちは不要（Issue #16・adr/0016）。
   // 合成ルート：Repository interface と実装をここで結線する（adr/0003・adr/0015）。
   // plans / pairing / settings は Issue #14 のモック段階のため in-memory フェイク。
   return (
@@ -80,7 +66,7 @@ export default function RootLayout() {
           <PairingProvider pairingRepository={fakePairingRepository}>
             <SettingsProvider settingsRepository={fakeSettingsRepository}>
               <StatusBar style="dark" />
-              <RootNavigator fontsLoaded={fontsLoaded} />
+              <RootNavigator />
               <ToastHost />
             </SettingsProvider>
           </PairingProvider>

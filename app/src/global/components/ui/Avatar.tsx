@@ -18,7 +18,7 @@ export function Avatar({ initial, tone = "camel", size = 22 }: AvatarProps) {
       style={{ width: size, height: size }}
     >
       <Text
-        className={`font-zen-bold ${textClass}`}
+        className={`font-bold ${textClass}`}
         style={{ fontSize: size * 0.45 }}
       >
         {initial}

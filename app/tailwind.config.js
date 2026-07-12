@@ -10,12 +10,13 @@ module.exports = {
       // chalo のデザイントークン（Claude Design 由来）。値の直書きをせず必ずここを参照する（adr/0016）。
       // 色の一次情報は src/global/constants/palette.js（SVG 等 className 不可の箇所と共有）。
       colors: palette,
-      fontFamily: {
-        // Zen Maru Gothic。RN はウェイトごとにフォントファミリー名が分かれる
-        zen: ["ZenMaruGothic_400Regular"],
-        "zen-medium": ["ZenMaruGothic_500Medium"],
-        "zen-bold": ["ZenMaruGothic_700Bold"],
-        "zen-black": ["ZenMaruGothic_900Black"],
+      // フォントは OS 標準（iOS システムフォント。和文はヒラギノ角ゴ／英数字は SF Pro へ
+      // 自動フォールバック）。fontFamily は指定せず、ウェイトのユーティリティ
+      // （font-normal / font-medium / font-bold / font-black）で階層を表す（Issue #16）。
+      borderRadius: {
+        // 面（カード・ボタン・シート・ダイアログ・入力欄）の角丸を 8px に統一（Issue #16）。
+        // アバター・アイコンボタン・チップ等の円形／ピルは rounded-full を使い対象外。
+        card: "8px",
       },
       boxShadow: {
         card: "0 2px 10px rgba(88, 71, 56, 0.07)",

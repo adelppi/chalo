@@ -54,9 +54,9 @@ const iconColorByVariant: Record<ButtonVariant, string> = {
 };
 
 const containerBySize: Record<ButtonSize, string> = {
-  sm: "h-[46px] rounded-[14px]",
-  md: "h-[54px] rounded-2xl",
-  lg: "h-[56px] rounded-[18px]",
+  sm: "h-[46px] rounded-card",
+  md: "h-[54px] rounded-card",
+  lg: "h-[56px] rounded-card",
 };
 
 const labelBySize: Record<ButtonSize, string> = {
@@ -96,7 +96,7 @@ export function Button({
           color={disabled ? palette.paper : iconColorByVariant[variant]}
         />
       ) : null}
-      <Text className={`font-zen-bold ${labelBySize[size]} ${labelColor}`}>
+      <Text className={`font-bold ${labelBySize[size]} ${labelColor}`}>
         {label}
       </Text>
     </Pressable>

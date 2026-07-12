@@ -35,8 +35,8 @@ export function DoneListScreen() {
       style={{ paddingTop: insets.top + 16 }}
     >
       <View className="px-6 pb-3">
-        <Text className="font-zen-black text-[32px] leading-tight text-ink">
-          おしまいプラン
+        <Text className="text-[32px] font-black leading-tight text-ink">
+          おわったプラン
         </Text>
       </View>
 
@@ -54,10 +54,10 @@ export function DoneListScreen() {
         >
           {groups.map((group) => (
             <View key={group.label} className="gap-2.5">
-              <Text className="px-1.5 pt-1.5 font-zen-bold text-xs tracking-[1.5px] text-stone">
+              <Text className="px-1.5 pt-1.5 text-xs font-bold tracking-[1.5px] text-stone">
                 {group.label}
               </Text>
-              <View className="overflow-hidden rounded-[20px] bg-paper shadow-card">
+              <View className="overflow-hidden rounded-card bg-paper shadow-card">
                 {group.plans.map((plan, index) => (
                   <Pressable
                     key={plan.id}
@@ -72,12 +72,12 @@ export function DoneListScreen() {
                     <PawPrint size={22} opacity={0.55} />
                     <View className="flex-1 gap-0.5">
                       <Text
-                        className="font-zen-bold text-[17px] text-ink"
+                        className="text-[17px] font-bold text-ink"
                         numberOfLines={1}
                       >
                         {plan.title}
                       </Text>
-                      <Text className="font-zen text-[11.5px] text-stone">
+                      <Text className="text-[11.5px] font-normal text-stone">
                         {formatClosedLabel(deriveClosedDate(plan) as string)}
                       </Text>
                     </View>
@@ -108,10 +108,10 @@ function DoneEmptyState() {
         rotate="-32deg"
         style={{ position: "absolute", right: 100, top: 170 }}
       />
-      <Text className="text-center font-zen-bold text-[17px] text-ink">
+      <Text className="text-center text-[17px] font-bold text-ink">
         まだ「おしまい」はありません
       </Text>
-      <Text className="mt-2 text-center font-zen-medium text-[13px] leading-6 text-taupe">
+      <Text className="mt-2 text-center text-[13px] font-medium leading-6 text-taupe">
         やりたいことが終わったら、ここに並びます。
       </Text>
     </View>
