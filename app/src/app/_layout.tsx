@@ -14,10 +14,10 @@ import { ToastHost } from "@global/components/shared";
 import { queryClient } from "@global/config/queryClient";
 import {
   fakePairingRepository,
-  fakePlanRepository,
-  fakeSettingsRepository,
   supabaseAuthRepository,
+  supabasePlanRepository,
   supabaseProfileRepository,
+  supabaseSettingsRepository,
 } from "@global/data";
 
 // セッション確認が終わるまでスプラッシュを保持する（Issue #8）。
@@ -55,16 +55,16 @@ function RootNavigator() {
 export default function RootLayout() {
   // フォントは OS 標準（システムフォント）。読み込み待ちは不要（Issue #16・adr/0016）。
   // 合成ルート：Repository interface と実装をここで結線する（adr/0003・adr/0015）。
-  // plans / pairing / settings は Issue #14 のモック段階のため in-memory フェイク。
+  // pairing のみ Supabase 化が別 Issue のため in-memory フェイク。
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider
         authRepository={supabaseAuthRepository}
         profileRepository={supabaseProfileRepository}
       >
-        <PlansProvider planRepository={fakePlanRepository}>
+        <PlansProvider planRepository={supabasePlanRepository}>
           <PairingProvider pairingRepository={fakePairingRepository}>
-            <SettingsProvider settingsRepository={fakeSettingsRepository}>
+            <SettingsProvider settingsRepository={supabaseSettingsRepository}>
               <StatusBar style="dark" />
               <RootNavigator />
               <ToastHost />

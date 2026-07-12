@@ -152,12 +152,12 @@ chalo の中心。
 
 ---
 
-## アクセス制御（RLS）方針 [提案]
+## アクセス制御（RLS）方針
 
-- `plans`：同じ `pair_id` のメンバー、またはソロ時は `owner_id` 本人のみ read/write 可。
-- `profiles`：本人と、同じペアの相手のみ参照可（相手の表示名等を見るため）。
-- `invites`：発行者本人と、コードを知って入力する側のみ。
-- すべて Supabase RLS で強制。詳細は実装時に確定。
+- `plans`：**[確定]** ソロ境界は実装済み。`owner_id = auth.uid()` の行のみ本人が select/insert/update/delete できる（権限は `authenticated` ロールにのみ grant。`anon` には付与しない）。同じ `pair_id` のメンバーへ開放するペア境界は別 Issue「RLS 一括実装」で追加する。
+- `profiles`：**[確定]** 本人のみ read/write 可の最小ポリシーを実装済み。**[提案]** 同じペアの相手の参照（相手の表示名等を見るため）は別 Issue「RLS 一括実装」で追加する。
+- `invites`：**[提案]** 発行者本人と、コードを知って入力する側のみ。
+- すべて Supabase RLS で強制。
 
 ---
 

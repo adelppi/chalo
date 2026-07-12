@@ -18,6 +18,81 @@ export type Database = {
   };
   public: {
     Tables: {
+      plans: {
+        Row: {
+          closed_at: string | null;
+          created_at: string;
+          date: string | null;
+          deadline: string | null;
+          id: string;
+          locked_at: string | null;
+          locked_by: string | null;
+          memo: string | null;
+          owner_id: string;
+          pair_id: string | null;
+          place_lat: number | null;
+          place_lng: number | null;
+          place_name: string | null;
+          reference_url: string | null;
+          time: string | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          closed_at?: string | null;
+          created_at?: string;
+          date?: string | null;
+          deadline?: string | null;
+          id?: string;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          memo?: string | null;
+          owner_id: string;
+          pair_id?: string | null;
+          place_lat?: number | null;
+          place_lng?: number | null;
+          place_name?: string | null;
+          reference_url?: string | null;
+          time?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          closed_at?: string | null;
+          created_at?: string;
+          date?: string | null;
+          deadline?: string | null;
+          id?: string;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          memo?: string | null;
+          owner_id?: string;
+          pair_id?: string | null;
+          place_lat?: number | null;
+          place_lng?: number | null;
+          place_name?: string | null;
+          reference_url?: string | null;
+          time?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "plans_locked_by_fkey";
+            columns: ["locked_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "plans_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;
