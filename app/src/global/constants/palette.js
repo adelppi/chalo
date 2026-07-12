@@ -2,7 +2,7 @@
 // tailwind.config.js（className 用）と、SVG 等 className を使えない箇所の両方がここを参照する。
 // CommonJS なのは tailwind.config.js から require するため。
 const palette = {
-  ink: "#584738", // 基調の焦げ茶。見出し・本文・主ボタン
+  ink: "#261f19", // 基調の焦げ茶。見出し・本文・主ボタン
   linen: "#F1EADA", // 画面背景。暗色上のテキストにも使う
   paper: "#FFFCF5", // カード・タブバーの表面
   sand: "#F0E8D5", // カード内の区切り線
