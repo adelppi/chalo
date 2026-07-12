@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Button, Icon, type IconName } from "@global/components/ui";
+import { BackHeader, Button, Icon, type IconName } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 
@@ -109,14 +109,14 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   };
 
   return (
-    // 戻るはネイティブのナビゲーションヘッダー（Issue #16。C-3/D-2 はプッシュ遷移）。
+    // C-3/D-2：戻るで閉じるプッシュ遷移のフル画面。
     // 追加する/保存する は画面下部に固定し、キーボードが出たらその上に逃がす。
     <KeyboardAvoidingView
       testID={`${screenName}-screen`}
       className="flex-1 bg-linen"
       behavior="padding"
-      keyboardVerticalOffset={insets.top + 44}
     >
+      <BackHeader testID={`${screenName}-back-button`} />
       <ScrollView
         className="flex-1"
         keyboardShouldPersistTaps="handled"

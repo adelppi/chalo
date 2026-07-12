@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
-import { Button, Icon } from "@global/components/ui";
+import { BackHeader, Button, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
 import { PairingCodeError } from "../data/pairingRepository";
@@ -12,7 +12,7 @@ import type { RedeemErrorReason } from "../model/types";
 
 const CODE_LENGTH = 6;
 
-// コード入力（B-3）。エラーはインライン表示（B-4・F-3）。戻るはナビゲーションヘッダー（Issue #16）。
+// コード入力（B-3）。エラーはインライン表示（B-4・F-3）。戻るは画面内の BackHeader。
 export function EnterCodeScreen() {
   const router = useRouter();
   const redeem = useRedeemInviteCode();
@@ -44,7 +44,8 @@ export function EnterCodeScreen() {
 
   return (
     <View testID="pairing-code-screen" className="flex-1 bg-linen">
-      <View className="gap-2.5 px-7 pt-3">
+      <BackHeader testID="pairing-code-back-button" />
+      <View className="gap-2.5 px-7 pt-5">
         <Text className="text-[26px] font-black leading-10 text-ink">
           コードを{"\n"}入力しましょう
         </Text>

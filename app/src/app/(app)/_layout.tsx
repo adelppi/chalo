@@ -2,21 +2,11 @@ import { Stack } from "expo-router";
 
 import { palette } from "@global/constants/palette";
 
-// 画面のナビゲーションヘッダー（戻る/編集/削除はここに統合する。Issue #16）。
-// 背景は linen・影なし・タイトルは各画面が本文に大きく出すため空にする。
-// ナビゲータの option のため className は使えない（adr/0016 の逃げ道）。
-const nativeHeaderOptions = {
-  headerShown: true,
-  headerStyle: { backgroundColor: palette.linen },
-  headerShadowVisible: false,
-  headerTintColor: palette.ink,
-  headerTitle: "",
-  headerBackButtonDisplayMode: "minimal",
-} as const;
-
 // サインイン済みユーザー向けの保護グループ。
 // 作成・編集はシートではなく1枚の画面へのプッシュ遷移（デザイン TURN 5・C-3/D-2）。
-// おしまいのお祝いはフェードの全画面で重ねる。
+// 戻るはどの画面もデザインどおり画面内の BackHeader が描く（iOS 26 の Liquid Glass
+// ヘッダーだとボタンがガラスのカプセルに繋がりデザインと乖離するため。
+// 戻るスワイプはネイティブのまま有効）。
 export default function AppLayout() {
   return (
     <Stack
@@ -27,18 +17,16 @@ export default function AppLayout() {
       }}
     >
       <Stack.Screen name="(tabs)" />
-      {/* プラン詳細（D-1）。戻るはネイティブ、編集/削除は画面側で headerRight に足す。 */}
-      <Stack.Screen name="plan/[id]/index" options={nativeHeaderOptions} />
-      {/* プラン作成（C-3）・編集（D-2）。戻るで閉じるフル画面。 */}
-      <Stack.Screen name="plan/new" options={nativeHeaderOptions} />
-      <Stack.Screen name="plan/[id]/edit" options={nativeHeaderOptions} />
-      <Stack.Screen
-        name="plan/[id]/closed"
-        options={{ presentation: "fullScreenModal", animation: "fade" }}
-      />
-      {/* 招待コード発行（B-2）・コード入力（B-3）。戻るをヘッダーに統合。 */}
-      <Stack.Screen name="pairing/invite" options={nativeHeaderOptions} />
-      <Stack.Screen name="pairing/code" options={nativeHeaderOptions} />
+      {/* プラン詳細（D-1）・作成（C-3）・編集（D-2）。戻るで閉じるフル画面。 */}
+      <Stack.Screen name="plan/[id]/index" />
+      <Stack.Screen name="plan/new" />
+      <Stack.Screen name="plan/[id]/edit" />
+      {/* おしまいのお祝い（D-3）。fullScreenModal で replace するとナビバーの状態が壊れ、
+          もどった先に「(tabs)」のタイトルが残留するため、通常遷移 + フェードで重ねる。 */}
+      <Stack.Screen name="plan/[id]/closed" options={{ animation: "fade" }} />
+      {/* 招待コード発行（B-2）・コード入力（B-3）。 */}
+      <Stack.Screen name="pairing/invite" />
+      <Stack.Screen name="pairing/code" />
     </Stack>
   );
 }

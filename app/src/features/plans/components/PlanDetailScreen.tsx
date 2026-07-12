@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -11,7 +11,14 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { PawPrint } from "@global/components/shared";
-import { Avatar, Button, Chip, Dialog, Icon } from "@global/components/ui";
+import {
+  Avatar,
+  BackHeader,
+  Button,
+  Chip,
+  Dialog,
+  Icon,
+} from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 
@@ -96,36 +103,35 @@ function PlanDetail({ plan }: { plan: Plan }) {
 
   return (
     <View testID="plan-detail-screen" className="flex-1 bg-linen">
-      {/* 編集・削除はナビゲーションヘッダーに統合（Issue #16）。戻るはネイティブの戻る。 */}
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            // D-1：44px の円形タップ領域を 10px 空けて並べる（くっつけない）
-            <View className="flex-row items-center gap-2.5">
-              <Pressable
-                testID="plan-detail-edit-button"
-                onPress={() => router.push(`/plan/${plan.id}/edit`)}
-                className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
-              >
-                <Icon name="pencil" size={20} color={palette.ink} />
-              </Pressable>
-              <Pressable
-                testID="plan-detail-delete-button"
-                onPress={() => setDeleteDialogVisible(true)}
-                className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
-              >
-                <Icon name="trash" size={20} color={palette.rust} />
-              </Pressable>
-            </View>
-          ),
-        }}
-      />
-
       <PawPrint
         size={130}
         opacity={0.06}
         rotate="-16deg"
-        style={{ position: "absolute", right: -26, top: 40 }}
+        style={{ position: "absolute", right: -26, top: 96 }}
+      />
+
+      {/* D-1：戻る・編集・削除は画面内の透明な円形ボタンで描く。
+          編集と削除は 44px のタップ領域を 10px 空けて並べる（くっつけない）。 */}
+      <BackHeader
+        testID="plan-detail-back-button"
+        right={
+          <View className="flex-row items-center gap-2.5">
+            <Pressable
+              testID="plan-detail-edit-button"
+              onPress={() => router.push(`/plan/${plan.id}/edit`)}
+              className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
+            >
+              <Icon name="pencil" size={20} color={palette.ink} />
+            </Pressable>
+            <Pressable
+              testID="plan-detail-delete-button"
+              onPress={() => setDeleteDialogVisible(true)}
+              className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
+            >
+              <Icon name="trash" size={20} color={palette.rust} />
+            </Pressable>
+          </View>
+        }
       />
 
       <ScrollView
@@ -258,7 +264,8 @@ function PlanLocked({ plan }: { plan: Plan }) {
 
   return (
     <View testID="plan-locked-screen" className="flex-1 bg-linen">
-      <View className="px-7 pt-3">
+      <BackHeader testID="plan-locked-back-button" />
+      <View className="px-7 pt-6">
         <Text className="text-2xl font-black leading-9 text-ink">
           {plan.title}
         </Text>
@@ -327,6 +334,7 @@ function PlanNotFound() {
 
   return (
     <View testID="plan-not-found-screen" className="flex-1 bg-linen">
+      <BackHeader testID="plan-not-found-back-button" onBack={goBackToList} />
       <View className="flex-1 items-center justify-center px-11">
         <PawPrint size={56} opacity={0.25} rotate="-14deg" />
         <Text className="mt-5 text-center text-lg font-black text-ink">

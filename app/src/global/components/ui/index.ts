@@ -1,5 +1,6 @@
 // 基本 UI プリミティブの公開バレル（adr/0015・adr/0016）。
 export { Avatar } from "./Avatar";
+export { BackHeader } from "./BackHeader";
 export { Button } from "./Button";
 export { Chip } from "./Chip";
 export { Dialog } from "./Dialog";

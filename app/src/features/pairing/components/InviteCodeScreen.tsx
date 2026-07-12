@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
-import { Button, Chip } from "@global/components/ui";
+import { BackHeader, Button, Chip } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 
@@ -9,7 +9,7 @@ import { useIssueInviteCode } from "../hooks/usePairingMutations";
 import { usePairState } from "../hooks/usePairState";
 import { formatRemainingLabel } from "../model/invite";
 
-// 招待コード発行（B-2）。未発行なら開いたときに発行する。戻るはナビゲーションヘッダー（Issue #16）。
+// 招待コード発行（B-2）。未発行なら開いたときに発行する。戻るは画面内の BackHeader。
 export function InviteCodeScreen() {
   const showToast = useToastStore((state) => state.show);
   const { data: pairState } = usePairState();
@@ -33,7 +33,8 @@ export function InviteCodeScreen() {
 
   return (
     <View testID="pairing-invite-screen" className="flex-1 bg-linen">
-      <View className="gap-2.5 px-7 pt-3">
+      <BackHeader testID="pairing-invite-back-button" />
+      <View className="gap-2.5 px-7 pt-5">
         <Text className="text-[26px] font-black leading-10 text-ink">
           招待コードが{"\n"}できました
         </Text>
