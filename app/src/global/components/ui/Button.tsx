@@ -65,6 +65,16 @@ const labelBySize: Record<ButtonSize, string> = {
   lg: "text-base",
 };
 
+// ラベルのウェイト（Claude Design：ベタ塗りは 600、枠線・明色・テキストは 500）
+const labelWeightByVariant: Record<ButtonVariant, string> = {
+  primary: "font-semibold",
+  accent: "font-semibold",
+  destructive: "font-semibold",
+  outline: "font-medium",
+  cream: "font-medium",
+  ghost: "font-medium",
+};
+
 export function Button({
   label,
   onPress,
@@ -96,7 +106,9 @@ export function Button({
           color={disabled ? palette.paper : iconColorByVariant[variant]}
         />
       ) : null}
-      <Text className={`font-bold ${labelBySize[size]} ${labelColor}`}>
+      <Text
+        className={`${labelWeightByVariant[variant]} ${labelBySize[size]} ${labelColor}`}
+      >
         {label}
       </Text>
     </Pressable>

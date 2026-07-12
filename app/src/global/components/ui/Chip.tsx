@@ -58,7 +58,7 @@ export function Chip({
           color={iconColorByTone[tone]}
         />
       ) : null}
-      <Text className={`font-bold ${textSize} ${textByTone[tone]}`}>
+      <Text className={`font-medium ${textSize} ${textByTone[tone]}`}>
         {label}
       </Text>
     </View>

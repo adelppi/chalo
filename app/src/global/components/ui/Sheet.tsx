@@ -49,7 +49,7 @@ export function Sheet({
                   hitSlop={8}
                   testID={action.testID}
                 >
-                  <Text className="text-sm font-bold text-stone">
+                  <Text className="text-sm font-medium text-stone">
                     {action.label}
                   </Text>
                 </Pressable>

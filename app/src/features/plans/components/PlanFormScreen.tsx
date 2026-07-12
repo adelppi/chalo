@@ -119,7 +119,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
               hitSlop={8}
               className="py-1.5 pr-3 active:opacity-60"
             >
-              <Text className="text-[15px] font-bold text-stone">
+              <Text className="text-[15px] font-medium text-stone">
                 キャンセル
               </Text>
             </Pressable>
@@ -152,7 +152,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             onBlur={() => setTitleFocused(false)}
             placeholder="タイトル"
             placeholderTextColor={palette.latte}
-            className="p-0 text-[17px] font-bold text-ink"
+            className="p-0 text-[17px] font-medium text-ink"
             selectionColor={palette.plum}
           />
         </View>
@@ -310,9 +310,9 @@ function FormFieldRow({
         size={15}
         color={filled ? palette.ink : palette.taupe}
       />
-      <Text className="flex-1 text-sm font-bold text-ink">{label}</Text>
+      <Text className="flex-1 text-sm font-medium text-ink">{label}</Text>
       <Text
-        className={`max-w-[150px] text-sm font-bold ${
+        className={`max-w-[150px] text-sm font-medium ${
           filled ? "text-plum" : "text-latte"
         }`}
         numberOfLines={1}

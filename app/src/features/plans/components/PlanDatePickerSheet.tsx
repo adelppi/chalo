@@ -104,7 +104,9 @@ export function PlanDatePickerSheet({
               key={label}
               className="h-[26px] flex-1 items-center justify-center"
             >
-              <Text className="text-[11px] font-bold text-stone">{label}</Text>
+              <Text className="text-[11px] font-medium text-stone">
+                {label}
+              </Text>
             </View>
           ))}
         </View>
@@ -129,7 +131,7 @@ export function PlanDatePickerSheet({
                     }`}
                   >
                     <Text
-                      className={`text-sm font-bold ${
+                      className={`text-sm font-medium ${
                         selected ? "text-linen" : "text-ink"
                       }`}
                     >
@@ -145,7 +147,7 @@ export function PlanDatePickerSheet({
 
       {withTime ? (
         <View className="mt-3.5 rounded-card bg-cream px-4 pb-1 pt-3">
-          <Text className="text-sm font-bold text-ink">時刻</Text>
+          <Text className="text-sm font-medium text-ink">時刻</Text>
           {/* iOS ネイティブのホイールピッカー（Issue #16）。先頭は「なし」= time 未設定。 */}
           <Picker
             testID="plan-date-picker-time-picker"

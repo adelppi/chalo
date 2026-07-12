@@ -88,7 +88,7 @@ export function EnterCodeScreen() {
             />
             <Text
               testID="pairing-code-error-text"
-              className="flex-1 text-[13px] font-bold text-rust"
+              className="flex-1 text-[13px] font-medium text-rust"
             >
               {redeemErrorMessage(errorReason)}
             </Text>

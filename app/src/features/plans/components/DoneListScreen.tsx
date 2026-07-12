@@ -72,12 +72,12 @@ export function DoneListScreen() {
                     <PawPrint size={22} opacity={0.55} />
                     <View className="flex-1 gap-0.5">
                       <Text
-                        className="text-[17px] font-bold text-ink"
+                        className="text-[17px] font-medium text-ink"
                         numberOfLines={1}
                       >
                         {plan.title}
                       </Text>
-                      <Text className="text-[11.5px] font-normal text-stone">
+                      <Text className="text-[11.5px] font-medium text-stone">
                         {formatClosedLabel(deriveClosedDate(plan) as string)}
                       </Text>
                     </View>
@@ -108,7 +108,7 @@ function DoneEmptyState() {
         rotate="-32deg"
         style={{ position: "absolute", right: 100, top: 170 }}
       />
-      <Text className="text-center text-[17px] font-bold text-ink">
+      <Text className="text-center text-[17px] font-medium text-ink">
         まだ「おしまい」はありません
       </Text>
       <Text className="mt-2 text-center text-[13px] font-medium leading-6 text-taupe">

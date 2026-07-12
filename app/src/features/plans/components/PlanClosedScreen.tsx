@@ -60,7 +60,9 @@ export function PlanClosedScreen({ id }: PlanClosedScreenProps) {
           </Text>
           {plan ? (
             <View className="mt-4 rounded-full bg-linen/[0.12] px-[18px] py-2">
-              <Text className="text-sm font-bold text-linen">{plan.title}</Text>
+              <Text className="text-sm font-semibold text-linen">
+                {plan.title}
+              </Text>
             </View>
           ) : null}
           <Text className="mt-3.5 text-[13px] font-medium text-latte">

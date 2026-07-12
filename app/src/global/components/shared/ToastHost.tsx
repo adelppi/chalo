@@ -36,7 +36,7 @@ export function ToastHost() {
           />
         ) : null}
         <Text
-          className={`text-sm font-bold ${isError ? "text-paper" : "text-linen"}`}
+          className={`text-sm font-semibold ${isError ? "text-paper" : "text-linen"}`}
         >
           {toast.message}
         </Text>

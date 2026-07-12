@@ -39,7 +39,7 @@ export function ExportPlansDialog({
         <View className="mt-1.5 gap-1.5 rounded-card bg-cream px-3.5 py-3">
           <View className="flex-row items-center gap-2">
             <Icon name="note" size={14} color={palette.taupe} />
-            <Text className="text-[12.5px] font-bold text-ink">
+            <Text className="text-[12.5px] font-medium text-ink">
               プラン {counts.active}件・おしまい {counts.done}件
             </Text>
           </View>

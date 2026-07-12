@@ -177,7 +177,7 @@ function PlanDetail({ plan }: { plan: Plan }) {
                 参考URL
               </Text>
               <Text
-                className="text-[13px] font-bold text-plum"
+                className="text-[13px] font-medium text-plum"
                 numberOfLines={1}
               >
                 {displayUrl}
@@ -268,7 +268,7 @@ function PlanLocked({ plan }: { plan: Plan }) {
       <View className="mx-6 mt-4 flex-row items-start gap-[11px] rounded-card border border-honey-border bg-honey-surface px-4 py-[15px]">
         <Icon name="lock" size={20} color={palette.honey.DEFAULT} />
         <View className="flex-1 gap-[3px]">
-          <Text className="text-sm font-bold text-honey-text">
+          <Text className="text-sm font-medium text-honey-text">
             {plan.lockedByName} が編集しています
           </Text>
           <Text className="text-xs font-medium leading-5 text-honey-soft">
@@ -283,7 +283,7 @@ function PlanLocked({ plan }: { plan: Plan }) {
             <Text className="text-xs font-bold tracking-[1px] text-stone">
               日にち
             </Text>
-            <Text className="text-[15px] font-bold text-ink">
+            <Text className="text-[15px] font-medium text-ink">
               {formatDateLong(plan.date, plan.time)}
             </Text>
           </View>
@@ -305,7 +305,9 @@ function PlanLocked({ plan }: { plan: Plan }) {
       <View className="px-6" style={{ paddingBottom: insets.bottom + 24 }}>
         <View className="h-[54px] flex-row items-center justify-center gap-2 rounded-card bg-honey-muted">
           <Icon name="lock" size={16} color={palette.stone} />
-          <Text className="text-base font-bold text-stone">編集できません</Text>
+          <Text className="text-base font-medium text-stone">
+            編集できません
+          </Text>
         </View>
       </View>
     </View>

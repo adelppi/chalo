@@ -169,7 +169,7 @@ function HomeEmptyState() {
         style={{ position: "absolute", right: 70, top: 270 }}
       />
       <ChaloFace width={96} style={{ marginTop: 120 }} />
-      <Text className="mt-[18px] text-center text-[17px] font-bold text-ink">
+      <Text className="mt-[18px] text-center text-[17px] font-medium text-ink">
         まだなにもありません
       </Text>
       <Text className="mt-2 text-center text-[13px] font-medium leading-6 text-taupe">

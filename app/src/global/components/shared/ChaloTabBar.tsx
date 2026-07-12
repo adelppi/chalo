@@ -61,7 +61,7 @@ export function ChaloTabBar({ state, descriptors, navigation }: TabBarProps) {
               />
             </View>
             <Text
-              className={`text-[10px] ${focused ? "font-bold" : "font-medium"}`}
+              className={`text-[10px] ${focused ? "font-semibold" : "font-medium"}`}
               style={{ color }}
             >
               {label}

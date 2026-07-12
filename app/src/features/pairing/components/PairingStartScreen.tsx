@@ -42,7 +42,7 @@ export function PairingStartScreen() {
             <Icon name="tray-up" size={22} color={palette.linen} />
           </View>
           <View className="flex-1 gap-[3px]">
-            <Text className="text-[17px] font-bold text-linen">
+            <Text className="text-[17px] font-medium text-linen">
               招待コードをつくる
             </Text>
             <Text className="text-xs font-medium text-latte">
@@ -61,7 +61,7 @@ export function PairingStartScreen() {
             <Icon name="keypad" size={22} color={palette.plum} />
           </View>
           <View className="flex-1 gap-[3px]">
-            <Text className="text-[17px] font-bold text-ink">
+            <Text className="text-[17px] font-medium text-ink">
               コードをもっています
             </Text>
             <Text className="text-xs font-medium text-stone">
@@ -78,7 +78,7 @@ export function PairingStartScreen() {
             hitSlop={8}
             className="border-b-[1.5px] border-ink/30 pb-0.5"
           >
-            <Text className="text-sm font-bold text-taupe">
+            <Text className="text-sm font-medium text-taupe">
               ひとりではじめる
             </Text>
           </Pressable>
