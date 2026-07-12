@@ -42,7 +42,7 @@ export function PairingStartScreen() {
             <Icon name="tray-up" size={22} color={palette.linen} />
           </View>
           <View className="flex-1 gap-[3px]">
-            <Text className="text-[17px] font-medium text-linen">
+            <Text className="text-[17px] font-semibold text-linen">
               招待コードをつくる
             </Text>
             <Text className="text-xs font-medium text-latte">

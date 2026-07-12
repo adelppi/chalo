@@ -42,7 +42,7 @@ export function InviteCodeScreen() {
         </Text>
       </View>
 
-      <View className="mx-6 mt-7 items-center gap-3 rounded-card bg-paper px-5 py-[26px] shadow-card">
+      <View className="mx-6 mt-7 items-center gap-3 rounded-hero bg-paper px-5 py-[26px] shadow-card">
         {inviteCode ? (
           <>
             <Text

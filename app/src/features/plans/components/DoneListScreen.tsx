@@ -77,7 +77,7 @@ export function DoneListScreen() {
                       >
                         {plan.title}
                       </Text>
-                      <Text className="text-[11.5px] font-medium text-stone">
+                      <Text className="text-[11.5px] font-normal text-stone">
                         {formatClosedLabel(deriveClosedDate(plan) as string)}
                       </Text>
                     </View>

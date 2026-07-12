@@ -72,7 +72,7 @@ export function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* プロフィール */}
-        <View className="overflow-hidden rounded-card bg-paper shadow-card">
+        <View className="overflow-hidden rounded-field bg-paper shadow-card">
           <SettingsRow
             label="あなたの名前"
             value={profile?.displayName}
@@ -91,7 +91,7 @@ export function SettingsScreen() {
         {isSolo ? (
           <>
             <SectionLabel label="ペア" />
-            <View className="overflow-hidden rounded-card bg-paper shadow-card">
+            <View className="overflow-hidden rounded-field bg-paper shadow-card">
               <Pressable
                 testID="settings-invite-code-button"
                 onPress={() => router.push("/pairing/invite")}
@@ -102,7 +102,7 @@ export function SettingsScreen() {
                     招待コードを発行
                   </Text>
                   {inviteCode ? (
-                    <Text className="text-[17px] font-black tracking-[2.5px] text-plum">
+                    <Text className="text-lg font-black tracking-[2.5px] text-plum">
                       {inviteCode.code}
                     </Text>
                   ) : (
@@ -113,7 +113,7 @@ export function SettingsScreen() {
                     />
                   )}
                 </View>
-                <Text className="text-xs font-normal text-stone">
+                <Text className="text-[12.5px] font-medium text-stone">
                   24時間有効・再発行すると前のコードは使えなくなります
                 </Text>
               </Pressable>
@@ -137,7 +137,7 @@ export function SettingsScreen() {
 
         {/* おしらせ・カレンダー（モック段階は表示のみ） */}
         <SectionLabel label="おしらせ・カレンダー" />
-        <View className="overflow-hidden rounded-card bg-paper shadow-card">
+        <View className="overflow-hidden rounded-field bg-paper shadow-card">
           <PermissionRow label="通知" />
           <PermissionRow label="カレンダー" />
           <SettingsRow
@@ -150,7 +150,7 @@ export function SettingsScreen() {
 
         {/* そのほか */}
         <SectionLabel label="そのほか" />
-        <View className="overflow-hidden rounded-card bg-paper shadow-card">
+        <View className="overflow-hidden rounded-field bg-paper shadow-card">
           <SettingsRow
             testID="settings-export-button"
             label="プランを書き出す"
@@ -181,7 +181,7 @@ export function SettingsScreen() {
           />
         </View>
 
-        <Text className="py-1.5 text-center text-[11px] font-medium text-latte">
+        <Text className="py-2.5 text-center text-xs font-medium text-latte">
           chalo バージョン {appVersion}
         </Text>
       </ScrollView>

@@ -38,7 +38,7 @@ export function Sheet({
         <KeyboardAvoidingView behavior="padding">
           <View
             testID={testID}
-            className="rounded-t-card bg-paper px-6 pb-12 pt-3"
+            className="rounded-t-sheet bg-paper px-6 pb-12 pt-3"
           >
             <View className="mb-[18px] h-[5px] w-10 self-center rounded-full bg-wheat" />
             <View className="flex-row items-center justify-between">

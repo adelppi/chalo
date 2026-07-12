@@ -46,7 +46,7 @@ export function SendLogsDialog({ visible, onClose }: SendLogsDialogProps) {
           placeholder="例：カレンダー追加が反映されない"
           placeholderTextColor={palette.stone}
           multiline
-          className="min-h-[54px] rounded-card bg-cream px-3.5 py-3 text-[13px] font-medium text-ink"
+          className="min-h-[54px] rounded-control bg-cream px-3.5 py-3 text-[13px] font-medium text-ink"
           style={{ textAlignVertical: "top" }}
         />
       </View>

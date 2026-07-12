@@ -15,7 +15,8 @@ const nativeHeaderOptions = {
 } as const;
 
 // サインイン済みユーザー向けの保護グループ。
-// 作成・編集はモーダル、おしまいのお祝いはフェードの全画面で重ねる（デザイン TURN 5）。
+// 作成・編集はシートではなく1枚の画面へのプッシュ遷移（デザイン TURN 5・C-3/D-2）。
+// おしまいのお祝いはフェードの全画面で重ねる。
 export default function AppLayout() {
   return (
     <Stack
@@ -28,14 +29,9 @@ export default function AppLayout() {
       <Stack.Screen name="(tabs)" />
       {/* プラン詳細（D-1）。戻るはネイティブ、編集/削除は画面側で headerRight に足す。 */}
       <Stack.Screen name="plan/[id]/index" options={nativeHeaderOptions} />
-      <Stack.Screen
-        name="plan/new"
-        options={{ ...nativeHeaderOptions, presentation: "modal" }}
-      />
-      <Stack.Screen
-        name="plan/[id]/edit"
-        options={{ ...nativeHeaderOptions, presentation: "modal" }}
-      />
+      {/* プラン作成（C-3）・編集（D-2）。戻るで閉じるフル画面。 */}
+      <Stack.Screen name="plan/new" options={nativeHeaderOptions} />
+      <Stack.Screen name="plan/[id]/edit" options={nativeHeaderOptions} />
       <Stack.Screen
         name="plan/[id]/closed"
         options={{ presentation: "fullScreenModal", animation: "fade" }}

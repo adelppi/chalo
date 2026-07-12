@@ -146,7 +146,7 @@ export function PlanDatePickerSheet({
       </View>
 
       {withTime ? (
-        <View className="mt-3.5 rounded-card bg-cream px-4 pb-1 pt-3">
+        <View className="mt-3.5 rounded-button bg-cream px-4 pb-1 pt-3">
           <Text className="text-sm font-medium text-ink">時刻</Text>
           {/* iOS ネイティブのホイールピッカー（Issue #16）。先頭は「なし」= time 未設定。 */}
           <Picker

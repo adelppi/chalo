@@ -1,7 +1,8 @@
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
   Pressable,
   ScrollView,
   Text,
@@ -108,39 +109,28 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   };
 
   return (
-    <View testID={`${screenName}-screen`} className="flex-1 bg-linen">
-      {/* キャンセルはナビゲーションヘッダーに統合（Issue #16。モーダルのため戻るは出ない）。 */}
-      <Stack.Screen
-        options={{
-          headerLeft: () => (
-            <Pressable
-              testID={`${screenName}-cancel-button`}
-              onPress={() => router.back()}
-              hitSlop={8}
-              className="py-1.5 pr-3 active:opacity-60"
-            >
-              <Text className="text-[15px] font-medium text-stone">
-                キャンセル
-              </Text>
-            </Pressable>
-          ),
-        }}
-      />
-
+    // 戻るはネイティブのナビゲーションヘッダー（Issue #16。C-3/D-2 はプッシュ遷移）。
+    // 追加する/保存する は画面下部に固定し、キーボードが出たらその上に逃がす。
+    <KeyboardAvoidingView
+      testID={`${screenName}-screen`}
+      className="flex-1 bg-linen"
+      behavior="padding"
+      keyboardVerticalOffset={insets.top + 44}
+    >
       <ScrollView
         className="flex-1"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: 24 }}
       >
-        <View className="px-6 pt-4">
+        <View className="px-6 pt-2.5">
           <Text className="text-[28px] font-black text-ink">
             {mode === "create" ? "あたらしいプラン" : "プランを編集"}
           </Text>
         </View>
 
         <View
-          className={`mx-6 mt-3.5 rounded-card border-2 bg-paper px-4 py-3.5 ${
+          className={`mx-6 mt-3.5 rounded-field border-2 bg-paper px-4 py-3.5 ${
             titleFocused ? "border-ink" : "border-ink/15"
           }`}
         >
@@ -157,7 +147,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           />
         </View>
 
-        <View className="mx-6 mt-3 overflow-hidden rounded-card bg-paper shadow-card">
+        <View className="mx-6 mt-3 overflow-hidden rounded-field bg-paper shadow-card">
           <FormFieldRow
             testID={`${screenName}-date-row`}
             icon="calendar"
@@ -191,16 +181,20 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             showSeparator={false}
           />
         </View>
-
-        <View className="mx-6 mt-3.5">
-          <Button
-            testID={`${screenName}-submit-button`}
-            label={mode === "create" ? "追加する" : "保存する"}
-            onPress={handleSubmit}
-            disabled={!canSubmit}
-          />
-        </View>
       </ScrollView>
+
+      {/* C-3/D-2：CTA は画面下部に固定（キーボード表示中はフォームの直下に来る） */}
+      <View
+        className="px-6 pt-3.5"
+        style={{ paddingBottom: insets.bottom + 24 }}
+      >
+        <Button
+          testID={`${screenName}-submit-button`}
+          label={mode === "create" ? "追加する" : "保存する"}
+          onPress={handleSubmit}
+          disabled={!canSubmit}
+        />
+      </View>
 
       {/* シートは開くたびに新しくマウントする（初期値のリセットを兼ねる） */}
       {openSheet === "date" ? (
@@ -274,7 +268,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           testID={`${screenName}-memo-sheet`}
         />
       ) : null}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

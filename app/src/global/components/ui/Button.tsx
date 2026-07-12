@@ -53,10 +53,11 @@ const iconColorByVariant: Record<ButtonVariant, string> = {
   ghost: palette.stone,
 };
 
+// 高さと角丸は Claude Design のセット（ダイアログ内 46/14・画面 CTA 54/16・おしまい 56/18）
 const containerBySize: Record<ButtonSize, string> = {
-  sm: "h-[46px] rounded-card",
-  md: "h-[54px] rounded-card",
-  lg: "h-[56px] rounded-card",
+  sm: "h-[46px] rounded-control",
+  md: "h-[54px] rounded-button",
+  lg: "h-[56px] rounded-field",
 };
 
 const labelBySize: Record<ButtonSize, string> = {
@@ -91,6 +92,9 @@ export function Button({
     ? `bg-ink/25 ${containerBySize[size]}`
     : `${containerByVariant[variant]} ${containerBySize[size]}`;
   const labelColor = disabled ? "text-paper" : labelColorByVariant[variant];
+  // 枠線ボタンの md はデザインでは 15px（D-1 カレンダーに追加）
+  const labelSize =
+    variant === "outline" && size === "md" ? "text-[15px]" : labelBySize[size];
 
   return (
     <Pressable
@@ -107,7 +111,7 @@ export function Button({
         />
       ) : null}
       <Text
-        className={`${labelWeightByVariant[variant]} ${labelBySize[size]} ${labelColor}`}
+        className={`${labelWeightByVariant[variant]} ${labelSize} ${labelColor}`}
       >
         {label}
       </Text>

@@ -54,7 +54,7 @@ export function PlanTextFieldSheet({
           keyboardType={keyboardType}
           autoCapitalize="none"
           autoFocus
-          className={`rounded-card bg-cream px-3.5 py-3 text-sm font-medium text-ink ${
+          className={`rounded-control bg-cream px-3.5 py-3 text-sm font-medium text-ink ${
             multiline ? "min-h-[96px]" : ""
           }`}
           style={multiline ? { textAlignVertical: "top" } : undefined}

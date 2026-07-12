@@ -100,22 +100,21 @@ function PlanDetail({ plan }: { plan: Plan }) {
       <Stack.Screen
         options={{
           headerRight: () => (
-            <View className="flex-row items-center gap-1">
+            // D-1：44px の円形タップ領域を 10px 空けて並べる（くっつけない）
+            <View className="flex-row items-center gap-2.5">
               <Pressable
                 testID="plan-detail-edit-button"
-                hitSlop={8}
                 onPress={() => router.push(`/plan/${plan.id}/edit`)}
-                className="p-1.5 active:opacity-60"
+                className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
               >
-                <Icon name="pencil" size={19} color={palette.ink} />
+                <Icon name="pencil" size={20} color={palette.ink} />
               </Pressable>
               <Pressable
                 testID="plan-detail-delete-button"
-                hitSlop={8}
                 onPress={() => setDeleteDialogVisible(true)}
-                className="p-1.5 active:opacity-60"
+                className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
               >
-                <Icon name="trash" size={19} color={palette.rust} />
+                <Icon name="trash" size={20} color={palette.rust} />
               </Pressable>
             </View>
           ),
@@ -134,7 +133,7 @@ function PlanDetail({ plan }: { plan: Plan }) {
         contentContainerClassName="pb-6"
         showsVerticalScrollIndicator={false}
       >
-        <View className="gap-3.5 px-7 pt-3">
+        <View className="gap-3.5 px-7 pt-6">
           <Text className="text-[28px] font-black leading-10 text-ink">
             {plan.title}
           </Text>
@@ -169,7 +168,7 @@ function PlanDetail({ plan }: { plan: Plan }) {
             onPress={() => Linking.openURL(plan.referenceUrl as string)}
             className="mx-6 mt-3 flex-row items-center gap-[11px] rounded-card bg-paper px-4 py-3.5 shadow-card active:opacity-70"
           >
-            <View className="h-[34px] w-[34px] items-center justify-center rounded-card bg-blush">
+            <View className="h-[34px] w-[34px] items-center justify-center rounded-chip bg-blush">
               <Icon name="camera" size={18} color={palette.plum} />
             </View>
             <View className="min-w-0 flex-1 gap-px">
@@ -265,7 +264,7 @@ function PlanLocked({ plan }: { plan: Plan }) {
         </Text>
       </View>
 
-      <View className="mx-6 mt-4 flex-row items-start gap-[11px] rounded-card border border-honey-border bg-honey-surface px-4 py-[15px]">
+      <View className="mx-6 mt-4 flex-row items-start gap-[11px] rounded-field border border-honey-border bg-honey-surface px-4 py-[15px]">
         <Icon name="lock" size={20} color={palette.honey.DEFAULT} />
         <View className="flex-1 gap-[3px]">
           <Text className="text-sm font-medium text-honey-text">
@@ -303,7 +302,7 @@ function PlanLocked({ plan }: { plan: Plan }) {
       <View className="flex-1" />
 
       <View className="px-6" style={{ paddingBottom: insets.bottom + 24 }}>
-        <View className="h-[54px] flex-row items-center justify-center gap-2 rounded-card bg-honey-muted">
+        <View className="h-[54px] flex-row items-center justify-center gap-2 rounded-button bg-honey-muted">
           <Icon name="lock" size={16} color={palette.stone} />
           <Text className="text-base font-medium text-stone">
             編集できません

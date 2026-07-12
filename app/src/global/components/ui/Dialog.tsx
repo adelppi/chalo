@@ -57,7 +57,7 @@ export function Dialog({
         <Pressable
           testID={testID}
           accessible={false}
-          className="w-full gap-2 rounded-card bg-paper p-6 shadow-dialog"
+          className="w-full gap-2 rounded-dialog bg-paper p-6 shadow-dialog"
           onPress={(event) => event.stopPropagation()}
         >
           {titleAccessory ? (

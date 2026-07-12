@@ -15,6 +15,7 @@ const palette = {
   plum: "#8C646E", // アクセント（おしまい・期限・強調）
   blush: "#F2ECEB", // plum の淡背景チップ
   rust: "#A8574F", // 破壊的操作・エラー
+  cocoa: "#3E3226", // Googleサインインボタンの文字（A-2）
   honey: {
     DEFAULT: "#9A7B2E", // 編集ロック注意のアイコン
     surface: "#F6EFDD", // 注意カードの背景

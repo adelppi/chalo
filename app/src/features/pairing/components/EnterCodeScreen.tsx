@@ -55,7 +55,7 @@ export function EnterCodeScreen() {
 
       <View className="px-6 pt-7">
         <View
-          className={`items-center justify-center rounded-card border-2 bg-paper p-[18px] ${
+          className={`items-center justify-center rounded-field border-2 bg-paper p-[18px] ${
             errorReason ? "border-rust" : "border-ink"
           }`}
         >

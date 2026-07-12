@@ -1,14 +1,18 @@
 import { useCallback } from "react";
 import { Alert, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { ChaloFace } from "@global/components/shared";
 
 import { useSignInWithApple } from "../hooks/useSignInWithApple";
 import { useSignInWithGoogle } from "../hooks/useSignInWithGoogle";
 import { AppleSignInButton } from "./AppleSignInButton";
 import { GoogleSignInButton } from "./GoogleSignInButton";
 
-// サインイン画面（オンボーディング A2。domain/onboarding.md）。
-// Google / Apple サインインのみを提供する。
+// サインイン画面（A-2。domain/onboarding.md）。
+// Google / Apple サインインのみを提供する（Apple が上。App Store 審査要件）。
 export function SignInScreen() {
+  const insets = useSafeAreaInsets();
   const google = useSignInWithGoogle();
   const apple = useSignInWithApple();
   const busy = google.isPending || apple.isPending;
@@ -22,23 +26,21 @@ export function SignInScreen() {
   }, []);
 
   return (
-    <View
-      testID="auth-sign-in-screen"
-      className="flex-1 items-center justify-center bg-white px-8"
-    >
-      <View className="mb-16 items-center">
-        <Text className="text-3xl font-bold text-neutral-900">chalo</Text>
-        <Text className="mt-3 text-center text-base text-neutral-500">
-          ふたりで「いつか行きたい」を貯めよう
+    <View testID="auth-sign-in-screen" className="flex-1 bg-linen">
+      <View className="flex-1 items-center justify-center px-8">
+        <ChaloFace width={112} />
+        <Text className="mt-5 text-center text-[30px] font-black leading-[45px] text-ink">
+          はじめまして{"\n"}chalo です
+        </Text>
+        <Text className="mt-3.5 text-center text-sm font-medium text-taupe">
+          やりたいことを共有しよう！
         </Text>
       </View>
 
-      <View className="w-full gap-3">
-        <GoogleSignInButton
-          loading={google.isPending}
-          disabled={busy}
-          onPress={() => google.mutate(undefined, { onError })}
-        />
+      <View
+        className="gap-3.5 px-6"
+        style={{ paddingBottom: insets.bottom + 24 }}
+      >
         <AppleSignInButton
           onPress={() => {
             if (busy) {
@@ -47,6 +49,16 @@ export function SignInScreen() {
             apple.mutate(undefined, { onError });
           }}
         />
+        <GoogleSignInButton
+          loading={google.isPending}
+          disabled={busy}
+          onPress={() => google.mutate(undefined, { onError })}
+        />
+        <Text className="text-center text-[11px] leading-5 text-stone">
+          はじめると、<Text className="font-medium text-plum">利用規約</Text>と
+          <Text className="font-medium text-plum">プライバシーポリシー</Text>に
+          {"\n"}同意したことになります。
+        </Text>
       </View>
     </View>
   );
