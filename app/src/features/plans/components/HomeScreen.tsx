@@ -19,7 +19,7 @@ import { buildHomeSections } from "../model/sections";
 import type { Plan } from "../model/types";
 import { PlanListRow } from "./PlanListRow";
 
-// ホーム（C-1b 採用案：よてい一体型。空状態は C-2）。
+// ホーム（C-1a 採用案：カード分割型。空状態は C-2）。
 export function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -46,7 +46,7 @@ export function HomeScreen() {
       style={{ paddingTop: insets.top + 16 }}
     >
       <View className="px-6 pb-3">
-        <Text className="font-zen-black text-[32px] leading-tight text-ink">
+        <Text className="text-[32px] font-black leading-tight text-ink">
           プラン
         </Text>
       </View>
@@ -64,57 +64,56 @@ export function HomeScreen() {
           showsVerticalScrollIndicator={false}
         >
           {sections.next ? (
-            <View className="overflow-hidden rounded-[22px] shadow-hero">
-              <Pressable
-                testID={`plans-list-item-${sections.next.id}`}
-                onPress={() => openPlan(sections.next as Plan)}
-                className="relative overflow-hidden bg-ink px-5 py-[18px] active:opacity-90"
-              >
-                <PawPrint
-                  size={104}
-                  light
-                  opacity={0.16}
-                  rotate="-18deg"
-                  style={{ position: "absolute", right: -12, bottom: -20 }}
+            <Pressable
+              testID={`plans-list-item-${sections.next.id}`}
+              onPress={() => openPlan(sections.next as Plan)}
+              className="relative overflow-hidden rounded-hero bg-ink px-5 py-[18px] shadow-hero active:opacity-90"
+            >
+              <PawPrint
+                size={104}
+                light
+                opacity={0.16}
+                rotate="-18deg"
+                style={{ position: "absolute", right: -12, bottom: -20 }}
+              />
+              <View className="gap-2.5">
+                <Text className="text-[11px] font-bold tracking-[1.5px] text-latte">
+                  つぎの予定
+                </Text>
+                <Text className="text-[19px] font-black text-linen">
+                  {sections.next.title}
+                </Text>
+                <Chip
+                  icon="calendar"
+                  tone="on-dark"
+                  label={formatDateLong(
+                    sections.next.date as string,
+                    sections.next.time,
+                  )}
                 />
-                <View className="gap-2.5">
-                  <Text className="font-zen-bold text-[11px] tracking-[1.5px] text-latte">
-                    つぎの予定
-                  </Text>
-                  <Text className="font-zen-black text-[19px] text-linen">
-                    {sections.next.title}
-                  </Text>
-                  <Chip
-                    icon="calendar"
-                    tone="on-dark"
-                    label={formatDateLong(
-                      sections.next.date as string,
-                      sections.next.time,
-                    )}
-                  />
-                </View>
-              </Pressable>
-              {sections.upcoming.length > 0 ? (
-                <View className="bg-paper">
-                  {sections.upcoming.map((plan, index) => (
-                    <PlanListRow
-                      key={plan.id}
-                      plan={plan}
-                      onPress={() => openPlan(plan)}
-                      showSeparator={index < sections.upcoming.length - 1}
-                    />
-                  ))}
-                </View>
-              ) : null}
+              </View>
+            </Pressable>
+          ) : null}
+
+          {sections.upcoming.length > 0 ? (
+            <View className="overflow-hidden rounded-card bg-paper shadow-card">
+              {sections.upcoming.map((plan, index) => (
+                <PlanListRow
+                  key={plan.id}
+                  plan={plan}
+                  onPress={() => openPlan(plan)}
+                  showSeparator={index < sections.upcoming.length - 1}
+                />
+              ))}
             </View>
           ) : null}
 
           {sections.wishes.length > 0 ? (
             <>
-              <Text className="px-1.5 pt-2.5 font-zen-bold text-xs tracking-[1.5px] text-stone">
+              <Text className="px-1.5 pt-2.5 text-xs font-bold tracking-[1.5px] text-stone">
                 いつかいく
               </Text>
-              <View className="overflow-hidden rounded-[20px] bg-paper shadow-card">
+              <View className="overflow-hidden rounded-card bg-paper shadow-card">
                 {sections.wishes.map((plan, index) => (
                   <PlanListRow
                     key={plan.id}
@@ -169,10 +168,10 @@ function HomeEmptyState() {
         style={{ position: "absolute", right: 70, top: 270 }}
       />
       <ChaloFace width={96} style={{ marginTop: 120 }} />
-      <Text className="mt-[18px] text-center font-zen-bold text-[17px] text-ink">
+      <Text className="mt-[18px] text-center text-[17px] font-medium text-ink">
         まだなにもありません
       </Text>
-      <Text className="mt-2 text-center font-zen-medium text-[13px] leading-6 text-taupe">
+      <Text className="mt-2 text-center text-[13px] font-medium leading-6 text-taupe">
         ＋ボタンからプランをつくろう
       </Text>
     </View>

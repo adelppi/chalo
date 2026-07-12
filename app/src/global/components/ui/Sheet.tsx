@@ -38,18 +38,18 @@ export function Sheet({
         <KeyboardAvoidingView behavior="padding">
           <View
             testID={testID}
-            className="rounded-t-[28px] bg-paper px-6 pb-12 pt-3"
+            className="rounded-t-sheet bg-paper px-6 pb-12 pt-3"
           >
             <View className="mb-[18px] h-[5px] w-10 self-center rounded-full bg-wheat" />
             <View className="flex-row items-center justify-between">
-              <Text className="font-zen-black text-lg text-ink">{title}</Text>
+              <Text className="text-lg font-black text-ink">{title}</Text>
               {action ? (
                 <Pressable
                   onPress={action.onPress}
                   hitSlop={8}
                   testID={action.testID}
                 >
-                  <Text className="font-zen-bold text-sm text-stone">
+                  <Text className="text-sm font-medium text-stone">
                     {action.label}
                   </Text>
                 </Pressable>

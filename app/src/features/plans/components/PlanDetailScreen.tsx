@@ -13,11 +13,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PawPrint } from "@global/components/shared";
 import {
   Avatar,
+  BackHeader,
   Button,
   Chip,
   Dialog,
   Icon,
-  IconButton,
 } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
@@ -102,11 +102,7 @@ function PlanDetail({ plan }: { plan: Plan }) {
   };
 
   return (
-    <View
-      testID="plan-detail-screen"
-      className="flex-1 bg-linen"
-      style={{ paddingTop: insets.top + 12 }}
-    >
+    <View testID="plan-detail-screen" className="flex-1 bg-linen">
       <PawPrint
         size={130}
         opacity={0.06}
@@ -114,27 +110,29 @@ function PlanDetail({ plan }: { plan: Plan }) {
         style={{ position: "absolute", right: -26, top: 96 }}
       />
 
-      <View className="flex-row items-center justify-between px-6">
-        <IconButton
-          testID="plan-detail-back-button"
-          icon="chevron-left"
-          iconSize={16}
-          onPress={() => router.back()}
-        />
-        <View className="flex-row gap-2.5">
-          <IconButton
-            testID="plan-detail-edit-button"
-            icon="pencil"
-            onPress={() => router.push(`/plan/${plan.id}/edit`)}
-          />
-          <IconButton
-            testID="plan-detail-delete-button"
-            icon="trash"
-            color={palette.rust}
-            onPress={() => setDeleteDialogVisible(true)}
-          />
-        </View>
-      </View>
+      {/* D-1：戻る・編集・削除は画面内の透明な円形ボタンで描く。
+          編集と削除は 44px のタップ領域を 10px 空けて並べる（くっつけない）。 */}
+      <BackHeader
+        testID="plan-detail-back-button"
+        right={
+          <View className="flex-row items-center gap-2.5">
+            <Pressable
+              testID="plan-detail-edit-button"
+              onPress={() => router.push(`/plan/${plan.id}/edit`)}
+              className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
+            >
+              <Icon name="pencil" size={20} color={palette.ink} />
+            </Pressable>
+            <Pressable
+              testID="plan-detail-delete-button"
+              onPress={() => setDeleteDialogVisible(true)}
+              className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
+            >
+              <Icon name="trash" size={20} color={palette.rust} />
+            </Pressable>
+          </View>
+        }
+      />
 
       <ScrollView
         className="flex-1"
@@ -142,7 +140,7 @@ function PlanDetail({ plan }: { plan: Plan }) {
         showsVerticalScrollIndicator={false}
       >
         <View className="gap-3.5 px-7 pt-6">
-          <Text className="font-zen-black text-[28px] leading-10 text-ink">
+          <Text className="text-[28px] font-black leading-10 text-ink">
             {plan.title}
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -160,11 +158,11 @@ function PlanDetail({ plan }: { plan: Plan }) {
         </View>
 
         {plan.memo ? (
-          <View className="mx-6 mt-[22px] gap-2 rounded-[20px] bg-paper p-[18px] shadow-card">
-            <Text className="font-zen-bold text-[11px] tracking-[1.5px] text-stone">
+          <View className="mx-6 mt-[22px] gap-2 rounded-card bg-paper p-[18px] shadow-card">
+            <Text className="text-[11px] font-bold tracking-[1.5px] text-stone">
               メモ
             </Text>
-            <Text className="font-zen-medium text-sm leading-7 text-ink">
+            <Text className="text-sm font-medium leading-7 text-ink">
               {plan.memo}
             </Text>
           </View>
@@ -174,17 +172,17 @@ function PlanDetail({ plan }: { plan: Plan }) {
           <Pressable
             testID="plan-detail-url-button"
             onPress={() => Linking.openURL(plan.referenceUrl as string)}
-            className="mx-6 mt-3 flex-row items-center gap-[11px] rounded-[20px] bg-paper px-4 py-3.5 shadow-card active:opacity-70"
+            className="mx-6 mt-3 flex-row items-center gap-[11px] rounded-card bg-paper px-4 py-3.5 shadow-card active:opacity-70"
           >
-            <View className="h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-blush">
+            <View className="h-[34px] w-[34px] items-center justify-center rounded-chip bg-blush">
               <Icon name="camera" size={18} color={palette.plum} />
             </View>
             <View className="min-w-0 flex-1 gap-px">
-              <Text className="font-zen-bold text-[11px] tracking-[1px] text-stone">
+              <Text className="text-[11px] font-bold tracking-[1px] text-stone">
                 参考URL
               </Text>
               <Text
-                className="font-zen-bold text-[13px] text-plum"
+                className="text-[13px] font-medium text-plum"
                 numberOfLines={1}
               >
                 {displayUrl}
@@ -196,7 +194,7 @@ function PlanDetail({ plan }: { plan: Plan }) {
 
         <View className="mx-6 mt-3 flex-row items-center gap-2 px-1">
           <Avatar initial={plan.ownerName.charAt(0)} />
-          <Text className="font-zen-medium text-xs text-stone">
+          <Text className="text-xs font-medium text-stone">
             {formatCreatedByLabel(plan.ownerName, plan.createdAt)}
           </Text>
         </View>
@@ -263,58 +261,45 @@ function PlanDetail({ plan }: { plan: Plan }) {
 // F-9 編集ロック中の競合（相手が編集しているとき）。
 function PlanLocked({ plan }: { plan: Plan }) {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
 
   return (
-    <View
-      testID="plan-locked-screen"
-      className="flex-1 bg-linen"
-      style={{ paddingTop: insets.top + 12 }}
-    >
-      <View className="px-6">
-        <IconButton
-          testID="plan-detail-back-button"
-          icon="chevron-left"
-          iconSize={16}
-          onPress={() => router.back()}
-        />
-      </View>
-
-      <View className="px-7 pt-5">
-        <Text className="font-zen-black text-2xl leading-9 text-ink">
+    <View testID="plan-locked-screen" className="flex-1 bg-linen">
+      <BackHeader testID="plan-locked-back-button" />
+      <View className="px-7 pt-6">
+        <Text className="text-2xl font-black leading-9 text-ink">
           {plan.title}
         </Text>
       </View>
 
-      <View className="mx-6 mt-4 flex-row items-start gap-[11px] rounded-[18px] border border-honey-border bg-honey-surface px-4 py-[15px]">
+      <View className="mx-6 mt-4 flex-row items-start gap-[11px] rounded-field border border-honey-border bg-honey-surface px-4 py-[15px]">
         <Icon name="lock" size={20} color={palette.honey.DEFAULT} />
         <View className="flex-1 gap-[3px]">
-          <Text className="font-zen-bold text-sm text-honey-text">
+          <Text className="text-sm font-medium text-honey-text">
             {plan.lockedByName} が編集しています
           </Text>
-          <Text className="font-zen-medium text-xs leading-5 text-honey-soft">
+          <Text className="text-xs font-medium leading-5 text-honey-soft">
             すこし待ってから、もう一度プランを開いてください。
           </Text>
         </View>
       </View>
 
-      <View className="mx-6 mt-3.5 overflow-hidden rounded-[20px] bg-paper opacity-60 shadow-card">
+      <View className="mx-6 mt-3.5 overflow-hidden rounded-card bg-paper opacity-60 shadow-card">
         {plan.date ? (
           <View className="flex-row items-center justify-between border-b border-sand px-[18px] py-[15px]">
-            <Text className="font-zen-bold text-xs tracking-[1px] text-stone">
+            <Text className="text-xs font-bold tracking-[1px] text-stone">
               日にち
             </Text>
-            <Text className="font-zen-bold text-[15px] text-ink">
+            <Text className="text-[15px] font-medium text-ink">
               {formatDateLong(plan.date, plan.time)}
             </Text>
           </View>
         ) : null}
         {plan.memo ? (
           <View className="gap-[5px] px-[18px] py-[15px]">
-            <Text className="font-zen-bold text-xs tracking-[1px] text-stone">
+            <Text className="text-xs font-bold tracking-[1px] text-stone">
               メモ
             </Text>
-            <Text className="font-zen-medium text-sm leading-6 text-ink">
+            <Text className="text-sm font-medium leading-6 text-ink">
               {plan.memo}
             </Text>
           </View>
@@ -324,9 +309,9 @@ function PlanLocked({ plan }: { plan: Plan }) {
       <View className="flex-1" />
 
       <View className="px-6" style={{ paddingBottom: insets.bottom + 24 }}>
-        <View className="h-[54px] flex-row items-center justify-center gap-2 rounded-2xl bg-honey-muted">
+        <View className="h-[54px] flex-row items-center justify-center gap-2 rounded-button bg-honey-muted">
           <Icon name="lock" size={16} color={palette.stone} />
-          <Text className="font-zen-bold text-base text-stone">
+          <Text className="text-base font-medium text-stone">
             編集できません
           </Text>
         </View>
@@ -337,7 +322,6 @@ function PlanLocked({ plan }: { plan: Plan }) {
 
 // F-10 プランが見つからない（削除済みプランへの遷移）。
 function PlanNotFound() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   const goBackToList = () => {
@@ -349,25 +333,14 @@ function PlanNotFound() {
   };
 
   return (
-    <View
-      testID="plan-not-found-screen"
-      className="flex-1 bg-linen"
-      style={{ paddingTop: insets.top + 12 }}
-    >
-      <View className="px-6">
-        <IconButton
-          testID="plan-detail-back-button"
-          icon="chevron-left"
-          iconSize={16}
-          onPress={goBackToList}
-        />
-      </View>
+    <View testID="plan-not-found-screen" className="flex-1 bg-linen">
+      <BackHeader testID="plan-not-found-back-button" onBack={goBackToList} />
       <View className="flex-1 items-center justify-center px-11">
         <PawPrint size={56} opacity={0.25} rotate="-14deg" />
-        <Text className="mt-5 text-center font-zen-black text-lg text-ink">
+        <Text className="mt-5 text-center text-lg font-black text-ink">
           プランが見つかりません
         </Text>
-        <Text className="mt-2.5 text-center font-zen-medium text-[13px] leading-6 text-taupe">
+        <Text className="mt-2.5 text-center text-[13px] font-medium leading-6 text-taupe">
           このプランは削除されたようです。
         </Text>
         <View className="mt-[22px]">

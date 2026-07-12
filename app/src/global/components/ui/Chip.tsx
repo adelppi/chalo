@@ -36,6 +36,13 @@ const iconColorByTone: Record<ChipTone, string> = {
   "on-dark": palette.linen,
 };
 
+// 暗色カード上のみ 600（つぎの予定カードの日付。C-1a）、明背景は 500
+const textWeightByTone: Record<ChipTone, string> = {
+  camel: "font-medium",
+  blush: "font-medium",
+  "on-dark": "font-semibold",
+};
+
 export function Chip({
   label,
   icon,
@@ -58,7 +65,9 @@ export function Chip({
           color={iconColorByTone[tone]}
         />
       ) : null}
-      <Text className={`font-zen-bold ${textSize} ${textByTone[tone]}`}>
+      <Text
+        className={`${textWeightByTone[tone]} ${textSize} ${textByTone[tone]}`}
+      >
         {label}
       </Text>
     </View>

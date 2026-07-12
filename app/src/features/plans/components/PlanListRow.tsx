@@ -12,7 +12,7 @@ type PlanListRowProps = {
   showSeparator: boolean;
 };
 
-// ホーム一覧の1行（C-1b）。予定は日付チップ、いつかいくは期限チップ（あれば）。
+// ホーム一覧の1行（C-1a）。予定は日付チップ、いつかいくは期限チップ（あれば）。
 export function PlanListRow({
   plan,
   onPress,
@@ -27,7 +27,7 @@ export function PlanListRow({
       }`}
     >
       <Text
-        className="mr-2 flex-1 font-zen-bold text-[17px] text-ink"
+        className="mr-2 flex-1 text-[17px] font-medium text-ink"
         numberOfLines={1}
       >
         {plan.title}

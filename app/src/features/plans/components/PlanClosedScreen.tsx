@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -7,6 +8,7 @@ import { Button } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
 import { usePlan } from "../hooks/usePlan";
+import { pickClosedGreeting } from "../model/greeting";
 
 type PlanClosedScreenProps = {
   id: string;
@@ -17,6 +19,9 @@ export function PlanClosedScreen({ id }: PlanClosedScreenProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { data: plan, isPending } = usePlan(id);
+  // 手動・自動どちらのおしまいでも、開くたびに挨拶をランダムに選ぶ（Issue #16）。
+  // マウント時に一度だけ確定させたいので useState の遅延初期化で持つ。
+  const [greeting] = useState(() => pickClosedGreeting(Math.random()));
 
   return (
     <View
@@ -50,17 +55,17 @@ export function PlanClosedScreen({ id }: PlanClosedScreenProps) {
       ) : (
         <>
           <ChaloFace width={132} />
-          <Text className="mt-[22px] text-center font-zen-black text-[28px] text-linen">
-            おつかれさま！
+          <Text className="mt-[22px] text-center text-[28px] font-black text-linen">
+            {greeting}
           </Text>
           {plan ? (
             <View className="mt-4 rounded-full bg-linen/[0.12] px-[18px] py-2">
-              <Text className="font-zen-bold text-sm text-linen">
+              <Text className="text-sm font-semibold text-linen">
                 {plan.title}
               </Text>
             </View>
           ) : null}
-          <Text className="mt-3.5 font-zen-medium text-[13px] text-latte">
+          <Text className="mt-3.5 text-[13px] font-medium text-latte">
             プランが終了しました！
           </Text>
         </>

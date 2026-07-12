@@ -57,21 +57,19 @@ export function Dialog({
         <Pressable
           testID={testID}
           accessible={false}
-          className="w-full gap-2 rounded-3xl bg-paper p-6 shadow-dialog"
+          className="w-full gap-2 rounded-dialog bg-paper p-6 shadow-dialog"
           onPress={(event) => event.stopPropagation()}
         >
           {titleAccessory ? (
             <View className="flex-row items-center gap-2.5">
               {titleAccessory}
-              <Text className="font-zen-black text-[17px] text-ink">
-                {title}
-              </Text>
+              <Text className="text-[17px] font-black text-ink">{title}</Text>
             </View>
           ) : (
-            <Text className="font-zen-black text-[17px] text-ink">{title}</Text>
+            <Text className="text-[17px] font-black text-ink">{title}</Text>
           )}
           {message ? (
-            <Text className="font-zen-medium text-[13px] leading-6 text-taupe">
+            <Text className="text-[13px] font-medium leading-6 text-taupe">
               {message}
             </Text>
           ) : null}

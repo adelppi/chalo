@@ -1,5 +1,6 @@
+import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import { Button, Icon, Sheet } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
@@ -15,7 +16,10 @@ import {
 
 const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
 
-// 30分きざみの時刻候補（OS標準ピッカーの代替。モック段階の簡易実装）
+// 「時刻なし」を表すホイールの先頭項目（time = null）。
+const TIME_NONE = "none";
+
+// 30分きざみの時刻候補（ネイティブのホイールピッカーの選択肢。Issue #16）
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
   const hour = String(Math.floor(i / 2)).padStart(2, "0");
   const minute = i % 2 === 0 ? "00" : "30";
@@ -58,7 +62,6 @@ export function PlanDatePickerSheet({
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
   const [time, setTime] = useState<string | null>(initialTime);
-  const [timeListOpen, setTimeListOpen] = useState(false);
 
   const weeks = getCalendarWeeks(month.year, month.month);
 
@@ -82,7 +85,7 @@ export function PlanDatePickerSheet({
         >
           <Icon name="chevron-left" size={14} color={palette.plum} />
         </Pressable>
-        <Text className="font-zen-black text-[15px] text-ink">
+        <Text className="text-[15px] font-black text-ink">
           {formatCalendarTitle(month)}
         </Text>
         <Pressable
@@ -101,7 +104,7 @@ export function PlanDatePickerSheet({
               key={label}
               className="h-[26px] flex-1 items-center justify-center"
             >
-              <Text className="font-zen-bold text-[11px] text-stone">
+              <Text className="text-[11px] font-medium text-stone">
                 {label}
               </Text>
             </View>
@@ -128,7 +131,7 @@ export function PlanDatePickerSheet({
                     }`}
                   >
                     <Text
-                      className={`font-zen-bold text-sm ${
+                      className={`text-sm font-medium ${
                         selected ? "text-linen" : "text-ink"
                       }`}
                     >
@@ -143,58 +146,23 @@ export function PlanDatePickerSheet({
       </View>
 
       {withTime ? (
-        <View className="mt-3.5 gap-2.5 rounded-2xl bg-cream px-4 py-3">
-          <View className="flex-row items-center justify-between">
-            <Text className="font-zen-bold text-sm text-ink">時刻</Text>
-            <Pressable
-              testID="plan-date-picker-time-button"
-              onPress={() => setTimeListOpen((open) => !open)}
-              className="rounded-[10px] border border-ink/20 bg-paper px-3 py-1.5"
-            >
-              <Text className="font-zen-bold text-[15px] text-ink">
-                {time ?? "なし"}
-              </Text>
-            </Pressable>
-          </View>
-          {timeListOpen ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="gap-2"
-            >
-              <Pressable
-                testID="plan-date-picker-time-none"
-                onPress={() => {
-                  setTime(null);
-                  setTimeListOpen(false);
-                }}
-                className={`rounded-full px-3 py-1.5 ${time === null ? "bg-ink" : "bg-paper"}`}
-              >
-                <Text
-                  className={`font-zen-bold text-[13px] ${time === null ? "text-linen" : "text-ink"}`}
-                >
-                  なし
-                </Text>
-              </Pressable>
-              {TIME_OPTIONS.map((option) => (
-                <Pressable
-                  key={option}
-                  testID={`plan-date-picker-time-${option}`}
-                  onPress={() => {
-                    setTime(option);
-                    setTimeListOpen(false);
-                  }}
-                  className={`rounded-full px-3 py-1.5 ${option === time ? "bg-ink" : "bg-paper"}`}
-                >
-                  <Text
-                    className={`font-zen-bold text-[13px] ${option === time ? "text-linen" : "text-ink"}`}
-                  >
-                    {option}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          ) : null}
+        <View className="mt-3.5 overflow-hidden rounded-button bg-cream px-4 pb-1 pt-3">
+          <Text className="text-sm font-medium text-ink">時刻</Text>
+          {/* iOS ネイティブのホイールピッカー（Issue #16）。先頭は「なし」= time 未設定。 */}
+          <Picker
+            testID="plan-date-picker-time-picker"
+            selectedValue={time ?? TIME_NONE}
+            onValueChange={(value) =>
+              setTime(value === TIME_NONE ? null : String(value))
+            }
+            itemStyle={{ fontSize: 22, color: palette.ink }}
+            style={{ height: 160 }}
+          >
+            <Picker.Item label="なし" value={TIME_NONE} color={palette.taupe} />
+            {TIME_OPTIONS.map((option) => (
+              <Picker.Item key={option} label={option} value={option} />
+            ))}
+          </Picker>
         </View>
       ) : null}
 

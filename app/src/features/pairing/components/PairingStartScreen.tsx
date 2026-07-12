@@ -25,8 +25,8 @@ export function PairingStartScreen() {
       />
 
       <View className="gap-2.5 px-7">
-        <Text className="font-zen-black text-[26px] text-ink">つながろう</Text>
-        <Text className="font-zen-medium text-[13px] leading-6 text-taupe">
+        <Text className="text-[26px] font-black text-ink">つながろう</Text>
+        <Text className="text-[13px] font-medium leading-6 text-taupe">
           chalo
           はふたりでつかうアプリです。相手を招待するか、もらったコードで参加しましょう。
         </Text>
@@ -36,16 +36,16 @@ export function PairingStartScreen() {
         <Pressable
           testID="pairing-start-invite-button"
           onPress={() => router.push("/pairing/invite")}
-          className="flex-row items-center gap-4 rounded-[20px] bg-ink p-[22px] shadow-hero active:opacity-90"
+          className="flex-row items-center gap-4 rounded-card bg-ink p-[22px] shadow-hero active:opacity-90"
         >
           <View className="h-12 w-12 items-center justify-center rounded-full bg-linen/[0.14]">
             <Icon name="tray-up" size={22} color={palette.linen} />
           </View>
           <View className="flex-1 gap-[3px]">
-            <Text className="font-zen-bold text-[17px] text-linen">
+            <Text className="text-[17px] font-semibold text-linen">
               招待コードをつくる
             </Text>
-            <Text className="font-zen-medium text-xs text-latte">
+            <Text className="text-xs font-medium text-latte">
               相手に送って、まってましょう
             </Text>
           </View>
@@ -55,16 +55,16 @@ export function PairingStartScreen() {
         <Pressable
           testID="pairing-start-enter-code-button"
           onPress={() => router.push("/pairing/code")}
-          className="flex-row items-center gap-4 rounded-[20px] bg-paper p-[22px] shadow-card active:opacity-70"
+          className="flex-row items-center gap-4 rounded-card bg-paper p-[22px] shadow-card active:opacity-70"
         >
           <View className="h-12 w-12 items-center justify-center rounded-full bg-blush">
             <Icon name="keypad" size={22} color={palette.plum} />
           </View>
           <View className="flex-1 gap-[3px]">
-            <Text className="font-zen-bold text-[17px] text-ink">
+            <Text className="text-[17px] font-medium text-ink">
               コードをもっています
             </Text>
-            <Text className="font-zen-medium text-xs text-stone">
+            <Text className="text-xs font-medium text-stone">
               もらったコードを入力します
             </Text>
           </View>
@@ -78,7 +78,7 @@ export function PairingStartScreen() {
             hitSlop={8}
             className="border-b-[1.5px] border-ink/30 pb-0.5"
           >
-            <Text className="font-zen-bold text-sm text-taupe">
+            <Text className="text-sm font-medium text-taupe">
               ひとりではじめる
             </Text>
           </Pressable>

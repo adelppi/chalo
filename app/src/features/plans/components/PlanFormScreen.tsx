@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
   Pressable,
   ScrollView,
   Text,
@@ -10,7 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Button, Icon, type IconName } from "@global/components/ui";
+import { BackHeader, Button, Icon, type IconName } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 
@@ -108,34 +109,28 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   };
 
   return (
-    <View testID={`${screenName}-screen`} className="flex-1 bg-linen">
+    // C-3/D-2：戻るで閉じるプッシュ遷移のフル画面。
+    // 追加する/保存する は画面下部に固定し、キーボードが出たらその上に逃がす。
+    <KeyboardAvoidingView
+      testID={`${screenName}-screen`}
+      className="flex-1 bg-linen"
+      behavior="padding"
+    >
+      <BackHeader testID={`${screenName}-back-button`} />
       <ScrollView
         className="flex-1"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: 24 }}
       >
-        <View className="px-6" style={{ paddingTop: insets.top + 20 }}>
-          <Pressable
-            testID={`${screenName}-cancel-button`}
-            onPress={() => router.back()}
-            hitSlop={8}
-            className="self-start"
-          >
-            <Text className="font-zen-bold text-[15px] text-stone">
-              キャンセル
-            </Text>
-          </Pressable>
-        </View>
-
         <View className="px-6 pt-2.5">
-          <Text className="font-zen-black text-[28px] text-ink">
+          <Text className="text-[28px] font-black text-ink">
             {mode === "create" ? "あたらしいプラン" : "プランを編集"}
           </Text>
         </View>
 
         <View
-          className={`mx-6 mt-3.5 rounded-[18px] border-2 bg-paper px-4 py-3.5 ${
+          className={`mx-6 mt-3.5 rounded-field border-2 bg-paper px-4 py-3.5 ${
             titleFocused ? "border-ink" : "border-ink/15"
           }`}
         >
@@ -147,12 +142,12 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             onBlur={() => setTitleFocused(false)}
             placeholder="タイトル"
             placeholderTextColor={palette.latte}
-            className="p-0 font-zen-bold text-[17px] text-ink"
+            className="p-0 text-[17px] font-medium text-ink"
             selectionColor={palette.plum}
           />
         </View>
 
-        <View className="mx-6 mt-3 overflow-hidden rounded-[18px] bg-paper shadow-card">
+        <View className="mx-6 mt-3 overflow-hidden rounded-field bg-paper shadow-card">
           <FormFieldRow
             testID={`${screenName}-date-row`}
             icon="calendar"
@@ -186,16 +181,20 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             showSeparator={false}
           />
         </View>
-
-        <View className="mx-6 mt-3.5">
-          <Button
-            testID={`${screenName}-submit-button`}
-            label={mode === "create" ? "追加する" : "保存する"}
-            onPress={handleSubmit}
-            disabled={!canSubmit}
-          />
-        </View>
       </ScrollView>
+
+      {/* C-3/D-2：CTA は画面下部に固定（キーボード表示中はフォームの直下に来る） */}
+      <View
+        className="px-6 pt-3.5"
+        style={{ paddingBottom: insets.bottom + 24 }}
+      >
+        <Button
+          testID={`${screenName}-submit-button`}
+          label={mode === "create" ? "追加する" : "保存する"}
+          onPress={handleSubmit}
+          disabled={!canSubmit}
+        />
+      </View>
 
       {/* シートは開くたびに新しくマウントする（初期値のリセットを兼ねる） */}
       {openSheet === "date" ? (
@@ -269,7 +268,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           testID={`${screenName}-memo-sheet`}
         />
       ) : null}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -305,9 +304,9 @@ function FormFieldRow({
         size={15}
         color={filled ? palette.ink : palette.taupe}
       />
-      <Text className="flex-1 font-zen-bold text-sm text-ink">{label}</Text>
+      <Text className="flex-1 text-sm font-medium text-ink">{label}</Text>
       <Text
-        className={`max-w-[150px] font-zen-bold text-sm ${
+        className={`max-w-[150px] text-sm font-medium ${
           filled ? "text-plum" : "text-latte"
         }`}
         numberOfLines={1}

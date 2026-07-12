@@ -1,9 +1,8 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Button, Icon, IconButton } from "@global/components/ui";
+import { BackHeader, Button, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
 import { PairingCodeError } from "../data/pairingRepository";
@@ -13,9 +12,8 @@ import type { RedeemErrorReason } from "../model/types";
 
 const CODE_LENGTH = 6;
 
-// コード入力（B-3）。エラーはインライン表示（B-4・F-3）。
+// コード入力（B-3）。エラーはインライン表示（B-4・F-3）。戻るは画面内の BackHeader。
 export function EnterCodeScreen() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const redeem = useRedeemInviteCode();
   const [code, setCode] = useState("");
@@ -41,39 +39,28 @@ export function EnterCodeScreen() {
     });
   };
 
-  const filled = code.padEnd(CODE_LENGTH, "△");
+  // 未入力の桁は「•」で表す（Claude Design B-3。旧「△」を置き換え。Issue #16）。
+  const filled = code.padEnd(CODE_LENGTH, "•");
 
   return (
-    <View
-      testID="pairing-code-screen"
-      className="flex-1 bg-linen"
-      style={{ paddingTop: insets.top + 12 }}
-    >
-      <View className="px-6">
-        <IconButton
-          testID="pairing-code-back-button"
-          icon="chevron-left"
-          iconSize={16}
-          onPress={() => router.back()}
-        />
-      </View>
-
+    <View testID="pairing-code-screen" className="flex-1 bg-linen">
+      <BackHeader testID="pairing-code-back-button" />
       <View className="gap-2.5 px-7 pt-5">
-        <Text className="font-zen-black text-[26px] leading-10 text-ink">
+        <Text className="text-[26px] font-black leading-10 text-ink">
           コードを{"\n"}入力しましょう
         </Text>
-        <Text className="font-zen-medium text-[13px] leading-6 text-taupe">
+        <Text className="text-[13px] font-medium leading-6 text-taupe">
           相手からもらった6桁の数字です。
         </Text>
       </View>
 
       <View className="px-6 pt-7">
         <View
-          className={`items-center justify-center rounded-[18px] border-2 bg-paper p-[18px] ${
+          className={`items-center justify-center rounded-field border-2 bg-paper p-[18px] ${
             errorReason ? "border-rust" : "border-ink"
           }`}
         >
-          <Text className="font-zen-black text-[30px] tracking-[7px]">
+          <Text className="text-[30px] font-black tracking-[7px]">
             <Text className="text-ink">{code}</Text>
             <Text className="text-latte">{filled.slice(code.length)}</Text>
           </Text>
@@ -102,7 +89,7 @@ export function EnterCodeScreen() {
             />
             <Text
               testID="pairing-code-error-text"
-              className="flex-1 font-zen-bold text-[13px] text-rust"
+              className="flex-1 text-[13px] font-medium text-rust"
             >
               {redeemErrorMessage(errorReason)}
             </Text>

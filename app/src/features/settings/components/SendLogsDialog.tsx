@@ -36,7 +36,7 @@ export function SendLogsDialog({ visible, onClose }: SendLogsDialogProps) {
       }}
     >
       <View className="mt-1.5 gap-1.5">
-        <Text className="font-zen-bold text-[11px] tracking-[1px] text-stone">
+        <Text className="text-[11px] font-bold tracking-[1px] text-stone">
           ひとこと（任意）
         </Text>
         <TextInput
@@ -46,7 +46,7 @@ export function SendLogsDialog({ visible, onClose }: SendLogsDialogProps) {
           placeholder="例：カレンダー追加が反映されない"
           placeholderTextColor={palette.stone}
           multiline
-          className="min-h-[54px] rounded-[14px] bg-cream px-3.5 py-3 font-zen-medium text-[13px] text-ink"
+          className="min-h-[54px] rounded-control bg-cream px-3.5 py-3 text-[13px] font-medium text-ink"
           style={{ textAlignVertical: "top" }}
         />
       </View>

@@ -37,8 +37,8 @@ export function AppleSignInButton({ onPress }: Props) {
       testID="auth-sign-in-apple-button"
       buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
       buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-      cornerRadius={12}
-      style={{ width: "100%", height: 48 }}
+      cornerRadius={16}
+      style={{ width: "100%", height: 54 }}
       onPress={onPress}
     />
   );

@@ -3,8 +3,8 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
-    "@expo-google-fonts/zen-maru-gothic": "^0.4.1",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-picker/picker": "2.11.4",
     "@supabase/supabase-js": "^2.110.2",
     "@tanstack/react-query": "^5.101.2",
     "aes-js": "^3.1.2",

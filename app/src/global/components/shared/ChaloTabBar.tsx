@@ -12,7 +12,7 @@ type TabBarProps = Parameters<
   NonNullable<ComponentProps<typeof Tabs>["tabBar"]>
 >[0];
 
-// デザイン準拠のタブバー（C-1b 下部）。プラン＝足あと・おわったプラン＝チェック・設定＝歯車。
+// デザイン準拠のタブバー（C-1a 下部）。プラン＝足あと・おわったプラン＝チェック・設定＝歯車。
 const TAB_ICONS: Record<string, IconName> = {
   index: "paw",
   done: "check-circle",
@@ -61,7 +61,7 @@ export function ChaloTabBar({ state, descriptors, navigation }: TabBarProps) {
               />
             </View>
             <Text
-              className={`text-[10px] ${focused ? "font-zen-bold" : "font-zen-medium"}`}
+              className={`text-[10px] ${focused ? "font-semibold" : "font-medium"}`}
               style={{ color }}
             >
               {label}

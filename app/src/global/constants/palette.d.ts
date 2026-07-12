@@ -13,6 +13,7 @@ export declare const palette: {
   plum: string;
   blush: string;
   rust: string;
+  cocoa: string;
   honey: {
     DEFAULT: string;
     surface: string;

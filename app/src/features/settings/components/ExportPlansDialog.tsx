@@ -36,14 +36,14 @@ export function ExportPlansDialog({
           testID: "settings-export-confirm-button",
         }}
       >
-        <View className="mt-1.5 gap-1.5 rounded-[14px] bg-cream px-3.5 py-3">
+        <View className="mt-1.5 gap-1.5 rounded-control bg-cream px-3.5 py-3">
           <View className="flex-row items-center gap-2">
             <Icon name="note" size={14} color={palette.taupe} />
-            <Text className="font-zen-bold text-[12.5px] text-ink">
+            <Text className="text-[12.5px] font-medium text-ink">
               プラン {counts.active}件・おしまい {counts.done}件
             </Text>
           </View>
-          <Text className="pl-[22px] font-zen-medium text-[11.5px] text-stone">
+          <Text className="pl-[22px] text-[11.5px] font-medium text-stone">
             テキスト（.txt）でまとめます
           </Text>
         </View>

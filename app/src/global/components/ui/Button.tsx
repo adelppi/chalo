@@ -53,16 +53,27 @@ const iconColorByVariant: Record<ButtonVariant, string> = {
   ghost: palette.stone,
 };
 
+// 高さと角丸は Claude Design のセット（ダイアログ内 46/14・画面 CTA 54/16・おしまい 56/18）
 const containerBySize: Record<ButtonSize, string> = {
-  sm: "h-[46px] rounded-[14px]",
-  md: "h-[54px] rounded-2xl",
-  lg: "h-[56px] rounded-[18px]",
+  sm: "h-[46px] rounded-control",
+  md: "h-[54px] rounded-button",
+  lg: "h-[56px] rounded-field",
 };
 
 const labelBySize: Record<ButtonSize, string> = {
   sm: "text-sm",
   md: "text-base",
   lg: "text-base",
+};
+
+// ラベルのウェイト（Claude Design：ベタ塗りは 600、枠線・明色・テキストは 500）
+const labelWeightByVariant: Record<ButtonVariant, string> = {
+  primary: "font-semibold",
+  accent: "font-semibold",
+  destructive: "font-semibold",
+  outline: "font-medium",
+  cream: "font-medium",
+  ghost: "font-medium",
 };
 
 export function Button({
@@ -81,6 +92,9 @@ export function Button({
     ? `bg-ink/25 ${containerBySize[size]}`
     : `${containerByVariant[variant]} ${containerBySize[size]}`;
   const labelColor = disabled ? "text-paper" : labelColorByVariant[variant];
+  // 枠線ボタンの md はデザインでは 15px（D-1 カレンダーに追加）
+  const labelSize =
+    variant === "outline" && size === "md" ? "text-[15px]" : labelBySize[size];
 
   return (
     <Pressable
@@ -96,7 +110,9 @@ export function Button({
           color={disabled ? palette.paper : iconColorByVariant[variant]}
         />
       ) : null}
-      <Text className={`font-zen-bold ${labelBySize[size]} ${labelColor}`}>
+      <Text
+        className={`${labelWeightByVariant[variant]} ${labelSize} ${labelColor}`}
+      >
         {label}
       </Text>
     </Pressable>
