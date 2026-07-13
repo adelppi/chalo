@@ -1,0 +1,53 @@
+# 招待コード発行(B-2)・コピー・コード入力(B-3)のエラー表示(F-3)を通す（Issue #20：Supabase 実データ）。
+# 前提: アプリがサインイン済みであること（Google/Apple の外部認証は自動化しない）。
+#
+# 成立（redeem 成功）は2アカウントが同時に必要なため、この単一デバイスのフローでは検証できない。
+# RPC・RLS（ペア境界）はレビュー観点として PR 側で確認する（adr/0014）。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "tab-settings"
+- assertVisible:
+    id: "settings-screen"
+
+# 招待コード発行（B-2）
+- tapOn:
+    id: "settings-invite-code-button"
+- assertVisible:
+    id: "pairing-invite-screen"
+- assertVisible:
+    id: "pairing-invite-code-text"
+- copyTextFrom:
+    id: "pairing-invite-code-text"
+- tapOn:
+    id: "pairing-invite-copy-button"
+- tapOn:
+    id: "pairing-invite-back-button"
+- assertVisible:
+    id: "settings-screen"
+
+# コード入力（B-3）：自分の発行済みコードを入力 → own-code エラー（F-3）
+- tapOn:
+    id: "settings-enter-code-button"
+- assertVisible:
+    id: "pairing-code-screen"
+- tapOn:
+    id: "pairing-code-input"
+- pasteText
+- tapOn:
+    id: "pairing-code-submit-button"
+- assertVisible:
+    id: "pairing-code-error-text"
+    text: ".*自分でつくったコードは使えません.*"
+
+# 存在しないコード → not-found エラー（F-3）
+- eraseText
+- inputText: "000001"
+- tapOn:
+    id: "pairing-code-submit-button"
+- assertVisible:
+    id: "pairing-code-error-text"
+    text: ".*コードが見つかりません.*"

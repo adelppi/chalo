@@ -33,3 +33,19 @@ export function redeemErrorMessage(reason: RedeemErrorReason): string {
       return "すでにペアになっています。設定からペアを確認できます。";
   }
 }
+
+// redeem_invite_code() RPC（Postgres）が raise するメッセージ →
+// RedeemErrorReason のマッピング（Issue #20）。RPC 側の文言と1対1で対応させる。
+const RPC_ERROR_MESSAGE_TO_REASON: Record<string, RedeemErrorReason> = {
+  invite_not_found: "not-found",
+  invite_expired: "expired",
+  invite_own_code: "own-code",
+  already_paired: "already-paired",
+};
+
+/** RPC のエラーメッセージを RedeemErrorReason にマップする。既知の種別でなければ null */
+export function mapRedeemErrorReason(
+  message: string,
+): RedeemErrorReason | null {
+  return RPC_ERROR_MESSAGE_TO_REASON[message] ?? null;
+}

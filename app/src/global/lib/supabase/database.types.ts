@@ -1,5 +1,5 @@
 // Supabase の DB スキーマから自動生成した型。
-// 生成コマンド: `supabase gen types typescript --project-id <ref>`（または Supabase MCP）。
+// 生成コマンド: `supabase gen types typescript --project-id <ref>`(または Supabase MCP)。
 // スキーマを変更したら再生成する。手で編集しない。
 
 export type Json =
@@ -18,6 +18,53 @@ export type Database = {
   };
   public: {
     Tables: {
+      invites: {
+        Row: {
+          code: string;
+          created_at: string;
+          expires_at: string;
+          inviter_id: string;
+          used_at: string | null;
+        };
+        Insert: {
+          code: string;
+          created_at?: string;
+          expires_at: string;
+          inviter_id: string;
+          used_at?: string | null;
+        };
+        Update: {
+          code?: string;
+          created_at?: string;
+          expires_at?: string;
+          inviter_id?: string;
+          used_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "invites_inviter_id_fkey";
+            columns: ["inviter_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pairs: {
+        Row: {
+          created_at: string;
+          id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+        };
+        Relationships: [];
+      };
       plans: {
         Row: {
           closed_at: string | null;
@@ -91,6 +138,13 @@ export type Database = {
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "plans_pair_id_fkey";
+            columns: ["pair_id"];
+            isOneToOne: false;
+            referencedRelation: "pairs";
+            referencedColumns: ["id"];
+          },
         ];
       };
       profiles: {
@@ -121,14 +175,29 @@ export type Database = {
           partner_nickname?: string | null;
           timezone?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "profiles_pair_id_fkey";
+            columns: ["pair_id"];
+            isOneToOne: false;
+            referencedRelation: "pairs";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      current_pair_id: { Args: never; Returns: string };
+      redeem_invite_code: {
+        Args: { p_code: string };
+        Returns: {
+          partner_id: string;
+          partner_name: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;

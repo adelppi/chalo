@@ -3,6 +3,7 @@ import { describe, expect, it } from "@jest/globals";
 import {
   formatRemainingLabel,
   isValidCodeFormat,
+  mapRedeemErrorReason,
   redeemErrorMessage,
 } from "./invite";
 
@@ -47,5 +48,19 @@ describe("redeemErrorMessage", () => {
     expect(redeemErrorMessage("already-paired")).toBe(
       "すでにペアになっています。設定からペアを確認できます。",
     );
+  });
+});
+
+describe("mapRedeemErrorReason", () => {
+  it("redeem_invite_code() RPC のエラーメッセージを reason にマップする", () => {
+    expect(mapRedeemErrorReason("invite_not_found")).toBe("not-found");
+    expect(mapRedeemErrorReason("invite_expired")).toBe("expired");
+    expect(mapRedeemErrorReason("invite_own_code")).toBe("own-code");
+    expect(mapRedeemErrorReason("already_paired")).toBe("already-paired");
+  });
+
+  it("未知のメッセージは null", () => {
+    expect(mapRedeemErrorReason("not_authenticated")).toBeNull();
+    expect(mapRedeemErrorReason("")).toBeNull();
   });
 });
