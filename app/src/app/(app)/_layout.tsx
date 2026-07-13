@@ -21,6 +21,8 @@ export default function AppLayout() {
       <Stack.Screen name="plan/[id]/index" />
       <Stack.Screen name="plan/new" />
       <Stack.Screen name="plan/[id]/edit" />
+      {/* 編集ロック中の競合（F-9）。編集ボタン押下時に相手のロックを検出したら遷移。 */}
+      <Stack.Screen name="plan/[id]/locked" />
       {/* おしまいのお祝い（D-3）。fullScreenModal で replace するとナビバーの状態が壊れ、
           もどった先に「(tabs)」のタイトルが残留するため、通常遷移 + フェードで重ねる。 */}
       <Stack.Screen name="plan/[id]/closed" options={{ animation: "fade" }} />

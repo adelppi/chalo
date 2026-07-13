@@ -40,7 +40,9 @@ export function useStartEditing(id: string) {
         now: new Date(),
       });
       if (!canStartEditing(state)) {
+        // ロック画面（F-9）が最新の内容を映せるようキャッシュへ反映しておく。
         // 表示名が読めなかったときも文言が壊れないようフォールバック
+        queryClient.setQueryData(planKeys.detail(id), plan);
         return { type: "locked", lockedByName: plan.lockedByName ?? "相手" };
       }
 

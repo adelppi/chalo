@@ -22,8 +22,7 @@ type DialogProps = {
   children?: ReactNode;
   cancelLabel?: string;
   onCancel: () => void;
-  /** 省略すると閉じるボタンだけの「お知らせ」ダイアログになる（編集ロック衝突等） */
-  confirm?: DialogAction;
+  confirm: DialogAction;
   cancelTestID?: string;
   testID?: string;
 };
@@ -85,19 +84,17 @@ export function Dialog({
                 testID={cancelTestID}
               />
             </View>
-            {confirm ? (
-              <View className="flex-1">
-                <Button
-                  label={confirm.label}
-                  onPress={confirm.onPress}
-                  variant={confirm.variant ?? "primary"}
-                  icon={confirm.icon}
-                  iconSize={15}
-                  size="sm"
-                  testID={confirm.testID}
-                />
-              </View>
-            ) : null}
+            <View className="flex-1">
+              <Button
+                label={confirm.label}
+                onPress={confirm.onPress}
+                variant={confirm.variant ?? "primary"}
+                icon={confirm.icon}
+                iconSize={15}
+                size="sm"
+                testID={confirm.testID}
+              />
+            </View>
           </View>
         </Pressable>
       </Pressable>

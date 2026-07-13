@@ -77,20 +77,22 @@ function PlanDetail({
   const startEditing = useStartEditing(plan.id);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [calendarDialogVisible, setCalendarDialogVisible] = useState(false);
-  // 相手が編集中だったとき F-9 のダイアログに出す表示名（null なら非表示）
-  const [lockOwnerName, setLockOwnerName] = useState<string | null>(null);
 
   const displayUrl = plan.referenceUrl?.replace(/^https?:\/\//, "");
 
   // 編集ボタン押下時にその1件だけ最新取得し、空いていればロックを立ててから
-  // 編集画面を開く（adr/0005）。not-found はキャッシュが null になり F-10 へ切り替わる。
+  // 編集画面を開く。相手がロック中ならロック画面（F-9）へ遷移する（adr/0005）。
+  // not-found はキャッシュが null になり F-10 へ切り替わる。
   const handleEdit = () => {
     startEditing.mutate(undefined, {
       onSuccess: (result) => {
         if (result.type === "acquired") {
           router.push(`/plan/${plan.id}/edit`);
         } else if (result.type === "locked") {
-          setLockOwnerName(result.lockedByName);
+          router.push({
+            pathname: "/plan/[id]/locked",
+            params: { id: plan.id, name: result.lockedByName },
+          });
         }
       },
       onError: () => {
@@ -291,17 +293,6 @@ function PlanDetail({
           },
           testID: "plan-detail-calendar-confirm-button",
         }}
-      />
-
-      {/* F-9 編集ロック衝突。「〇〇が編集中です」（non-functional.md） */}
-      <Dialog
-        testID="plan-detail-locked-dialog"
-        visible={lockOwnerName !== null}
-        title={`${lockOwnerName ?? ""}が編集中です`}
-        message="すこし待ってから、もう一度お試しください。"
-        cancelLabel="わかりました"
-        onCancel={() => setLockOwnerName(null)}
-        cancelTestID="plan-detail-locked-close-button"
       />
     </View>
   );
