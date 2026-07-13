@@ -1,0 +1,79 @@
+# pull-to-refresh の動作確認（Issue #22）。
+# ホーム・プラン詳細・おわったプランの3画面で、引っ張って再取得しても
+# 既存データの表示が維持される（画面が壊れない・全画面スピナーに戻らない）ことを確認する。
+# 前提: アプリがサインイン済みであること（Google/Apple の外部認証は自動化しない）。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+
+# データを用意（タイトルのみで作成）
+- tapOn:
+    id: "home-create-button"
+- assertVisible:
+    id: "plan-create-screen"
+- tapOn:
+    id: "plan-create-title-input"
+- inputText: "引っ張って更新テスト"
+- tapOn:
+    id: "plan-create-submit-button"
+- assertVisible:
+    id: "home-screen"
+- assertVisible:
+    text: "引っ張って更新テスト.*"
+
+# ホームで pull-to-refresh → 既存データが表示されたまま
+- swipe:
+    start: 50%, 30%
+    end: 50%, 70%
+- assertVisible:
+    id: "home-screen"
+- assertVisible:
+    text: "引っ張って更新テスト.*"
+
+# プラン詳細で pull-to-refresh → 表示が維持される
+- tapOn:
+    text: "引っ張って更新テスト.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- swipe:
+    start: 50%, 30%
+    end: 50%, 70%
+- assertVisible:
+    id: "plan-detail-screen"
+- assertVisible:
+    text: "引っ張って更新テスト.*"
+
+# おわったプランで pull-to-refresh（空でも引っ張れる）
+- tapOn:
+    id: "plan-detail-back-button"
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "tab-done"
+- assertVisible:
+    id: "done-screen"
+- swipe:
+    start: 50%, 30%
+    end: 50%, 70%
+- assertVisible:
+    id: "done-screen"
+
+# 後片付け：作成したプランを削除
+- tapOn:
+    id: "tab-plans"
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    text: "引っ張って更新テスト.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn:
+    id: "plan-detail-delete-button"
+- tapOn:
+    id: "plan-detail-delete-confirm-button"
+- assertVisible:
+    id: "home-screen"
+- assertNotVisible:
+    text: "引っ張って更新テスト.*"

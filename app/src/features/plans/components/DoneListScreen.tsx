@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import {
   ActivityIndicator,
   Pressable,
+  RefreshControl,
   ScrollView,
   Text,
   View,
@@ -13,6 +14,7 @@ import { PawPrint } from "@global/components/shared";
 import { palette } from "@global/constants/palette";
 
 import { usePlans } from "../hooks/usePlans";
+import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { formatClosedLabel } from "../model/format";
 import { groupDoneByMonth } from "../model/sections";
 import { deriveClosedDate } from "../model/status";
@@ -21,7 +23,8 @@ import { deriveClosedDate } from "../model/status";
 export function DoneListScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { data: plans, isPending } = usePlans();
+  const { data: plans, isPending, refetch } = usePlans();
+  const { refreshing, onRefresh } = usePullToRefresh(refetch);
 
   const groups = useMemo(
     () => groupDoneByMonth(plans ?? [], new Date()),
@@ -45,12 +48,35 @@ export function DoneListScreen() {
           <ActivityIndicator color={palette.ink} />
         </View>
       ) : groups.length === 0 ? (
-        <DoneEmptyState />
+        // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="flex-grow"
+          showsVerticalScrollIndicator={false}
+          alwaysBounceVertical
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={palette.ink}
+            />
+          }
+        >
+          <DoneEmptyState />
+        </ScrollView>
       ) : (
         <ScrollView
           className="flex-1 px-5 pt-1"
-          contentContainerClassName="gap-2.5 pb-10"
+          contentContainerClassName="grow gap-2.5 pb-10"
           showsVerticalScrollIndicator={false}
+          alwaysBounceVertical
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={palette.ink}
+            />
+          }
         >
           {groups.map((group) => (
             <View key={group.label} className="gap-2.5">
