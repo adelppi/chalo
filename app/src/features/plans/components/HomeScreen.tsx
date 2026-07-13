@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import {
   ActivityIndicator,
   Pressable,
+  RefreshControl,
   ScrollView,
   Text,
   View,
@@ -14,6 +15,7 @@ import { Chip, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
 import { usePlans } from "../hooks/usePlans";
+import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { formatDateLong } from "../model/format";
 import { buildHomeSections } from "../model/sections";
 import type { Plan } from "../model/types";
@@ -23,7 +25,8 @@ import { PlanListRow } from "./PlanListRow";
 export function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { data: plans, isPending } = usePlans();
+  const { data: plans, isPending, refetch } = usePlans();
+  const { refreshing, onRefresh } = usePullToRefresh(refetch);
 
   const sections = useMemo(
     () => buildHomeSections(plans ?? [], new Date()),
@@ -56,12 +59,33 @@ export function HomeScreen() {
           <ActivityIndicator color={palette.ink} />
         </View>
       ) : isEmpty ? (
-        <HomeEmptyState />
+        // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="flex-grow"
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={palette.ink}
+            />
+          }
+        >
+          <HomeEmptyState />
+        </ScrollView>
       ) : (
         <ScrollView
           className="flex-1 px-5 pt-1"
           contentContainerClassName="gap-2.5 pb-28"
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={palette.ink}
+            />
+          }
         >
           {sections.next ? (
             <Pressable

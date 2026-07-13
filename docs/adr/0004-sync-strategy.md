@@ -9,8 +9,17 @@
 
 ## 決定
 
-- 同期は **アプリ起動時・フォアグラウンド復帰時に再取得**する。Realtime 常時購読は使わない。
+- 同期は **アプリ起動時・フォアグラウンド復帰時・画面遷移（マウント）時に再取得**する。Realtime 常時購読は使わない。
+- 一覧・詳細画面（ホーム・おわったプラン・プラン詳細）には **pull-to-refresh** を備え、ユーザーが任意のタイミングで再取得できる。
 - 編集ロックの判定だけは別扱い：**編集ボタンを押した瞬間に、その1件だけ最新取得**してロック状態を確認する（`adr/0005`）。
+
+### 実現方法（TanStack Query） [確定]
+
+- **stale-while-revalidate**：`staleTime: 0`（`global/config/queryClient.ts`）でキャッシュを常に stale 扱いにし、キャッシュを即表示しつつ裏で再取得する。全画面スピナーは初回ロード（キャッシュなし）のみ。
+- **フォアグラウンド復帰**：React Native には window focus がないため、`AppState` の `active` 遷移を `focusManager.setFocused()` に結線する（TanStack Query 公式の React Native パターン）。復帰時に表示中のクエリが再取得される。
+- **画面遷移**：マウント時の再取得（`refetchOnMount` 既定 + `staleTime: 0`）に任せる。
+- **pull-to-refresh**：`RefreshControl` を `refetch()` に接続する。インジケータは引っ張った時だけ出し、裏の再取得では出さない（ローカル state で管理）。
+- **再取得失敗時**：TanStack Query の既定挙動どおり既存キャッシュを表示し続ける（画面を壊さない）。オフライン時の扱いは `adr/0008`。
 
 ## 結果
 

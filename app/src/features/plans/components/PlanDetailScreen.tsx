@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Linking,
   Pressable,
+  RefreshControl,
   ScrollView,
   Text,
   View,
@@ -24,6 +25,7 @@ import { useToastStore } from "@global/store/useToastStore";
 
 import { usePlan } from "../hooks/usePlan";
 import { useClosePlan, useDeletePlan } from "../hooks/usePlanMutations";
+import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { formatCreatedByLabel, formatDateLong } from "../model/format";
 import type { Plan } from "../model/types";
 
@@ -33,7 +35,7 @@ type PlanDetailScreenProps = {
 
 // プラン詳細（D-1）。相手が編集中なら F-9、見つからなければ F-10 を出す。
 export function PlanDetailScreen({ id }: PlanDetailScreenProps) {
-  const { data: plan, isPending } = usePlan(id);
+  const { data: plan, isPending, refetch } = usePlan(id);
 
   if (isPending) {
     return (
@@ -51,7 +53,7 @@ export function PlanDetailScreen({ id }: PlanDetailScreenProps) {
     return <PlanLocked plan={plan} />;
   }
 
-  return <PlanDetail plan={plan} />;
+  return <PlanDetail plan={plan} refetch={refetch} />;
 }
 
 function todayString(): string {
@@ -61,10 +63,17 @@ function todayString(): string {
   return `${now.getFullYear()}-${mm}-${dd}`;
 }
 
-function PlanDetail({ plan }: { plan: Plan }) {
+function PlanDetail({
+  plan,
+  refetch,
+}: {
+  plan: Plan;
+  refetch: () => Promise<unknown>;
+}) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const showToast = useToastStore((state) => state.show);
+  const { refreshing, onRefresh } = usePullToRefresh(refetch);
   const deletePlan = useDeletePlan(plan.id);
   const closePlan = useClosePlan(plan.id);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -138,6 +147,13 @@ function PlanDetail({ plan }: { plan: Plan }) {
         className="flex-1"
         contentContainerClassName="pb-6"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={palette.ink}
+          />
+        }
       >
         <View className="gap-3.5 px-7 pt-6">
           <Text className="text-[28px] font-black leading-10 text-ink">
