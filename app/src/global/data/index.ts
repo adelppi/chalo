@@ -1,8 +1,7 @@
 export { supabaseAuthRepository } from "./supabaseAuthRepository";
+export { supabasePlanRepository } from "./supabasePlanRepository";
 export { supabaseProfileRepository } from "./supabaseProfileRepository";
+export { supabaseSettingsRepository } from "./supabaseSettingsRepository";
 
-// Issue #14：画面モック用の in-memory フェイク実装。
-// Supabase 実装ができたら合成ルート（src/app/_layout.tsx）で差し替える。
+// pairing の Supabase 化は別 Issue。それまで in-memory フェイクで結線する。
 export { fakePairingRepository } from "./fakePairingRepository";
-export { fakePlanRepository } from "./fakePlanRepository";
-export { fakeSettingsRepository } from "./fakeSettingsRepository";

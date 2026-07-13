@@ -1,0 +1,82 @@
+# プラン CRUD の王道シナリオ（Issue #18：Supabase 実データ）。
+# 作成（タイトルのみ）→一覧反映→編集→おしまい→おしまい一覧→削除 を通す。
+# 前提: アプリがサインイン済みであること（Google/Apple の外部認証は自動化しない）。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+
+# 作成（必須はタイトルだけ）
+- tapOn:
+    id: "home-create-button"
+- assertVisible:
+    id: "plan-create-screen"
+- tapOn:
+    id: "plan-create-title-input"
+- inputText: "たこ焼きパーティー"
+- tapOn:
+    id: "plan-create-submit-button"
+
+# 一覧へ反映される（日付なし → いつかいく）
+- assertVisible:
+    id: "home-screen"
+- assertVisible:
+    text: "たこ焼きパーティー.*"
+
+# 詳細 → 編集（メモを追加）
+- tapOn:
+    text: "たこ焼きパーティー.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn:
+    id: "plan-detail-edit-button"
+- assertVisible:
+    id: "plan-edit-screen"
+- tapOn:
+    id: "plan-edit-memo-row"
+- tapOn:
+    id: "plan-edit-memo-sheet-input"
+- inputText: "ソースは多めがいい"
+- tapOn:
+    id: "plan-edit-memo-sheet-confirm-button"
+- tapOn:
+    id: "plan-edit-submit-button"
+
+# 詳細に編集が反映される
+- assertVisible:
+    id: "plan-detail-screen"
+- assertVisible:
+    text: ".*ソースは多めがいい.*"
+
+# 手動おしまい → お祝い画面（D-3）
+- tapOn:
+    id: "plan-detail-close-button"
+- assertVisible:
+    id: "plan-closed-screen"
+- tapOn:
+    id: "plan-closed-done-button"
+
+# おわったプラン一覧に入る
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "tab-done"
+- assertVisible:
+    id: "done-screen"
+- assertVisible:
+    text: "たこ焼きパーティー.*"
+
+# 削除 → 一覧から消える
+- tapOn:
+    text: "たこ焼きパーティー.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn:
+    id: "plan-detail-delete-button"
+- tapOn:
+    id: "plan-detail-delete-confirm-button"
+- assertVisible:
+    id: "done-screen"
+- assertNotVisible:
+    text: "たこ焼きパーティー.*"
