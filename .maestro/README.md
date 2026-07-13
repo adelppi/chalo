@@ -7,6 +7,9 @@ chalo の E2E テストを Maestro で管理。
 - `auth/sign-in-screen-smoke.yaml` … サインイン画面の表示確認（動作確認用）
 - `plans/plan-crud.yaml` … プラン CRUD の王道シナリオ（Issue #18・Supabase 実装）
   - 作成（タイトルのみ）→ 一覧反映 → 編集 → 手動おしまい → おしまい一覧 → 削除
+- `pairing/pairing-invite-and-errors.yaml` … 招待コード発行・コピー・コード入力エラー（Issue #20・Supabase 実装）
+  - 発行 → コピー → own-code エラー → not-found エラー
+  - **成立（redeem 成功）は2アカウント同時が必要なため対象外。** RPC・RLS（ペア境界）はレビューで確認する（`adr/0014`・`adr/0017`）
 
 ## ローカルでの実行
 

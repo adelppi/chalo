@@ -63,7 +63,7 @@ Supabase Auth のユーザーに 1:1 で対応。
 
 > ペアのメンバーは `profiles.pair_id` で表現（2人がぶら下がる）。招待コードの保持方法は下記 invites を参照。
 
-### invites（招待コード） [提案]
+### invites（招待コード） [確定]
 
 | 列 | 型 | 説明 |
 |---|---|---|
@@ -100,7 +100,7 @@ chalo の中心。
 > **status は保存しない（完全導出）**：`done` = `closed_at` あり、または date（時刻があればその時刻）の終わりを過ぎた。`scheduled` = date 有りで未おしまい。`wish` = date 無しで未おしまい。判定は端末のタイムゾーン基準（`domain/plan-lifecycle.md`）。
 > **おしまい日の導出**：`closed_at ?? date`（自動おしまいは書き込まないため、`closed_at` が無ければ date がおしまい日）。
 > **アルバム対象日**：`date ?? closed_at`（`domain/plan-lifecycle.md` の例外あり）。
-> **ソロ時の所属**：ペア未成立のプランは `pair_id` null、`owner_id` で本人に紐づく。ペア成立時は、成立処理と同一トランザクションのサーバ側関数が両者のソロプランへ `pair_id` を付与して共有プールへ移す（`domain/pairing.md`）。
+> **ソロ時の所属**：ペア未成立のプランは `pair_id` null、`owner_id` で本人に紐づく。ペア成立時は、成立処理と同一トランザクションのサーバ側関数（`redeem_invite_code()`。`adr/0017`）が両者のソロプランへ `pair_id` を付与して共有プールへ移す（`domain/pairing.md`）。ペア成立後に新規作成するプランは `BEFORE INSERT` トリガー（`set_plan_pair_id()`）が作成者の `pair_id` を自動で付与する。
 > **作成者表示**：作成者は `owner_id` を参照して表示する（所有者＝作成者。別列は持たない）。
 > **退会時の付け替え**：パートナーが退会したら、その人を指すプランの `owner_id` を残った側へ付け替える（NOT NULL 維持）。`locked_by` は null にクリア。退会者が作ったプランはメモ末尾に作成者を追記して残す（文言・詳細は `domain/pairing.md`）。
 
@@ -154,10 +154,11 @@ chalo の中心。
 
 ## アクセス制御（RLS）方針
 
-- `plans`：**[確定]** ソロ境界は実装済み。`owner_id = auth.uid()` の行のみ本人が select/insert/update/delete できる（権限は `authenticated` ロールにのみ grant。`anon` には付与しない）。同じ `pair_id` のメンバーへ開放するペア境界は別 Issue「RLS 一括実装」で追加する。
-- `profiles`：**[確定]** 本人のみ read/write 可の最小ポリシーを実装済み。**[提案]** 同じペアの相手の参照（相手の表示名等を見るため）は別 Issue「RLS 一括実装」で追加する。
-- `invites`：**[提案]** 発行者本人と、コードを知って入力する側のみ。
-- すべて Supabase RLS で強制。
+- `plans`：**[確定]** `owner_id = auth.uid()`（ソロ境界）**または**同じ `pair_id` のメンバー（`pair_id = current_pair_id()`）の行を select/update/delete できる。insert は `owner_id = auth.uid()` のみ（権限は `authenticated` ロールにのみ grant。`anon` には付与しない）。ペア成立後に新規作成するプランへの `pair_id` 付与は `BEFORE INSERT` トリガーが行う（`adr/0017`）。
+- `profiles`：**[確定]** 本人の行に加え、同じペアの相手の行も select できる（相手の表示名取得のため）。write は本人のみ。
+- `invites`：**[確定]** 発行者本人のみ select/insert/delete。redeem は `redeem_invite_code()` RPC（SECURITY DEFINER）経由で RLS を跨ぐ（一般 SELECT で他人の招待コードを読ませない）。
+- `pairs`：**[確定]** 同じペアのメンバーのみ select 可。書き込みは RPC 経由のみ（`authenticated` への insert/update/delete grant なし）。
+- すべて Supabase RLS で強制。RLS 再帰を避けるためのヘルパ関数 `current_pair_id()` は `adr/0017` を参照。
 
 ---
 

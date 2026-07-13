@@ -9,7 +9,7 @@ export { PairSuccessScreen } from "./components/PairSuccessScreen";
 export { PairingProvider } from "./hooks/PairingProvider";
 export { usePairState } from "./hooks/usePairState";
 
-export { formatRemainingLabel } from "./model/invite";
+export { formatRemainingLabel, mapRedeemErrorReason } from "./model/invite";
 
 // データ契約（Repository interface とドメイン型）。global/data のフェイク実装が参照する。
 export { PairingCodeError, type PairingRepository } from "./data";
