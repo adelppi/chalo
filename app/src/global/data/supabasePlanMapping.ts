@@ -39,8 +39,10 @@ export function toPlan(row: PlanRowWithNames): Plan {
     referenceUrl: row.reference_url,
     memo: row.memo,
     closedAt: row.closed_at,
-    // ソロ RLS では自分のプランしか読めないため owner は常に自分の profile。
-    // 万一 profiles 側の RLS で読めなかった場合は空欄で表示する。
+    lockedBy: row.locked_by,
+    lockedAt: row.locked_at,
+    // owner / locker はペアの相手でも profiles RLS で読める（#20）。
+    // 万一読めなかった場合は空欄・null にフォールバックして表示を壊さない。
     ownerName: row.owner?.display_name ?? "",
     lockedByName: row.locked_by ? (row.locker?.display_name ?? null) : null,
     createdAt: toLocalDateString(row.created_at),

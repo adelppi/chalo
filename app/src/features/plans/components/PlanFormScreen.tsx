@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -17,6 +17,7 @@ import { useToastStore } from "@global/store/useToastStore";
 
 import { usePlan } from "../hooks/usePlan";
 import { useCreatePlan, useUpdatePlan } from "../hooks/usePlanMutations";
+import { usePlansContext } from "../hooks/PlansProvider";
 import { formatDateShort } from "../model/format";
 import type { Plan, PlanDraft } from "../model/types";
 import { PlanDatePickerSheet } from "./PlanDatePickerSheet";
@@ -35,6 +36,16 @@ export function PlanFormScreen(props: PlanFormScreenProps) {
 
 function EditLoader({ id }: { id: string }) {
   const { data: plan, isPending } = usePlan(id);
+  const { planRepository } = usePlansContext();
+
+  // 編集画面に入る前にロックを立てている（useStartEditing）ため、
+  // 保存・キャンセル（戻る／スワイプ）のどの経路でも、編集終了＝アンマウントで解除する。
+  // 解除に失敗しても TTL（5分）の自動失効に委ねる（adr/0005）
+  useEffect(() => {
+    return () => {
+      planRepository.releaseLock(id).catch(() => {});
+    };
+  }, [planRepository, id]);
 
   if (isPending || !plan) {
     return (

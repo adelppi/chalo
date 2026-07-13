@@ -80,9 +80,22 @@ describe("toPlan", () => {
       memo: "チケットは前日までに",
       closedAt: "2026-07-10",
       ownerName: "ゆい",
+      lockedBy: null,
+      lockedAt: null,
       lockedByName: null,
       createdAt: toLocalDateString(row.created_at),
     });
+  });
+
+  it("locked_by / locked_at を行のまま写す（TTL 判定は model/editLock が担う）", () => {
+    const row = makeRow({
+      locked_by: "5f0c2c74-0000-0000-0000-0000000000bb",
+      locked_at: "2026-07-14T12:00:00+00:00",
+      locker: { display_name: "そうた" },
+    });
+    const plan = toPlan(row);
+    expect(plan.lockedBy).toBe("5f0c2c74-0000-0000-0000-0000000000bb");
+    expect(plan.lockedAt).toBe("2026-07-14T12:00:00+00:00");
   });
 
   it("owner が読めない行は ownerName を空欄にする", () => {

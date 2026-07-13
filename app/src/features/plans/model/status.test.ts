@@ -14,6 +14,8 @@ function makePlan(overrides: Partial<Plan>): Plan {
     referenceUrl: null,
     memo: null,
     closedAt: null,
+    lockedBy: null,
+    lockedAt: null,
     lockedByName: null,
     ownerName: "ゆい",
     createdAt: "2026-06-01",

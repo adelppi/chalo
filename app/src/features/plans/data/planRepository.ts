@@ -17,4 +17,10 @@ export interface PlanRepository {
 
   /** 手動おしまい。closedAt は押した日（YYYY-MM-DD） */
   close(id: string, closedAt: string): Promise<Plan>;
+
+  /** 編集ロックを立てる（自分が保持者になる。adr/0005） */
+  acquireLock(id: string): Promise<void>;
+
+  /** 自分が保持しているロックだけを解除する（相手のロックは触らない） */
+  releaseLock(id: string): Promise<void>;
 }

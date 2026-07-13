@@ -5,7 +5,7 @@ import { currentUserId } from "./currentUserId";
 import { toInsertRow, toPlan, toUpdateRow } from "./supabasePlanMapping";
 
 // owner / locked_by の表示名を FK 名の埋め込みで一緒に取得する。
-// ソロ RLS の間は owner = 自分なので常に解決できる（相手の profiles 行は読めない）。
+// ペアの相手の profiles 行も RLS で select できるため、双方の名前を解決できる（#20）。
 const PLAN_SELECT =
   "*, owner:profiles!plans_owner_id_fkey(display_name), locker:profiles!plans_locked_by_fkey(display_name)";
 
@@ -86,5 +86,31 @@ export const supabasePlanRepository: PlanRepository = {
       throw error;
     }
     return toPlan(data);
+  },
+
+  async acquireLock(id: string): Promise<void> {
+    const userId = await currentUserId();
+    // locked_at は端末時計。TTL 判定（model/editLock）も読む側の端末時計なので、
+    // 多少のズレは TTL 5分に対して許容する（adr/0005）
+    const { error } = await supabase
+      .from("plans")
+      .update({ locked_by: userId, locked_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) {
+      throw error;
+    }
+  },
+
+  async releaseLock(id: string): Promise<void> {
+    const userId = await currentUserId();
+    // 自分の TTL 切れ後に相手が取り直したロックを消さないよう、保持者が自分の行だけ更新する
+    const { error } = await supabase
+      .from("plans")
+      .update({ locked_by: null, locked_at: null })
+      .eq("id", id)
+      .eq("locked_by", userId);
+    if (error) {
+      throw error;
+    }
   },
 };

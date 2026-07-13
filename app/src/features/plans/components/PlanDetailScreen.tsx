@@ -26,6 +26,7 @@ import { useToastStore } from "@global/store/useToastStore";
 import { usePlan } from "../hooks/usePlan";
 import { useClosePlan, useDeletePlan } from "../hooks/usePlanMutations";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
+import { useStartEditing } from "../hooks/useStartEditing";
 import { formatCreatedByLabel, formatDateLong } from "../model/format";
 import type { Plan } from "../model/types";
 
@@ -33,7 +34,8 @@ type PlanDetailScreenProps = {
   id: string;
 };
 
-// プラン詳細（D-1）。相手が編集中なら F-9、見つからなければ F-10 を出す。
+// プラン詳細（D-1）。相手がロック中でも閲覧は可能で、編集ボタン押下時にだけ
+// ロック判定する（adr/0005）。見つからなければ F-10 を出す。
 export function PlanDetailScreen({ id }: PlanDetailScreenProps) {
   const { data: plan, isPending, refetch } = usePlan(id);
 
@@ -47,10 +49,6 @@ export function PlanDetailScreen({ id }: PlanDetailScreenProps) {
 
   if (!plan) {
     return <PlanNotFound />;
-  }
-
-  if (plan.lockedByName) {
-    return <PlanLocked plan={plan} />;
   }
 
   return <PlanDetail plan={plan} refetch={refetch} />;
@@ -76,10 +74,32 @@ function PlanDetail({
   const { refreshing, onRefresh } = usePullToRefresh(refetch);
   const deletePlan = useDeletePlan(plan.id);
   const closePlan = useClosePlan(plan.id);
+  const startEditing = useStartEditing(plan.id);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [calendarDialogVisible, setCalendarDialogVisible] = useState(false);
+  // 相手が編集中だったとき F-9 のダイアログに出す表示名（null なら非表示）
+  const [lockOwnerName, setLockOwnerName] = useState<string | null>(null);
 
   const displayUrl = plan.referenceUrl?.replace(/^https?:\/\//, "");
+
+  // 編集ボタン押下時にその1件だけ最新取得し、空いていればロックを立ててから
+  // 編集画面を開く（adr/0005）。not-found はキャッシュが null になり F-10 へ切り替わる。
+  const handleEdit = () => {
+    startEditing.mutate(undefined, {
+      onSuccess: (result) => {
+        if (result.type === "acquired") {
+          router.push(`/plan/${plan.id}/edit`);
+        } else if (result.type === "locked") {
+          setLockOwnerName(result.lockedByName);
+        }
+      },
+      onError: () => {
+        showToast("編集を開始できませんでした。もう一度お試しください。", {
+          variant: "error",
+        });
+      },
+    });
+  };
 
   const handleDelete = () => {
     deletePlan.mutate(undefined, {
@@ -127,7 +147,8 @@ function PlanDetail({
           <View className="flex-row items-center gap-2.5">
             <Pressable
               testID="plan-detail-edit-button"
-              onPress={() => router.push(`/plan/${plan.id}/edit`)}
+              onPress={handleEdit}
+              disabled={startEditing.isPending}
               className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
             >
               <Icon name="pencil" size={20} color={palette.ink} />
@@ -271,68 +292,17 @@ function PlanDetail({
           testID: "plan-detail-calendar-confirm-button",
         }}
       />
-    </View>
-  );
-}
 
-// F-9 編集ロック中の競合（相手が編集しているとき）。
-function PlanLocked({ plan }: { plan: Plan }) {
-  const insets = useSafeAreaInsets();
-
-  return (
-    <View testID="plan-locked-screen" className="flex-1 bg-linen">
-      <BackHeader testID="plan-locked-back-button" />
-      <View className="px-7 pt-6">
-        <Text className="text-2xl font-black leading-9 text-ink">
-          {plan.title}
-        </Text>
-      </View>
-
-      <View className="mx-6 mt-4 flex-row items-start gap-[11px] rounded-field border border-honey-border bg-honey-surface px-4 py-[15px]">
-        <Icon name="lock" size={20} color={palette.honey.DEFAULT} />
-        <View className="flex-1 gap-[3px]">
-          <Text className="text-sm font-medium text-honey-text">
-            {plan.lockedByName} が編集しています
-          </Text>
-          <Text className="text-xs font-medium leading-5 text-honey-soft">
-            すこし待ってから、もう一度プランを開いてください。
-          </Text>
-        </View>
-      </View>
-
-      <View className="mx-6 mt-3.5 overflow-hidden rounded-card bg-paper opacity-60 shadow-card">
-        {plan.date ? (
-          <View className="flex-row items-center justify-between border-b border-sand px-[18px] py-[15px]">
-            <Text className="text-xs font-bold tracking-[1px] text-stone">
-              日にち
-            </Text>
-            <Text className="text-[15px] font-medium text-ink">
-              {formatDateLong(plan.date, plan.time)}
-            </Text>
-          </View>
-        ) : null}
-        {plan.memo ? (
-          <View className="gap-[5px] px-[18px] py-[15px]">
-            <Text className="text-xs font-bold tracking-[1px] text-stone">
-              メモ
-            </Text>
-            <Text className="text-sm font-medium leading-6 text-ink">
-              {plan.memo}
-            </Text>
-          </View>
-        ) : null}
-      </View>
-
-      <View className="flex-1" />
-
-      <View className="px-6" style={{ paddingBottom: insets.bottom + 24 }}>
-        <View className="h-[54px] flex-row items-center justify-center gap-2 rounded-button bg-honey-muted">
-          <Icon name="lock" size={16} color={palette.stone} />
-          <Text className="text-base font-medium text-stone">
-            編集できません
-          </Text>
-        </View>
-      </View>
+      {/* F-9 編集ロック衝突。「〇〇が編集中です」（non-functional.md） */}
+      <Dialog
+        testID="plan-detail-locked-dialog"
+        visible={lockOwnerName !== null}
+        title={`${lockOwnerName ?? ""}が編集中です`}
+        message="すこし待ってから、もう一度お試しください。"
+        cancelLabel="わかりました"
+        onCancel={() => setLockOwnerName(null)}
+        cancelTestID="plan-detail-locked-close-button"
+      />
     </View>
   );
 }
