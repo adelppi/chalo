@@ -18,7 +18,7 @@ AI駆動開発で実装が速く動く分、回帰を機械的に検知したい
 
 - **ロジックテストは純粋関数だけ**に絞る。副作用のない関数に切り出せる計算・判定を対象とし、UI 描画やフックは E2E に委ねる。安定して高速、保守コストが低い。
 - **E2E は機能単位**で構成する。1機能につき、その機能の王道の使い方を通す正常系と、権限拒否・オフライン・入力不備などの異常系を両方カバーする。
-- **E2E は実行の動画を記録して格納する**。Maestro の録画を成果物として保存し、テスト失敗時に画面の動きから原因をたどれるようにする。
+- **E2E は実行の動画を記録して格納する**。`maestro record --local <flow.yaml> <output.mp4>` でローカルレンダリングした動画を `.maestro/recordings/` に保存し、テスト失敗時に画面の動きから原因をたどれるようにする。
 
 ## testID 命名規則 [提案]
 
@@ -40,7 +40,7 @@ E2E（Maestro）の要素特定には `testID`（iOS の accessibility identifie
 └── recordings/        # 実行動画の出力先（.gitignore 対象、.gitkeep のみコミット）
 ```
 
-実行動画は `maestro test --test-output-dir .maestro/recordings` でローカルに出力し、リポジトリにはコミットしない。
+実行動画は `maestro record --local <flow.yaml> .maestro/recordings/<name>.mp4` でローカルに出力し、リポジトリにはコミットしない。
 
 ## 対象外
 
