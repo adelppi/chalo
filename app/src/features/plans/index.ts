@@ -5,7 +5,6 @@ export { HomeScreen } from "./components/HomeScreen";
 export { PlanClosedScreen } from "./components/PlanClosedScreen";
 export { PlanDetailScreen } from "./components/PlanDetailScreen";
 export { PlanFormScreen } from "./components/PlanFormScreen";
-export { PlanLockedScreen } from "./components/PlanLockedScreen";
 
 export { PlansProvider } from "./hooks/PlansProvider";
 export { usePlans } from "./hooks/usePlans";

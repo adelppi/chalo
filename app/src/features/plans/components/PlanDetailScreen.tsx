@@ -21,23 +21,28 @@ import {
   Icon,
 } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
+import { useAuthStore } from "@global/store/useAuthStore";
 import { useToastStore } from "@global/store/useToastStore";
 
 import { usePlan } from "../hooks/usePlan";
 import { useClosePlan, useDeletePlan } from "../hooks/usePlanMutations";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { useStartEditing } from "../hooks/useStartEditing";
+import { evaluateEditLock } from "../model/editLock";
 import { formatCreatedByLabel, formatDateLong } from "../model/format";
 import type { Plan } from "../model/types";
+import { PlanLockedScreen } from "./PlanLockedScreen";
 
 type PlanDetailScreenProps = {
   id: string;
 };
 
-// プラン詳細（D-1）。相手がロック中でも閲覧は可能で、編集ボタン押下時にだけ
-// ロック判定する（adr/0005）。見つからなければ F-10 を出す。
+// プラン詳細（D-1）。開いた時点でその1件を最新取得（adr/0004）し、相手がロック中
+// （TTL 内）なら編集ロック画面（F-9）に切り替えて操作をブロックする（adr/0005）。
+// 見つからなければ F-10 を出す。
 export function PlanDetailScreen({ id }: PlanDetailScreenProps) {
   const { data: plan, isPending, refetch } = usePlan(id);
+  const userId = useAuthStore((state) => state.userId);
 
   if (isPending) {
     return (
@@ -49,6 +54,18 @@ export function PlanDetailScreen({ id }: PlanDetailScreenProps) {
 
   if (!plan) {
     return <PlanNotFound />;
+  }
+
+  const lockedByPartner =
+    userId != null &&
+    evaluateEditLock({
+      lockedBy: plan.lockedBy,
+      lockedAt: plan.lockedAt,
+      userId,
+      now: new Date(),
+    }) === "partner";
+  if (lockedByPartner) {
+    return <PlanLockedScreen plan={plan} />;
   }
 
   return <PlanDetail plan={plan} refetch={refetch} />;
@@ -80,19 +97,14 @@ function PlanDetail({
 
   const displayUrl = plan.referenceUrl?.replace(/^https?:\/\//, "");
 
-  // 編集ボタン押下時にその1件だけ最新取得し、空いていればロックを立ててから
-  // 編集画面を開く。相手がロック中ならロック画面（F-9）へ遷移する（adr/0005）。
-  // not-found はキャッシュが null になり F-10 へ切り替わる。
+  // 詳細を開いた後に相手がロックを取ることもあるため、編集ボタン押下時にも
+  // その1件だけ最新取得してロック判定する（adr/0005）。空いていればロックを立てて
+  // 編集画面へ。相手ロック中・削除済みはキャッシュ更新でこの画面が F-9 / F-10 に切り替わる。
   const handleEdit = () => {
     startEditing.mutate(undefined, {
       onSuccess: (result) => {
         if (result.type === "acquired") {
           router.push(`/plan/${plan.id}/edit`);
-        } else if (result.type === "locked") {
-          router.push({
-            pathname: "/plan/[id]/locked",
-            params: { id: plan.id, name: result.lockedByName },
-          });
         }
       },
       onError: () => {

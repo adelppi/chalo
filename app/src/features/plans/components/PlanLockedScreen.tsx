@@ -4,27 +4,25 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackHeader, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
-import { usePlan } from "../hooks/usePlan";
 import { formatDateLong } from "../model/format";
+import type { Plan } from "../model/types";
 
 type PlanLockedScreenProps = {
-  id: string;
-  /** ロック保持者（相手）の表示名。編集ボタン押下時の判定結果から受け取る */
-  lockedByName: string;
+  plan: Plan;
 };
 
-// F-9 編集ロック中の競合。編集ボタン押下時に相手のロック（TTL 内）を検出したら
-// この画面に遷移する（adr/0005）。閲覧は詳細画面（D-1）で引き続き可能。
-export function PlanLockedScreen({ id, lockedByName }: PlanLockedScreenProps) {
+// F-9 編集ロック中の競合。相手がロック中（TTL 内）のプランを開くと詳細の代わりに
+// これを表示し、編集・削除・おしまい等の操作をブロックする（adr/0005）。
+// 内容（タイトル・日にち・メモ）は薄く見せて閲覧だけできる。
+export function PlanLockedScreen({ plan }: PlanLockedScreenProps) {
   const insets = useSafeAreaInsets();
-  const { data: plan } = usePlan(id);
 
   return (
     <View testID="plan-locked-screen" className="flex-1 bg-linen">
       <BackHeader testID="plan-locked-back-button" />
       <View className="px-7 pt-6">
         <Text className="text-2xl font-black leading-9 text-ink">
-          {plan?.title ?? ""}
+          {plan.title}
         </Text>
       </View>
 
@@ -32,7 +30,7 @@ export function PlanLockedScreen({ id, lockedByName }: PlanLockedScreenProps) {
         <Icon name="lock" size={20} color={palette.honey.DEFAULT} />
         <View className="flex-1 gap-[3px]">
           <Text className="text-sm font-medium text-honey-text">
-            {lockedByName} が編集しています
+            {plan.lockedByName ?? "相手"} が編集しています
           </Text>
           <Text className="text-xs font-medium leading-5 text-honey-soft">
             すこし待ってから、もう一度プランを開いてください。
@@ -41,7 +39,7 @@ export function PlanLockedScreen({ id, lockedByName }: PlanLockedScreenProps) {
       </View>
 
       <View className="mx-6 mt-3.5 overflow-hidden rounded-card bg-paper opacity-60 shadow-card">
-        {plan?.date ? (
+        {plan.date ? (
           <View className="flex-row items-center justify-between border-b border-sand px-[18px] py-[15px]">
             <Text className="text-xs font-bold tracking-[1px] text-stone">
               日にち
@@ -51,7 +49,7 @@ export function PlanLockedScreen({ id, lockedByName }: PlanLockedScreenProps) {
             </Text>
           </View>
         ) : null}
-        {plan?.memo ? (
+        {plan.memo ? (
           <View className="gap-[5px] px-[18px] py-[15px]">
             <Text className="text-xs font-bold tracking-[1px] text-stone">
               メモ
