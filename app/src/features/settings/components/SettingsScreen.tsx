@@ -5,6 +5,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useSignOut } from "@features/auth";
+import { CalendarPermissionRow, DefaultCalendarRow } from "@features/calendar";
 import { usePairState } from "@features/pairing";
 import { countPlanStatuses, usePlans } from "@features/plans";
 import { Dialog, Icon } from "@global/components/ui";
@@ -135,17 +136,12 @@ export function SettingsScreen() {
           </>
         ) : null}
 
-        {/* おしらせ・カレンダー（モック段階は表示のみ） */}
+        {/* おしらせ・カレンダー（通知はモック段階、カレンダーは実働） */}
         <SectionLabel label="おしらせ・カレンダー" />
         <View className="overflow-hidden rounded-field bg-paper shadow-card">
           <PermissionRow label="通知" />
-          <PermissionRow label="カレンダー" />
-          <SettingsRow
-            label="既定カレンダーをえらぶ"
-            value="ふたりの予定"
-            chevron
-            showSeparator={false}
-          />
+          <CalendarPermissionRow />
+          <DefaultCalendarRow />
         </View>
 
         {/* そのほか */}
@@ -285,7 +281,8 @@ function SettingsRow({
   );
 }
 
-// 通知・カレンダーの許可行（E-1）。モック段階は「許可する」ピルの表示のみ。
+// 通知の許可行（E-1）。モック段階は「許可する」ピルの表示のみ
+//（カレンダーの行は @features/calendar の実働コンポーネントを使う）。
 function PermissionRow({ label }: { label: string }) {
   return (
     <View className="flex-row items-center justify-between border-b border-sand px-[18px] py-3.5">

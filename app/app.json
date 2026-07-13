@@ -31,7 +31,14 @@
       "expo-apple-authentication",
       "expo-web-browser",
       "expo-secure-store",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "プランを端末のカレンダーに追加・更新するために使います。",
+          "remindersPermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

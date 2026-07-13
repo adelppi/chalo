@@ -11,6 +11,10 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import {
+  calendarEventFieldsChanged,
+  useSyncPlanToCalendar,
+} from "@features/calendar";
 import { BackHeader, Button, Icon, type IconName } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
@@ -65,6 +69,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   const showToast = useToastStore((state) => state.show);
   const createPlan = useCreatePlan();
   const updatePlan = useUpdatePlan(plan?.id ?? "");
+  const syncCalendar = useSyncPlanToCalendar();
 
   const [title, setTitle] = useState(plan?.title ?? "");
   const [titleFocused, setTitleFocused] = useState(false);
@@ -110,7 +115,22 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
       });
     } else {
       updatePlan.mutate(buildDraft(), {
-        onSuccess: () => {
+        onSuccess: async (updated) => {
+          // 連携済みプランはイベントを自動更新する（置いてけぼり防止。domain/calendar.md）。
+          // イベントに影響する項目が変わった時だけ端末カレンダーを触る。
+          // 画面を離れる前に await し、失敗トーストを取りこぼさない。
+          if (plan && calendarEventFieldsChanged(plan, updated)) {
+            try {
+              await syncCalendar.mutateAsync(updated);
+            } catch {
+              router.back();
+              showToast(
+                "カレンダーの予定を更新できませんでした。もういちど保存してください。",
+                { variant: "error" },
+              );
+              return;
+            }
+          }
           router.back();
           showToast("保存しました", { icon: "check-circle" });
         },

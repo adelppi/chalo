@@ -11,6 +11,10 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import {
+  PlanCalendarButton,
+  useRemovePlanFromCalendar,
+} from "@features/calendar";
 import { PawPrint } from "@global/components/shared";
 import {
   Avatar,
@@ -92,8 +96,8 @@ function PlanDetail({
   const deletePlan = useDeletePlan(plan.id);
   const closePlan = useClosePlan(plan.id);
   const startEditing = useStartEditing(plan.id);
+  const removeFromCalendar = useRemovePlanFromCalendar();
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [calendarDialogVisible, setCalendarDialogVisible] = useState(false);
 
   const displayUrl = plan.referenceUrl?.replace(/^https?:\/\//, "");
 
@@ -118,6 +122,9 @@ function PlanDetail({
   const handleDelete = () => {
     deletePlan.mutate(undefined, {
       onSuccess: () => {
+        // プラン削除に連動して端末カレンダーのイベントも自動削除する
+        // （domain/calendar.md。未連携なら何もしない。失敗しても削除自体は完了している）
+        removeFromCalendar.mutate(plan.id);
         setDeleteDialogVisible(false);
         showToast("削除しました", { icon: "trash" });
         router.back();
@@ -256,13 +263,7 @@ function PlanDetail({
         className="gap-3 px-6"
         style={{ paddingBottom: insets.bottom + 24 }}
       >
-        <Button
-          testID="plan-detail-calendar-button"
-          label="カレンダーに追加"
-          icon="calendar-plus"
-          variant="outline"
-          onPress={() => setCalendarDialogVisible(true)}
-        />
+        <PlanCalendarButton plan={plan} />
         <Button
           testID="plan-detail-close-button"
           label="おしまいにする"
@@ -287,23 +288,6 @@ function PlanDetail({
           variant: "destructive",
           onPress: handleDelete,
           testID: "plan-detail-delete-confirm-button",
-        }}
-      />
-
-      {/* F-4 カレンダー許可のプライミング（モックのため連携はトースト表示のみ） */}
-      <Dialog
-        visible={calendarDialogVisible}
-        title="カレンダーと連携しますか？"
-        message="日時が設定されているプランを、端末のカレンダーに追加できます。次の画面で許可してください。"
-        cancelLabel="あとで"
-        onCancel={() => setCalendarDialogVisible(false)}
-        confirm={{
-          label: "連携する",
-          onPress: () => {
-            setCalendarDialogVisible(false);
-            showToast("カレンダーに追加しました", { icon: "calendar" });
-          },
-          testID: "plan-detail-calendar-confirm-button",
         }}
       />
     </View>

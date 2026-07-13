@@ -9,10 +9,12 @@
 
 ## 決定
 
-- 端末カレンダー操作は **`expo-calendar`** で行う。
+- 端末カレンダー操作は **`expo-calendar`** で行う。イベント ID 指定の取得・更新・削除が揃う **legacy API**（`expo-calendar/legacy`）を使う。
 - プラン↔端末イベントの対応（`{ planId → eventId, calendarId }`）は **端末ローカルに保存**する。クラウド（Supabase）には持たない（`data-model.md`）。
+  - 保存先は **AsyncStorage**（キー `calendar.links`。planId をキーにした JSON マップ）。秘匿情報ではないため SecureStore は使わない。
 - リンクが失われた時の判定のため、イベントのメモ末尾に目印「チャロが追加🐾」を入れる。
-- 既定の追加先カレンダー（プロファイル）は設定値として端末に保持する。
+- 既定の追加先カレンダー（プロファイル）は設定値として端末に保持する（AsyncStorage キー `calendar.default-calendar-id`）。
+- カレンダーの利用目的文言（`NSCalendarsUsageDescription` / `NSCalendarsFullAccessUsageDescription`）は expo-calendar の config plugin（`calendarPermission`）で設定する。リマインダーは使わないため対応する文言は入れない（`remindersPermission: false`）。
 
 ## 結果
 
