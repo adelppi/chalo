@@ -64,6 +64,7 @@ export function HomeScreen() {
           className="flex-1"
           contentContainerClassName="flex-grow"
           showsVerticalScrollIndicator={false}
+          alwaysBounceVertical
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -77,8 +78,9 @@ export function HomeScreen() {
       ) : (
         <ScrollView
           className="flex-1 px-5 pt-1"
-          contentContainerClassName="gap-2.5 pb-28"
+          contentContainerClassName="grow gap-2.5 pb-28"
           showsVerticalScrollIndicator={false}
+          alwaysBounceVertical
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

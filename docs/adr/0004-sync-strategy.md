@@ -18,7 +18,7 @@
 - **stale-while-revalidate**：`staleTime: 0`（`global/config/queryClient.ts`）でキャッシュを常に stale 扱いにし、キャッシュを即表示しつつ裏で再取得する。全画面スピナーは初回ロード（キャッシュなし）のみ。
 - **フォアグラウンド復帰**：React Native には window focus がないため、`AppState` の `active` 遷移を `focusManager.setFocused()` に結線する（TanStack Query 公式の React Native パターン）。復帰時に表示中のクエリが再取得される。
 - **画面遷移**：マウント時の再取得（`refetchOnMount` 既定 + `staleTime: 0`）に任せる。
-- **pull-to-refresh**：`RefreshControl` を `refetch()` に接続する。インジケータは引っ張った時だけ出し、裏の再取得では出さない（ローカル state で管理）。
+- **pull-to-refresh**：`RefreshControl` を `refetch()` に接続する。インジケータは引っ張った時だけ出し、裏の再取得では出さない（ローカル state で管理）。ScrollView は `contentContainer` を画面高まで伸ばし（`grow`/`flex-grow`）、`alwaysBounceVertical` を付けて、内容が短くても余白を含む画面のどこからでも引っ張れるようにする。
 - **再取得失敗時**：TanStack Query の既定挙動どおり既存キャッシュを表示し続ける（画面を壊さない）。オフライン時の扱いは `adr/0008`。
 
 ## 結果

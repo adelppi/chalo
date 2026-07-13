@@ -145,8 +145,9 @@ function PlanDetail({
 
       <ScrollView
         className="flex-1"
-        contentContainerClassName="pb-6"
+        contentContainerClassName="grow pb-6"
         showsVerticalScrollIndicator={false}
+        alwaysBounceVertical
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

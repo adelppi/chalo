@@ -53,6 +53,7 @@ export function DoneListScreen() {
           className="flex-1"
           contentContainerClassName="flex-grow"
           showsVerticalScrollIndicator={false}
+          alwaysBounceVertical
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -66,8 +67,9 @@ export function DoneListScreen() {
       ) : (
         <ScrollView
           className="flex-1 px-5 pt-1"
-          contentContainerClassName="gap-2.5 pb-10"
+          contentContainerClassName="grow gap-2.5 pb-10"
           showsVerticalScrollIndicator={false}
+          alwaysBounceVertical
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
