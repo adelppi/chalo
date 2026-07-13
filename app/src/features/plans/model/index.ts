@@ -6,6 +6,12 @@ export {
   toDateString,
   type CalendarMonth,
 } from "./calendar";
+export {
+  canStartEditing,
+  EDIT_LOCK_TTL_MS,
+  evaluateEditLock,
+  type EditLockState,
+} from "./editLock";
 export { CLOSED_GREETINGS, pickClosedGreeting } from "./greeting";
 export {
   formatClosedLabel,

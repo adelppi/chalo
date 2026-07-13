@@ -20,10 +20,11 @@ export type Plan = {
   memo: string | null;
   /** 手動おしまいの日 YYYY-MM-DD（自動おしまいは書き込まない） */
   closedAt: string | null;
-  /**
-   * 相手が編集ロック中のとき、その相手の表示名（adr/0005。F-9 の表示に使う）。
-   * 本来は locked_by(uuid) から profiles を引くが、モック段階では名前に簡略化する。
-   */
+  /** 編集ロック保持者の profile id（adr/0005。TTL 判定は model/editLock） */
+  lockedBy: string | null;
+  /** ロック取得時刻の ISO 文字列 */
+  lockedAt: string | null;
+  /** ロック保持者の表示名（「〇〇が編集中です」の表示に使う。読めなければ null） */
   lockedByName: string | null;
   /** 作成者（owner）の表示名。本来は owner_id から profiles を引く */
   ownerName: string;
