@@ -15,6 +15,10 @@ import {
   calendarEventFieldsChanged,
   useSyncPlanToCalendar,
 } from "@features/calendar";
+import {
+  deadlineNotificationFieldsChanged,
+  useSyncDeadlineNotification,
+} from "@features/notifications";
 import { Button, Icon, type IconName } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
@@ -71,6 +75,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   const createPlan = useCreatePlan();
   const updatePlan = useUpdatePlan(plan?.id ?? "");
   const syncCalendar = useSyncPlanToCalendar();
+  const syncDeadlineNotification = useSyncDeadlineNotification();
 
   const [title, setTitle] = useState(plan?.title ?? "");
   const [titleFocused, setTitleFocused] = useState(false);
@@ -107,6 +112,9 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
     if (mode === "create") {
       createPlan.mutate(buildDraft(), {
         onSuccess: (created) => {
+          // 期限があれば「2週間前の朝9:00」のローカル通知を予約する
+          // （domain/notifications.md。予約失敗は静かに記録され、致命としない）。
+          syncDeadlineNotification.mutate(created);
           router.back();
           showToast(`「${created.title}」を追加しました`, {
             icon: "check-circle",
@@ -117,6 +125,11 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
     } else {
       updatePlan.mutate(buildDraft(), {
         onSuccess: async (updated) => {
+          // 期限変更＝再予約／期限削除・日付が入った＝予約削除の組み直し
+          // （domain/notifications.md）。失敗は静かに記録されるため待たない。
+          if (plan && deadlineNotificationFieldsChanged(plan, updated)) {
+            syncDeadlineNotification.mutate(updated);
+          }
           // 連携済みプランはイベントを自動更新する（置いてけぼり防止。domain/calendar.md）。
           // イベントに影響する項目が変わった時だけ端末カレンダーを触る。
           // 画面を離れる前に await し、失敗トーストを取りこぼさない。

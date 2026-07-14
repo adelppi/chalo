@@ -15,6 +15,7 @@ import {
   PlanCalendarButton,
   useRemovePlanFromCalendar,
 } from "@features/calendar";
+import { useCancelDeadlineNotification } from "@features/notifications";
 import { PawPrint } from "@global/components/shared";
 import { Avatar, Button, Chip, Dialog, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
@@ -91,6 +92,7 @@ function PlanDetail({
   const closePlan = useClosePlan(plan.id);
   const startEditing = useStartEditing(plan.id);
   const removeFromCalendar = useRemovePlanFromCalendar();
+  const cancelDeadlineNotification = useCancelDeadlineNotification();
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
 
   const displayUrl = plan.referenceUrl?.replace(/^https?:\/\//, "");
@@ -119,6 +121,8 @@ function PlanDetail({
         // プラン削除に連動して端末カレンダーのイベントも自動削除する
         // （domain/calendar.md。未連携なら何もしない。失敗しても削除自体は完了している）
         removeFromCalendar.mutate(plan.id);
+        // 期限通知の予約も取り消す（domain/notifications.md。未予約なら何もしない）
+        cancelDeadlineNotification.mutate(plan.id);
         setDeleteDialogVisible(false);
         showToast("削除しました", { icon: "trash" });
         router.back();

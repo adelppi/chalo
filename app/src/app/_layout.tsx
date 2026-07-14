@@ -8,6 +8,10 @@ import { useEffect } from "react";
 
 import { AuthProvider, useAuthStatus } from "@features/auth";
 import { CalendarProvider } from "@features/calendar";
+import {
+  NotificationsProvider,
+  useNotificationObserver,
+} from "@features/notifications";
 import { PairingProvider } from "@features/pairing";
 import { PlansProvider } from "@features/plans";
 import { SettingsProvider } from "@features/settings";
@@ -15,7 +19,9 @@ import { ToastHost } from "@global/components/shared";
 import { queryClient } from "@global/config/queryClient";
 import {
   asyncStorageCalendarStorage,
+  asyncStorageNotificationStorage,
   expoCalendarRepository,
+  expoNotificationRepository,
   supabaseAuthRepository,
   supabasePairingRepository,
   supabasePlanRepository,
@@ -29,6 +35,10 @@ SplashScreen.preventAutoHideAsync();
 function RootNavigator() {
   const status = useAuthStatus();
   const ready = status !== "loading";
+
+  // 通知タップ→プラン詳細へのディープリンク（domain/notifications.md）。
+  // ナビゲータのマウント前に遷移できないため ready を待つ。
+  useNotificationObserver(ready);
 
   useEffect(() => {
     if (ready) {
@@ -71,9 +81,16 @@ export default function RootLayout() {
                 deviceCalendarRepository={expoCalendarRepository}
                 calendarStorageRepository={asyncStorageCalendarStorage}
               >
-                <StatusBar style="dark" />
-                <RootNavigator />
-                <ToastHost />
+                <NotificationsProvider
+                  deviceNotificationRepository={expoNotificationRepository}
+                  notificationStorageRepository={
+                    asyncStorageNotificationStorage
+                  }
+                >
+                  <StatusBar style="dark" />
+                  <RootNavigator />
+                  <ToastHost />
+                </NotificationsProvider>
               </CalendarProvider>
             </SettingsProvider>
           </PairingProvider>
