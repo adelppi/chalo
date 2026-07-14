@@ -7,12 +7,15 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 
 import { AuthProvider, useAuthStatus } from "@features/auth";
+import { CalendarProvider } from "@features/calendar";
 import { PairingProvider } from "@features/pairing";
 import { PlansProvider } from "@features/plans";
 import { SettingsProvider } from "@features/settings";
 import { ToastHost } from "@global/components/shared";
 import { queryClient } from "@global/config/queryClient";
 import {
+  asyncStorageCalendarStorage,
+  expoCalendarRepository,
   supabaseAuthRepository,
   supabasePairingRepository,
   supabasePlanRepository,
@@ -64,9 +67,14 @@ export default function RootLayout() {
         <PlansProvider planRepository={supabasePlanRepository}>
           <PairingProvider pairingRepository={supabasePairingRepository}>
             <SettingsProvider settingsRepository={supabaseSettingsRepository}>
-              <StatusBar style="dark" />
-              <RootNavigator />
-              <ToastHost />
+              <CalendarProvider
+                deviceCalendarRepository={expoCalendarRepository}
+                calendarStorageRepository={asyncStorageCalendarStorage}
+              >
+                <StatusBar style="dark" />
+                <RootNavigator />
+                <ToastHost />
+              </CalendarProvider>
             </SettingsProvider>
           </PairingProvider>
         </PlansProvider>
