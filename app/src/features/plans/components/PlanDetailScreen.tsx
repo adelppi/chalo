@@ -139,6 +139,9 @@ function PlanDetail({
   const handleClose = () => {
     closePlan.mutate(todayString(), {
       onSuccess: () => {
+        // 手動おしまいに連動して期限通知の予約も取り消す
+        // （domain/notifications.md。未予約なら何もしない）
+        cancelDeadlineNotification.mutate(plan.id);
         router.replace(`/plan/${plan.id}/closed`);
       },
       onError: () => {

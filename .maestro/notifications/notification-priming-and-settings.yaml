@@ -1,0 +1,43 @@
+# 通知権限プライミング（B-6）と設定 E-1 の通知行（Issue #30）。
+# 「あとで」は要求せず閉じる／「許可する」で実要求（JIT＋プライミング。domain/onboarding.md）。
+# iOS のシステムダイアログは実質1回しか出せないため、権限が「未確認」でも
+# 「許可ずみ」でも通るように分岐する（拒否済みの端末は iOS 設定誘導になるため対象外）。
+# 前提: アプリがサインイン済みであること。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+
+# B-6 はペア成立直後に出る画面。単体では deep link で直接開く（adr/0002）
+- openLink: chalo://pairing/notifications
+- assertVisible:
+    id: "notification-priming-screen"
+- assertVisible: "通知をオンにしませんか？"
+
+# 「あとで」→ 権限を要求せずに閉じてホームへ戻る
+- tapOn:
+    id: "notification-priming-later-button"
+- assertVisible:
+    id: "home-screen"
+
+# もう一度開いて「許可する」→ 未確認の端末ではシステムダイアログが出る
+- openLink: chalo://pairing/notifications
+- assertVisible:
+    id: "notification-priming-screen"
+- tapOn:
+    id: "notification-priming-allow-button"
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+- assertVisible:
+    id: "home-screen"
+
+# 設定 E-1 の通知行が「許可ずみ」を表示する（features.md 9.4）
+- tapOn:
+    id: "tab-settings"
+- assertVisible:
+    id: "settings-screen"
+- assertVisible: "許可ずみ"

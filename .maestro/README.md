@@ -12,6 +12,11 @@ chalo の E2E テストを Maestro で管理。
 - `pairing/pairing-invite-and-errors.yaml` … 招待コード発行・コピー・コード入力エラー（Issue #20・Supabase 実装）
   - 発行 → コピー → own-code エラー → not-found エラー
   - **成立（redeem 成功）は2アカウント同時が必要なため対象外。** RPC・RLS（ペア境界）はレビューで確認する（`adr/0014`・`adr/0017`）
+- `notifications/notification-priming-and-settings.yaml` … 通知権限プライミング B-6 と設定 E-1 の通知行（Issue #30）
+  - 「あとで」で要求せず閉じる → 「許可する」で実要求（未確認/許可ずみの両状態で通る。拒否済み端末は対象外）→ 設定に「許可ずみ」表示
+- `notifications/deadline-notification-lifecycle.yaml` … 期限通知のライフサイクル（Issue #30）
+  - 期限追加 → 期限変更 → 日付追加 → 日付クリア → 期限削除 → 手動おしまい → 削除 → 2週間未満の期限、を UI から一巡
+  - **予約そのもの（端末ローカル通知）は Maestro から観測できない**（SpringBoard の通知 UI に触れない）ため、通知タップ→詳細遷移は手動で確認する。予約日時・送らない条件の算出は Jest が担保（`adr/0014`）
 
 ## ローカルでの実行
 
