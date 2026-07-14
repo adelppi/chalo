@@ -1,8 +1,10 @@
+import { Stack, useRouter } from "expo-router";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { BackHeader, Icon } from "@global/components/ui";
+import { Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
+import { backHeaderOptions } from "@global/utils/headerItems";
 
 import { formatDateLong } from "../model/format";
 import type { Plan } from "../model/types";
@@ -16,10 +18,13 @@ type PlanLockedScreenProps = {
 // 内容（タイトル・日にち・メモ）は薄く見せて閲覧だけできる。
 export function PlanLockedScreen({ plan }: PlanLockedScreenProps) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <View testID="plan-locked-screen" className="flex-1 bg-linen">
-      <BackHeader testID="plan-locked-back-button" />
+      <Stack.Screen
+        options={backHeaderOptions({ onBack: () => router.back() })}
+      />
       <View className="px-7 pt-6">
         <Text className="text-2xl font-black leading-9 text-ink">
           {plan.title}

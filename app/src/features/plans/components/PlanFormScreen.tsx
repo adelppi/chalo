@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,9 +15,10 @@ import {
   calendarEventFieldsChanged,
   useSyncPlanToCalendar,
 } from "@features/calendar";
-import { BackHeader, Button, Icon, type IconName } from "@global/components/ui";
+import { Button, Icon, type IconName } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
+import { backHeaderOptions } from "@global/utils/headerItems";
 
 import { usePlan } from "../hooks/usePlan";
 import { useCreatePlan, useUpdatePlan } from "../hooks/usePlanMutations";
@@ -147,7 +148,9 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
       className="flex-1 bg-linen"
       behavior="padding"
     >
-      <BackHeader testID={`${screenName}-back-button`} />
+      <Stack.Screen
+        options={backHeaderOptions({ onBack: () => router.back() })}
+      />
       <ScrollView
         className="flex-1"
         keyboardShouldPersistTaps="handled"

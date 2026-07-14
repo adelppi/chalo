@@ -4,9 +4,10 @@ import { palette } from "@global/constants/palette";
 
 // サインイン済みユーザー向けの保護グループ。
 // 作成・編集はシートではなく1枚の画面へのプッシュ遷移（デザイン TURN 5・C-3/D-2）。
-// 戻るはどの画面もデザインどおり画面内の BackHeader が描く（iOS 26 の Liquid Glass
-// ヘッダーだとボタンがガラスのカプセルに繋がりデザインと乖離するため。
-// 戻るスワイプはネイティブのまま有効）。
+// 戻る・編集・削除が要る画面は、既定の headerShown: false を各画面内の
+// Stack.Screen options（global/utils/headerItems）で headerShown: true に上書きし、
+// react-native-screens のネイティブバーボタンAPIで描く（Issue #28）。
+// 戻るスワイプはネイティブのまま有効。
 export default function AppLayout() {
   return (
     <Stack

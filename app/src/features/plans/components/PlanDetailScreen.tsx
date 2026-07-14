@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -16,17 +16,11 @@ import {
   useRemovePlanFromCalendar,
 } from "@features/calendar";
 import { PawPrint } from "@global/components/shared";
-import {
-  Avatar,
-  BackHeader,
-  Button,
-  Chip,
-  Dialog,
-  Icon,
-} from "@global/components/ui";
+import { Avatar, Button, Chip, Dialog, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useAuthStore } from "@global/store/useAuthStore";
 import { useToastStore } from "@global/store/useToastStore";
+import { backHeaderOptions, iconHeaderItem } from "@global/utils/headerItems";
 
 import { usePlan } from "../hooks/usePlan";
 import { useClosePlan, useDeletePlan } from "../hooks/usePlanMutations";
@@ -160,29 +154,27 @@ function PlanDetail({
         style={{ position: "absolute", right: -26, top: 96 }}
       />
 
-      {/* D-1：戻る・編集・削除は画面内の透明な円形ボタンで描く。
-          編集と削除は 44px のタップ領域を 10px 空けて並べる（くっつけない）。 */}
-      <BackHeader
-        testID="plan-detail-back-button"
-        right={
-          <View className="flex-row items-center gap-2.5">
-            <Pressable
-              testID="plan-detail-edit-button"
-              onPress={handleEdit}
-              disabled={startEditing.isPending}
-              className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
-            >
-              <Icon name="pencil" size={20} color={palette.ink} />
-            </Pressable>
-            <Pressable
-              testID="plan-detail-delete-button"
-              onPress={() => setDeleteDialogVisible(true)}
-              className="h-11 w-11 items-center justify-center rounded-full active:opacity-60"
-            >
-              <Icon name="trash" size={20} color={palette.rust} />
-            </Pressable>
-          </View>
-        }
+      {/* D-1：戻る・編集・削除はネイティブヘッダーのバーボタンで描く。
+          編集・削除は sharesBackground: false で個別の背景にし、
+          iOS 26 の Liquid Glass でも1つのカプセルに融合しないようにする。 */}
+      <Stack.Screen
+        options={backHeaderOptions({
+          onBack: () => router.back(),
+          right: [
+            iconHeaderItem({
+              symbol: "pencil",
+              onPress: handleEdit,
+              accessibilityLabel: "編集",
+              disabled: startEditing.isPending,
+            }),
+            iconHeaderItem({
+              symbol: "trash",
+              onPress: () => setDeleteDialogVisible(true),
+              accessibilityLabel: "削除",
+              tintColor: palette.rust,
+            }),
+          ],
+        })}
       />
 
       <ScrollView
@@ -308,7 +300,7 @@ function PlanNotFound() {
 
   return (
     <View testID="plan-not-found-screen" className="flex-1 bg-linen">
-      <BackHeader testID="plan-not-found-back-button" onBack={goBackToList} />
+      <Stack.Screen options={backHeaderOptions({ onBack: goBackToList })} />
       <View className="flex-1 items-center justify-center px-11">
         <PawPrint size={56} opacity={0.25} rotate="-14deg" />
         <Text className="mt-5 text-center text-lg font-black text-ink">
