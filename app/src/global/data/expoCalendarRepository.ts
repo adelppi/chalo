@@ -22,6 +22,19 @@ function toPermission(
   return "denied";
 }
 
+// ネイティブ側の Event は location に null を受け付けない（SDK 57 legacy）。
+// 空文字にすると「場所なし」になり、更新時のクリアも兼ねる。
+function toEventDetails(event: CalendarEventInput) {
+  return {
+    title: event.title,
+    notes: event.notes,
+    location: event.location ?? "",
+    startDate: event.startDate,
+    endDate: event.endDate,
+    allDay: event.allDay,
+  };
+}
+
 export const expoCalendarRepository: DeviceCalendarRepository = {
   async getPermission(): Promise<CalendarPermission> {
     return toPermission(await Calendar.getCalendarPermissionsAsync());
@@ -58,11 +71,11 @@ export const expoCalendarRepository: DeviceCalendarRepository = {
     calendarId: string,
     event: CalendarEventInput,
   ): Promise<string> {
-    return Calendar.createEventAsync(calendarId, event);
+    return Calendar.createEventAsync(calendarId, toEventDetails(event));
   },
 
   async updateEvent(eventId: string, event: CalendarEventInput): Promise<void> {
-    await Calendar.updateEventAsync(eventId, event);
+    await Calendar.updateEventAsync(eventId, toEventDetails(event));
   },
 
   async deleteEvent(eventId: string): Promise<void> {
