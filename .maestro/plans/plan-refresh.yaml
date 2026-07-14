@@ -46,8 +46,9 @@ appId: com.adelppi.chalo
     text: "引っ張って更新テスト.*"
 
 # おわったプランで pull-to-refresh（空でも引っ張れる）
+# 戻るはネイティブヘッダーのバーボタン(testID不可)のため text で参照する
 - tapOn:
-    id: "plan-detail-back-button"
+    text: "戻る"
 - assertVisible:
     id: "home-screen"
 - tapOn:
@@ -70,7 +71,7 @@ appId: com.adelppi.chalo
 - assertVisible:
     id: "plan-detail-screen"
 - tapOn:
-    id: "plan-detail-delete-button"
+    text: "削除"
 - tapOn:
     id: "plan-detail-delete-confirm-button"
 - assertVisible:

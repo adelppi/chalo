@@ -31,7 +31,6 @@ export function ExportPlansDialog({
         cancelTestID="settings-export-cancel-button"
         confirm={{
           label: "書き出す",
-          icon: "tray-up",
           onPress: () => setStep("done"),
           testID: "settings-export-confirm-button",
         }}

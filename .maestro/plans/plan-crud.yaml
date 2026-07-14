@@ -29,8 +29,9 @@ appId: com.adelppi.chalo
     text: "たこ焼きパーティー.*"
 - assertVisible:
     id: "plan-detail-screen"
+# 編集・削除はネイティブヘッダーのバーボタン(testID不可)のため text で参照する
 - tapOn:
-    id: "plan-detail-edit-button"
+    text: "編集"
 - assertVisible:
     id: "plan-edit-screen"
 - tapOn:
@@ -73,7 +74,7 @@ appId: com.adelppi.chalo
 - assertVisible:
     id: "plan-detail-screen"
 - tapOn:
-    id: "plan-detail-delete-button"
+    text: "削除"
 - tapOn:
     id: "plan-detail-delete-confirm-button"
 - assertVisible:

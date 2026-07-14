@@ -1,16 +1,19 @@
+import { Stack, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
-import { BackHeader, Button, Chip } from "@global/components/ui";
+import { Button, Chip } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
+import { backHeaderOptions } from "@global/utils/headerItems";
 
 import { useIssueInviteCode } from "../hooks/usePairingMutations";
 import { usePairState } from "../hooks/usePairState";
 import { formatRemainingLabel } from "../model/invite";
 
-// 招待コード発行（B-2）。未発行なら開いたときに発行する。戻るは画面内の BackHeader。
+// 招待コード発行（B-2）。未発行なら開いたときに発行する。戻るはネイティブヘッダー。
 export function InviteCodeScreen() {
+  const router = useRouter();
   const showToast = useToastStore((state) => state.show);
   const { data: pairState } = usePairState();
   const issueInviteCode = useIssueInviteCode();
@@ -33,7 +36,9 @@ export function InviteCodeScreen() {
 
   return (
     <View testID="pairing-invite-screen" className="flex-1 bg-linen">
-      <BackHeader testID="pairing-invite-back-button" />
+      <Stack.Screen
+        options={backHeaderOptions({ onBack: () => router.back() })}
+      />
       <View className="gap-2.5 px-7 pt-5">
         <Text className="text-[26px] font-black leading-10 text-ink">
           招待コードが{"\n"}できました

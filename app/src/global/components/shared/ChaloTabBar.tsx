@@ -58,6 +58,7 @@ export function ChaloTabBar({ state, descriptors, navigation }: TabBarProps) {
                 name={TAB_ICONS[route.name] ?? "paw"}
                 size={route.name === "index" ? 26 : 22}
                 color={color}
+                filled={focused}
               />
             </View>
             <Text
