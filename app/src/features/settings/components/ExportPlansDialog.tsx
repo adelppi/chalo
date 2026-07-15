@@ -1,25 +1,51 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Text, View } from "react-native";
 
+import {
+  countPlanStatuses,
+  EXPORT_FILE_NAME,
+  type Plan,
+} from "@features/plans";
 import { Dialog, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
+import { useToastStore } from "@global/store/useToastStore";
+
+import { useExportPlans } from "../hooks/useExportPlans";
 
 type ExportPlansDialogProps = {
   visible: boolean;
-  /** 「プラン 12件・おしまい 8件」の件数 */
-  counts: { active: number; done: number };
+  /** 書き出す全プラン（自分＋相手、ソロなら自分のみ） */
+  plans: Plan[];
   onClose: () => void;
 };
 
 // プランを書き出すダイアログ（F-1b）。確認 → 完了の2段階。
-// モック段階のため、実際のファイル書き出し・共有は行わない。
+// 「書き出す」でテキストを整形し、「共有」で .txt を iOS 共有シートへ渡す。
+// 設定（E-1）とロック画面（partner-left）で共通。
 // 開くたびに親が新しくマウントする前提（step は confirm から始まる）。
 export function ExportPlansDialog({
   visible,
-  counts,
+  plans,
   onClose,
 }: ExportPlansDialogProps) {
   const [step, setStep] = useState<"confirm" | "done">("confirm");
+  const showToast = useToastStore((state) => state.show);
+  const exportPlans = useExportPlans();
+
+  const counts = useMemo(() => countPlanStatuses(plans, new Date()), [plans]);
+
+  const handleShare = () => {
+    if (exportPlans.isPending) {
+      return;
+    }
+    exportPlans.mutate(plans, {
+      onError: () => {
+        showToast("共有できませんでした。もういちどためしてください。", {
+          variant: "error",
+        });
+      },
+    });
+  };
 
   if (step === "confirm") {
     return (
@@ -59,14 +85,14 @@ export function ExportPlansDialog({
           <Icon name="check-circle" size={17} color={palette.plum} />
         </View>
       }
-      message="「chalo-plans.txt」を用意しました。共有して保存しておきましょう。"
+      message={`「${EXPORT_FILE_NAME}」を用意しました。共有して保存しておきましょう。`}
       cancelLabel="とじる"
       onCancel={onClose}
       cancelTestID="settings-export-close-button"
       confirm={{
         label: "共有",
         icon: "share",
-        onPress: onClose,
+        onPress: handleShare,
         testID: "settings-export-share-button",
       }}
     />

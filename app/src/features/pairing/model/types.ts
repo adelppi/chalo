@@ -18,6 +18,10 @@ export type PairState =
       /** 自分の表示名（B-5 の名前ピルに使う） */
       myName: string;
       partnerName: string;
+    }
+  | {
+      /** パートナーがアカウント削除済み。全画面ロックに入る（domain/pairing.md「残った側（B）の状態」） */
+      status: "partner-left";
     };
 
 /** 招待コード入力のエラー種別（F-3） */

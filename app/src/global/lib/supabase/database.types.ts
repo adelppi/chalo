@@ -220,6 +220,10 @@ export type Database = {
     };
     Functions: {
       current_pair_id: { Args: never; Returns: string };
+      delete_account_data: {
+        Args: { p_attribution: string; p_profile_id: string };
+        Returns: undefined;
+      };
       redeem_invite_code: {
         Args: { p_code: string };
         Returns: {

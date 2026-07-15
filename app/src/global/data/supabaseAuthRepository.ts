@@ -187,4 +187,44 @@ export const supabaseAuthRepository: AuthRepository = {
       throw error;
     }
   },
+
+  async deleteAccount(): Promise<boolean> {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) {
+      throw userError;
+    }
+
+    // Apple 連携ユーザーはトークン失効（App Store Guideline 5.1.1(v)）のために
+    // 再認証して authorization code を取り直す（保存済みトークンは持たないため。adr/0018）。
+    // ユーザーが Apple のシートを閉じたら削除は行わない。
+    let appleAuthorizationCode: string | null = null;
+    const hasApple = userData.user?.identities?.some(
+      (identity) => identity.provider === "apple",
+    );
+    if (hasApple) {
+      try {
+        const credential = await AppleAuthentication.signInAsync();
+        appleAuthorizationCode = credential.authorizationCode;
+      } catch (error) {
+        if (isAppleCancellation(error)) {
+          return false;
+        }
+        throw error;
+      }
+    }
+
+    // 退会処理の本体はサーバ側（Edge Function delete-account）。
+    // 対象ユーザーは JWT から特定されるため body には含めない。
+    const { error } = await supabase.functions.invoke("delete-account", {
+      body: { apple_authorization_code: appleAuthorizationCode },
+    });
+    if (error) {
+      throw error;
+    }
+
+    // auth.users は削除済みでサーバ側セッションは失効している。
+    // ローカルセッションの破棄だけ行い、失敗（既に無効等）は無視する。
+    await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+    return true;
+  },
 };

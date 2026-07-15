@@ -11,5 +11,6 @@ export { usePlans } from "./hooks/usePlans";
 
 // データ契約（Repository interface とドメイン型）。global/data のフェイク実装が参照する。
 export type { PlanRepository } from "./data";
+export { buildPlansExportText, EXPORT_FILE_NAME } from "./model/exportText";
 export { countPlanStatuses } from "./model/sections";
 export type { Plan, PlanDraft, PlanStatus } from "./model/types";

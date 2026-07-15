@@ -1,14 +1,14 @@
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useSignOut } from "@features/auth";
+import { useDeleteAccount, useSignOut } from "@features/auth";
 import { CalendarPermissionRow, DefaultCalendarRow } from "@features/calendar";
 import { NotificationPermissionRow } from "@features/notifications";
 import { usePairState } from "@features/pairing";
-import { countPlanStatuses, usePlans } from "@features/plans";
+import { usePlans } from "@features/plans";
 import { Dialog, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
@@ -29,13 +29,9 @@ export function SettingsScreen() {
   const { data: pairState } = usePairState();
   const { data: plans } = usePlans();
   const signOut = useSignOut();
+  const deleteAccount = useDeleteAccount();
 
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
-
-  const counts = useMemo(
-    () => countPlanStatuses(plans ?? [], new Date()),
-    [plans],
-  );
 
   const isSolo = pairState?.status === "solo";
   const inviteCode = pairState?.status === "solo" ? pairState.inviteCode : null;
@@ -52,6 +48,20 @@ export function SettingsScreen() {
         showToast("ログアウトできませんでした。もういちどためしてください。", {
           variant: "error",
         });
+      },
+    });
+  };
+
+  // アカウント削除（F-1・adr/0018）。成功時のサインイン画面への遷移は
+  // ローカルサインアウト → protected routes が担う。失敗はトースト＋再試行。
+  const handleDeleteAccount = () => {
+    closeDialog();
+    deleteAccount.mutate(undefined, {
+      onError: () => {
+        showToast(
+          "アカウントを削除できませんでした。もういちどためしてください。",
+          { variant: "error" },
+        );
       },
     });
   };
@@ -185,7 +195,7 @@ export function SettingsScreen() {
 
       {/* F-1b プランを書き出す（開くたびに新しくマウントして状態をリセット） */}
       {openDialog === "export" ? (
-        <ExportPlansDialog visible counts={counts} onClose={closeDialog} />
+        <ExportPlansDialog visible plans={plans ?? []} onClose={closeDialog} />
       ) : null}
 
       {/* F-1c ログを送信（同上） */}
@@ -207,7 +217,7 @@ export function SettingsScreen() {
         }}
       />
 
-      {/* F-1 アカウント削除（モック段階のため実際の削除は行わない） */}
+      {/* F-1 アカウント削除（adr/0018） */}
       <Dialog
         visible={openDialog === "delete-account"}
         title="アカウントを削除しますか？"
@@ -221,7 +231,7 @@ export function SettingsScreen() {
         confirm={{
           label: "削除する",
           variant: "destructive",
-          onPress: closeDialog,
+          onPress: handleDeleteAccount,
           testID: "settings-delete-account-confirm-button",
         }}
       />

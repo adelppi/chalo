@@ -12,10 +12,12 @@ export {
   evaluateEditLock,
   type EditLockState,
 } from "./editLock";
+export { buildPlansExportText, EXPORT_FILE_NAME } from "./exportText";
 export { CLOSED_GREETINGS, pickClosedGreeting } from "./greeting";
 export {
   formatClosedLabel,
   formatCreatedByLabel,
+  formatDateFull,
   formatDateLong,
   formatDateShort,
   formatDeadlineLabel,

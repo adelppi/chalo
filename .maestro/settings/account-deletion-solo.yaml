@@ -1,0 +1,37 @@
+# アカウント削除（ソロ利用）のハッピーパス（Issue #34・adr/0018）。
+# 設定 → アカウントを削除する → 確認ダイアログ → 削除 → サインイン画面へ戻る。
+# 前提: アプリがソロ利用のテストユーザーでサインイン済みであること（外部認証は自動化しない）。
+# 注意: 実行するとそのテストユーザーは Supabase から完全に消える（使い捨てユーザーで実行する）。
+# サーバ側の消滅（plans / invites / push_tokens / profiles / auth.users）は SQL で別途確認する（adr/0014 の範囲外）。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "tab-settings"
+- assertVisible:
+    id: "settings-screen"
+
+# 削除ダイアログを開いて、いったんキャンセル（誤操作で消えないこと）
+- scrollUntilVisible:
+    element:
+      id: "settings-delete-account-button"
+- tapOn:
+    id: "settings-delete-account-button"
+- assertVisible:
+    text: "アカウントを削除しますか？"
+- tapOn:
+    id: "settings-delete-account-cancel-button"
+- assertVisible:
+    id: "settings-screen"
+
+# 本削除 → ローカルセッションが破棄されサインイン画面へ
+- tapOn:
+    id: "settings-delete-account-button"
+- tapOn:
+    id: "settings-delete-account-confirm-button"
+- extendedWaitUntil:
+    visible:
+      id: "auth-sign-in-screen"
+    timeout: 15000

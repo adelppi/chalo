@@ -15,6 +15,14 @@ export function formatDateLong(date: string, time?: string | null): string {
   return time ? `${base}${time}` : base;
 }
 
+/** 「2026年7月12日（日）10:00」（書き出しなど年が要る場面。時刻なしなら日付のみ） */
+export function formatDateFull(date: string, time?: string | null): string {
+  const [year] = date.split("-").map(Number);
+  const { month, day, weekday } = parts(date);
+  const base = `${year}年${month}月${day}日（${weekday}）`;
+  return time ? `${base}${time}` : base;
+}
+
 /** 「7/12（日）10:00」（編集画面の行の値） */
 export function formatDateShort(date: string, time?: string | null): string {
   const { month, day, weekday } = parts(date);
