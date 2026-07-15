@@ -96,26 +96,43 @@ export const expoNotificationRepository: DeviceNotificationRepository = {
     return () => subscription.remove();
   },
 
-  async getExpoPushToken(): Promise<string | null> {
+  subscribeToExpoPushToken(
+    listener: (token: string | null) => void,
+  ): () => void {
     const projectId = Constants.expoConfig?.extra?.eas?.projectId as
       string | undefined;
     if (!projectId) {
-      return null;
+      listener(null);
+      return () => {};
     }
-    try {
-      const { data } = await Notifications.getExpoPushTokenAsync({
-        projectId,
-      });
-      return data;
-    } catch (error) {
-      // 実機の権限拒否・シミュレータ等、取得できない場合がある。致命としない。
-      console.warn("Expo push token を取得できませんでした", error);
-      return null;
-    }
-  },
 
-  addPushTokenChangeListener(listener: () => void): () => void {
-    const subscription = Notifications.addPushTokenListener(() => listener());
+    const fetchAndNotify = async (
+      devicePushToken?: Notifications.DevicePushToken,
+    ) => {
+      try {
+        const { data } = await Notifications.getExpoPushTokenAsync(
+          devicePushToken ? { projectId, devicePushToken } : { projectId },
+        );
+        listener(data);
+      } catch (error) {
+        // 実機の権限拒否・シミュレータ等、取得できない場合がある。致命としない。
+        console.warn("Expo push token を取得できませんでした", error);
+        listener(null);
+      }
+    };
+
+    void fetchAndNotify();
+
+    // 注意: 端末の push token 変更イベント（addPushTokenListener）の中で
+    // devicePushToken を渡さずに getExpoPushTokenAsync を呼ぶと、内部で
+    // 端末トークンを取得し直す際にこのイベント自体を再度発火させてしまい、
+    // 無限ループになる（expo-notifications 自身の注意書き。TokenEmitter 参照）。
+    // 受け取った devicePushToken をそのまま渡すことで re-fetch を避ける。
+    const subscription = Notifications.addPushTokenListener(
+      (devicePushToken) => {
+        void fetchAndNotify(devicePushToken);
+      },
+    );
     return () => subscription.remove();
   },
 };

@@ -5,9 +5,10 @@ import { useNotificationsContext } from "./NotificationsProvider";
 
 // トークン登録（domain/notifications.md 1・adr/0007 系統2）。
 // 通知権限が許可されている場合に Expo push token を取得して push_tokens に
-// upsert する。端末の push token 更新（addPushTokenChangeListener）でも
-// 取得し直して保存を更新する。失敗は静かに記録し、致命としない
-// （non-functional.md「サーバ側 push の送信失敗はユーザーに見せない」と同じ方針）。
+// upsert する。端末の push token 更新でも取得し直して保存を更新する
+// （subscribeToExpoPushToken が re-fetch の無限ループを避ける責務を持つ）。
+// 失敗は静かに記録し、致命としない（non-functional.md「サーバ側 push の
+// 送信失敗はユーザーに見せない」と同じ方針）。
 
 /**
  * @param profileId サインイン中ユーザーの id。未サインインなら null
@@ -26,24 +27,17 @@ export function usePushTokenRegistration(
     }
     let cancelled = false;
 
-    const register = async () => {
-      const token = await deviceNotificationRepository.getExpoPushToken();
-      if (!token || cancelled) {
-        return;
-      }
-      try {
-        await pushTokenRepository.upsertToken(profileId, token);
-      } catch (error) {
-        console.warn("push token を保存できませんでした", error);
-      }
-    };
-
-    void register();
-    const unsubscribe = deviceNotificationRepository.addPushTokenChangeListener(
-      () => {
-        void register();
+    const unsubscribe = deviceNotificationRepository.subscribeToExpoPushToken(
+      (token) => {
+        if (!token || cancelled) {
+          return;
+        }
+        pushTokenRepository.upsertToken(profileId, token).catch((error) => {
+          console.warn("push token を保存できませんでした", error);
+        });
       },
     );
+
     return () => {
       cancelled = true;
       unsubscribe();

@@ -33,15 +33,18 @@ export interface DeviceNotificationRepository {
     listener: (url: string | null) => void,
   ): () => void;
 
-  /** 現在の Expo push token を取得する(取得できない・権限なし等は null) */
-  getExpoPushToken(): Promise<string | null>;
-
   /**
-   * 端末の push token が更新されたときの通知(引数なし。呼び出し側は
-   * getExpoPushToken() を呼び直して最新のトークンを取る。生の native token は
-   * Expo push token と別物のため、この抽象では外へ出さない)。解除関数を返す。
+   * Expo push token の初期値取得＋更新の購読をまとめて行う。取得できるたびに
+   * listener を呼ぶ(取得できない・権限なし等は null)。解除関数を返す。
+   *
+   * 呼び出し側(getExpoPushTokenAsync 相当)を購読コールバックの中で単独に
+   * 呼び直すと、内部で端末の push token 変更イベントを再度発火させて
+   * 無限ループになる(expo-notifications 自身の既知の注意点)。実装側で
+   * 受け取った生の token を使って re-fetch を避ける責務を持つ。
    */
-  addPushTokenChangeListener(listener: () => void): () => void;
+  subscribeToExpoPushToken(
+    listener: (token: string | null) => void,
+  ): () => void;
 }
 
 /** push_tokens(クラウド)への登録。Repository interface(adr/0003) */
