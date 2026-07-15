@@ -17,7 +17,7 @@ import {
 import { PairingProvider } from "@features/pairing";
 import { PlansProvider } from "@features/plans";
 import { SettingsProvider } from "@features/settings";
-import { SplashLoading, ToastHost } from "@global/components/shared";
+import { ToastHost } from "@global/components/shared";
 import { queryClient } from "@global/config/queryClient";
 import {
   asyncStorageCalendarStorage,
@@ -33,8 +33,7 @@ import {
 } from "@global/data";
 import { useAuthStore } from "@global/store/useAuthStore";
 
-// JSマウント前にネイティブスプラッシュが自動で消えないようにする（Issue #8）。
-// 実際に隠すのは RootNavigator のマウント時（Issue #36・SplashLoading へ引き継ぐ）。
+// セッション確認が終わるまでスプラッシュを保持する（Issue #8）。
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
@@ -55,13 +54,14 @@ function RootNavigator() {
   );
 
   useEffect(() => {
-    // ネイティブスプラッシュ（静止画）はここで即座に隠し、以降は
-    // SplashLoading（GIFアニメーション）に引き継ぐ（Issue #36）。
-    SplashScreen.hideAsync();
-  }, []);
+    if (ready) {
+      SplashScreen.hideAsync();
+    }
+  }, [ready]);
 
   if (!ready) {
-    return <SplashLoading />;
+    // スプラッシュ保持中。ナビゲータはまだ描画しない。
+    return null;
   }
 
   // Expo Router の protected routes でサインイン状態に応じて出し分ける。
