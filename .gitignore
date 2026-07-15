@@ -2,7 +2,9 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-Icon
+# Finderのカスタムフォルダアイコン(実体は "Icon\r" で終わるファイル名)専用のパターン。
+# 大文字小文字を区別しないファイルシステムでは単なる "Icon" だと `icon` という名前のディレクトリ(例: app/src/assets/icon/)まで誤って除外してしまうため、`?` で1文字分の制御文字要件を必須にする。
+Icon?
 ._*
 
 # Windows
