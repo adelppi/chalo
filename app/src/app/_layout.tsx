@@ -11,6 +11,8 @@ import { CalendarProvider } from "@features/calendar";
 import {
   NotificationsProvider,
   useNotificationObserver,
+  useNotificationPermission,
+  usePushTokenRegistration,
 } from "@features/notifications";
 import { PairingProvider } from "@features/pairing";
 import { PlansProvider } from "@features/plans";
@@ -26,19 +28,30 @@ import {
   supabasePairingRepository,
   supabasePlanRepository,
   supabaseProfileRepository,
+  supabasePushTokenRepository,
   supabaseSettingsRepository,
 } from "@global/data";
+import { useAuthStore } from "@global/store/useAuthStore";
 
 // セッション確認が終わるまでスプラッシュを保持する（Issue #8）。
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
   const status = useAuthStatus();
+  const userId = useAuthStore((state) => state.userId);
   const ready = status !== "loading";
 
   // 通知タップ→プラン詳細へのディープリンク（domain/notifications.md）。
   // ナビゲータのマウント前に遷移できないため ready を待つ。
   useNotificationObserver(ready);
+
+  // 作成通知（サーバ push）の宛先登録。権限が許可されていれば
+  // Expo push token を push_tokens に upsert する（domain/notifications.md 1）。
+  const { data: notificationPermission } = useNotificationPermission();
+  usePushTokenRegistration(
+    status === "signedIn" ? userId : null,
+    notificationPermission,
+  );
 
   useEffect(() => {
     if (ready) {
@@ -86,6 +99,7 @@ export default function RootLayout() {
                   notificationStorageRepository={
                     asyncStorageNotificationStorage
                   }
+                  pushTokenRepository={supabasePushTokenRepository}
                 >
                   <StatusBar style="dark" />
                   <RootNavigator />

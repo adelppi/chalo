@@ -1,3 +1,4 @@
+import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 
 import type {
@@ -92,6 +93,29 @@ export const expoNotificationRepository: DeviceNotificationRepository = {
         );
       },
     );
+    return () => subscription.remove();
+  },
+
+  async getExpoPushToken(): Promise<string | null> {
+    const projectId = Constants.expoConfig?.extra?.eas?.projectId as
+      string | undefined;
+    if (!projectId) {
+      return null;
+    }
+    try {
+      const { data } = await Notifications.getExpoPushTokenAsync({
+        projectId,
+      });
+      return data;
+    } catch (error) {
+      // 実機の権限拒否・シミュレータ等、取得できない場合がある。致命としない。
+      console.warn("Expo push token を取得できませんでした", error);
+      return null;
+    }
+  },
+
+  addPushTokenChangeListener(listener: () => void): () => void {
+    const subscription = Notifications.addPushTokenListener(() => listener());
     return () => subscription.remove();
   },
 };

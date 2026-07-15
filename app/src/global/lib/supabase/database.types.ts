@@ -185,6 +185,35 @@ export type Database = {
           },
         ];
       };
+      push_tokens: {
+        Row: {
+          expo_push_token: string;
+          id: string;
+          profile_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          expo_push_token: string;
+          id?: string;
+          profile_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          expo_push_token?: string;
+          id?: string;
+          profile_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "push_tokens_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;

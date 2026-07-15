@@ -6,7 +6,9 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ["dist/*"],
+    // supabase/functions は Deno ランタイム（別 lint 対象。jsr:/npm: 解決や Deno
+    // グローバルを ESLint は理解できない）。
+    ignores: ["dist/*", "supabase/functions/**"],
   },
   {
     rules: {

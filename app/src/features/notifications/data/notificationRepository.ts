@@ -32,6 +32,22 @@ export interface DeviceNotificationRepository {
   addNotificationResponseListener(
     listener: (url: string | null) => void,
   ): () => void;
+
+  /** 現在の Expo push token を取得する(取得できない・権限なし等は null) */
+  getExpoPushToken(): Promise<string | null>;
+
+  /**
+   * 端末の push token が更新されたときの通知(引数なし。呼び出し側は
+   * getExpoPushToken() を呼び直して最新のトークンを取る。生の native token は
+   * Expo push token と別物のため、この抽象では外へ出さない)。解除関数を返す。
+   */
+  addPushTokenChangeListener(listener: () => void): () => void;
+}
+
+/** push_tokens(クラウド)への登録。Repository interface(adr/0003) */
+export interface PushTokenRepository {
+  /** 端末の Expo push token を自分のプロフィールに紐づけて保存する(冪等) */
+  upsertToken(profileId: string, expoPushToken: string): Promise<void>;
 }
 
 /** 端末ローカルの保存（planId → 予約識別子の対応。data-model.md「期限通知の予約」） */

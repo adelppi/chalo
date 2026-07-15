@@ -13,12 +13,14 @@ export {
   useSyncDeadlineNotification,
 } from "./hooks/useDeadlineNotificationMutations";
 export { useNotificationObserver } from "./hooks/useNotificationObserver";
+export { usePushTokenRegistration } from "./hooks/usePushTokenRegistration";
 export { deadlineNotificationFieldsChanged } from "./model/deadline";
 
 // データ契約（Repository interface とドメイン型）。global/data の実装が参照する。
 export type {
   DeviceNotificationRepository,
   NotificationStorageRepository,
+  PushTokenRepository,
 } from "./data";
 export { extractNotificationUrl } from "./model/deadline";
 export {
