@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useRequestNotificationPermission } from "@features/notifications";
 import { ChaloFace } from "@global/components/shared";
 import { Button, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
@@ -9,17 +10,24 @@ import { palette } from "@global/constants/palette";
 import { usePairState } from "../hooks/usePairState";
 
 // 通知プライミング（B-6。ペア成立直後の JIT）。
-// モック段階のため、どちらのボタンも実際の通知許可は要求せずに閉じるだけ。
+// iOS のシステムダイアログは実質1回しか出せないため、「許可する」を選んだ
+// 前向きなときだけ実要求する。「あとで」は要求せず閉じる（domain/onboarding.md）。
 export function NotificationPrimingScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { data: pairState } = usePairState();
+  const requestPermission = useRequestNotificationPermission();
 
   const partnerName =
     pairState?.status === "paired" ? pairState.partnerName : "相手";
 
   const finish = () => {
     router.dismissAll();
+  };
+
+  const handleAllow = () => {
+    // 許可・拒否のどちらを選んでも画面は閉じる（結果は設定 E-1 で確認できる）
+    requestPermission.mutate(undefined, { onSettled: finish });
   };
 
   return (
@@ -47,7 +55,8 @@ export function NotificationPrimingScreen() {
         <Button
           testID="notification-priming-allow-button"
           label="許可する"
-          onPress={finish}
+          onPress={handleAllow}
+          disabled={requestPermission.isPending}
         />
         <Button
           testID="notification-priming-later-button"

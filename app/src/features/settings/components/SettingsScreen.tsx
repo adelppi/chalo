@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useSignOut } from "@features/auth";
 import { CalendarPermissionRow, DefaultCalendarRow } from "@features/calendar";
+import { NotificationPermissionRow } from "@features/notifications";
 import { usePairState } from "@features/pairing";
 import { countPlanStatuses, usePlans } from "@features/plans";
 import { Dialog, Icon } from "@global/components/ui";
@@ -136,10 +137,10 @@ export function SettingsScreen() {
           </>
         ) : null}
 
-        {/* おしらせ・カレンダー（通知はモック段階、カレンダーは実働） */}
+        {/* おしらせ・カレンダー */}
         <SectionLabel label="おしらせ・カレンダー" />
         <View className="overflow-hidden rounded-field bg-paper shadow-card">
-          <PermissionRow label="通知" />
+          <NotificationPermissionRow />
           <CalendarPermissionRow />
           <DefaultCalendarRow />
         </View>
@@ -278,18 +279,5 @@ function SettingsRow({
         ) : null}
       </View>
     </Pressable>
-  );
-}
-
-// 通知の許可行（E-1）。モック段階は「許可する」ピルの表示のみ
-//（カレンダーの行は @features/calendar の実働コンポーネントを使う）。
-function PermissionRow({ label }: { label: string }) {
-  return (
-    <View className="flex-row items-center justify-between border-b border-sand px-[18px] py-3.5">
-      <Text className="text-[17px] font-medium text-ink">{label}</Text>
-      <View className="rounded-full bg-plum px-[15px] py-[7px]">
-        <Text className="text-[13px] font-semibold text-blush">許可する</Text>
-      </View>
-    </View>
   );
 }

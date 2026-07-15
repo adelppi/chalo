@@ -1,5 +1,7 @@
 export { asyncStorageCalendarStorage } from "./asyncStorageCalendarStorage";
+export { asyncStorageNotificationStorage } from "./asyncStorageNotificationStorage";
 export { expoCalendarRepository } from "./expoCalendarRepository";
+export { expoNotificationRepository } from "./expoNotificationRepository";
 export { supabaseAuthRepository } from "./supabaseAuthRepository";
 export { supabasePairingRepository } from "./supabasePairingRepository";
 export { supabasePlanRepository } from "./supabasePlanRepository";

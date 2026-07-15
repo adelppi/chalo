@@ -1,0 +1,195 @@
+# 期限通知のライフサイクル（Issue #30。domain/notifications.md「期限通知のライフサイクル」）。
+# 予約そのもの（端末ローカル通知）は Maestro から観測できないため、予約の組み直しを
+# 引き起こす各操作（期限追加・期限変更・日付追加・日付クリア・期限削除・手動おしまい・
+# プラン削除・2週間未満の期限）が UI から通しで成立することを検証する。
+# 予約日時・送らない条件の算出は Jest（features/notifications/model）が担保する（adr/0014）。
+# 前提: アプリがサインイン済みであること。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+
+# 日付はテスト実行日から相対で組み立てる（翌月15日＝常に2週間以上先・翌日＝常に2週間未満）
+- evalScript: ${output.deadlineFirst = (function(){ var d = new Date(); var y = d.getFullYear(); var m = d.getMonth() + 2; if (m > 12) { m -= 12; y += 1; } return y + '-' + ('0' + m).slice(-2) + '-15'; })()}
+- evalScript: ${output.deadlineSecond = output.deadlineFirst.slice(0, 8) + '22'}
+- evalScript: ${output.tomorrow = (function(){ var d = new Date(Date.now() + 86400000); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); })()}
+
+# 期限を追加（2週間以上先）→ 予約（domain: 期限を追加 → 2週間前に予約）
+- tapOn:
+    id: "home-create-button"
+- assertVisible:
+    id: "plan-create-screen"
+- tapOn:
+    id: "plan-create-title-input"
+- inputText: "期限通知テスト"
+- hideKeyboard
+- tapOn:
+    id: "plan-create-deadline-row"
+- assertVisible:
+    id: "plan-date-picker-sheet"
+- tapOn:
+    id: "plan-date-picker-next-month-button"
+- tapOn:
+    id: "plan-date-picker-day-${output.deadlineFirst}"
+- tapOn:
+    id: "plan-date-picker-confirm-button"
+- tapOn:
+    id: "plan-create-submit-button"
+- assertVisible:
+    id: "home-screen"
+# いつかいく に期限チップ（「M/15 まで」）付きで並ぶ
+- assertVisible: "期限通知テスト.*15 まで.*"
+
+# 期限を変更 → 旧予約を消して再予約
+- tapOn: "期限通知テスト.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn: "編集"
+- assertVisible:
+    id: "plan-edit-screen"
+- tapOn:
+    id: "plan-edit-deadline-row"
+# ピッカーは設定済みの期限の月で開くため、月移動は不要
+- tapOn:
+    id: "plan-date-picker-day-${output.deadlineSecond}"
+- tapOn:
+    id: "plan-date-picker-confirm-button"
+- tapOn:
+    id: "plan-edit-submit-button"
+- assertVisible:
+    id: "plan-detail-screen"
+
+# 日付（行く予定日）が入った → 予約を消す（送らない条件に合致）
+- tapOn: "編集"
+- assertVisible:
+    id: "plan-edit-screen"
+- tapOn:
+    id: "plan-edit-date-row"
+- assertVisible:
+    id: "plan-date-picker-sheet"
+# 翌日が今の月に無ければ翌月へ送る（月末実行対策）
+- runFlow:
+    when:
+      notVisible:
+        id: "plan-date-picker-day-${output.tomorrow}"
+    commands:
+      - tapOn:
+          id: "plan-date-picker-next-month-button"
+- tapOn:
+    id: "plan-date-picker-day-${output.tomorrow}"
+- tapOn:
+    id: "plan-date-picker-confirm-button"
+- tapOn:
+    id: "plan-edit-submit-button"
+- assertVisible:
+    id: "plan-detail-screen"
+
+# 日付をクリア → 期限が残っているので再予約
+- tapOn: "編集"
+- assertVisible:
+    id: "plan-edit-screen"
+- tapOn:
+    id: "plan-edit-date-row"
+- tapOn:
+    id: "plan-date-picker-clear-button"
+- tapOn:
+    id: "plan-edit-submit-button"
+- assertVisible:
+    id: "plan-detail-screen"
+
+# 期限を削除 → 予約を消す
+- tapOn: "編集"
+- assertVisible:
+    id: "plan-edit-screen"
+- tapOn:
+    id: "plan-edit-deadline-row"
+- tapOn:
+    id: "plan-date-picker-clear-button"
+- tapOn:
+    id: "plan-edit-submit-button"
+- assertVisible:
+    id: "plan-detail-screen"
+
+# 期限を設定し直してから、手動おしまい → 予約を消す（domain: 手動おしまい）
+- tapOn: "編集"
+- assertVisible:
+    id: "plan-edit-screen"
+- tapOn:
+    id: "plan-edit-deadline-row"
+- tapOn:
+    id: "plan-date-picker-next-month-button"
+- tapOn:
+    id: "plan-date-picker-day-${output.deadlineSecond}"
+- tapOn:
+    id: "plan-date-picker-confirm-button"
+- tapOn:
+    id: "plan-edit-submit-button"
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn:
+    id: "plan-detail-close-button"
+- assertVisible:
+    id: "plan-closed-screen"
+- tapOn:
+    id: "plan-closed-done-button"
+- assertVisible:
+    id: "home-screen"
+
+# プラン削除 → 予約を消す（おしまい済みプランをおわったプラン一覧から削除）
+- tapOn:
+    id: "tab-done"
+- assertVisible:
+    id: "done-screen"
+- tapOn: "期限通知テスト.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn: "削除"
+- tapOn:
+    id: "plan-detail-delete-confirm-button"
+- assertVisible:
+    id: "done-screen"
+- assertNotVisible: "期限通知テスト.*"
+
+# 期限まで2週間未満（翌日）→ そもそも予約しない（UI 上は通常どおり保存される）
+- tapOn:
+    id: "tab-plans"
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "home-create-button"
+- assertVisible:
+    id: "plan-create-screen"
+- tapOn:
+    id: "plan-create-title-input"
+- inputText: "映画前売り券"
+- hideKeyboard
+- tapOn:
+    id: "plan-create-deadline-row"
+- runFlow:
+    when:
+      notVisible:
+        id: "plan-date-picker-day-${output.tomorrow}"
+    commands:
+      - tapOn:
+          id: "plan-date-picker-next-month-button"
+- tapOn:
+    id: "plan-date-picker-day-${output.tomorrow}"
+- tapOn:
+    id: "plan-date-picker-confirm-button"
+- tapOn:
+    id: "plan-create-submit-button"
+- assertVisible:
+    id: "home-screen"
+- assertVisible: "映画前売り券.*まで.*"
+
+# 後片付け（作ったプランを削除）
+- tapOn: "映画前売り券.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn: "削除"
+- tapOn:
+    id: "plan-detail-delete-confirm-button"
+- assertVisible:
+    id: "home-screen"
+- assertNotVisible: "映画前売り券.*"
