@@ -1,0 +1,58 @@
+{
+  "fill" : {
+    "solid" : "display-p3:0.94043,0.91846,0.86133,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode-specializations" : [
+            {
+              "value" : "normal"
+            },
+            {
+              "appearance" : "dark",
+              "value" : "plus-lighter"
+            }
+          ],
+          "fill-specializations" : [
+            {
+              "value" : "automatic"
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "display-p3:0.56354,0.54928,0.54629,1.00000"
+              }
+            }
+          ],
+          "hidden" : false,
+          "image-name" : "chalo_dark.png",
+          "name" : "chalo_dark",
+          "opacity" : 1,
+          "position" : {
+            "scale" : 0.93,
+            "translation-in-points" : [
+              10.1484375,
+              0
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.6
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

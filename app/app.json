@@ -14,6 +14,7 @@
     "ios": {
       "bundleIdentifier": "com.adelppi.chalo",
       "usesAppleSignIn": true,
+      "icon": "./src/assets/icon/chalo.icon",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
