@@ -30,6 +30,15 @@
 - 通知先プランが削除済みなら「見つかりません」。
 - 通知許可はペア成立直後に要求（JIT＋プライミング、`domain/onboarding.md`）。拒否時は設定→iOS設定へ。
 
+### 作成通知の具体的な実装 [確定]（#31）
+
+- **トークン登録**：端末は通知権限が許可されていれば `getExpoPushTokenAsync` で Expo push token を取得し、`push_tokens`（`profile_id` ＋ `expo_push_token` に unique 制約）へ upsert する。`addPushTokenListener` はネイティブトークン変更の合図に過ぎず、受け取るのは APNs の生トークンで Expo push token とは別物のため、通知が来たら `getExpoPushTokenAsync` を呼び直して保存する。
+- **トリガー方式**：`plans` への `AFTER INSERT` トリガー（`public.notify_plan_created()`、`SECURITY DEFINER`）が `pg_net`（`net.http_post`）で Edge Function `notify-plan-created` を非同期に呼ぶ。`pair_id is null`（ソロ）なら何もしない。`pg_net` は fire-and-forget のため INSERT トランザクションをブロックせず、呼び出し自体が失敗しても例外を握りつぶしてプラン作成は成功させる。
+- **認証**：Edge Function は `verify_jwt: true`（既定）のまま。トリガーは `Authorization: Bearer <anon key>` を付けて呼ぶ（anon key は JWT 検証を通すためだけに使う値で、アプリ本体にも同梱済みの非秘匿値）。Edge Function 内部では自動注入される `SUPABASE_SERVICE_ROLE_KEY` で管理者クライアントを作り、`profiles`／`push_tokens` を RLS を介さず参照する。
+- **秘匿値の保管**：呼び出し先 URL（`edge_function_url`）と anon key（`edge_function_anon_key`）は **Supabase Vault**（`vault.decrypted_secrets`）に保存し、migration には値を含めない（`vault.create_secret(...)` は運用で別途実行）。Expo Push API 用の `EXPO_ACCESS_TOKEN` は任意（未設定でも送信可）で、設定する場合は Edge Function のシークレットとして登録する。
+- **送信・リトライ**：Edge Function は Expo Push API（`https://exp.host/--/api/v2/push/send`）へ最大3回・簡易バックオフでリトライする。失敗はサーバ側ログ（`console.error`）に残すのみでユーザーには見せない。振り返り通知のような pg_cron 定期バッチは使わない（v1 スコープ外。`release-v1.md`）。
+- **ペイロード**：`data: { url: "/plan/<id>" }` の形に統一し、`#30` のタップ遷移（`extractNotificationUrl`・`useNotificationObserver`）をそのまま流用する。
+
 ## 結果
 
 - 良い点：各通知の性質に最適な方式を選べる／1年先予約のローカル不安定さ（iOS上限・再インストール）を回避。

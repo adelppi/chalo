@@ -3,11 +3,13 @@ import { createContext, type ReactNode, useContext, useMemo } from "react";
 import type {
   DeviceNotificationRepository,
   NotificationStorageRepository,
+  PushTokenRepository,
 } from "../data/notificationRepository";
 
 type NotificationsContextValue = {
   deviceNotificationRepository: DeviceNotificationRepository;
   notificationStorageRepository: NotificationStorageRepository;
+  pushTokenRepository: PushTokenRepository;
 };
 
 const NotificationsContext = createContext<NotificationsContextValue | null>(
@@ -18,11 +20,20 @@ const NotificationsContext = createContext<NotificationsContextValue | null>(
 export function NotificationsProvider({
   deviceNotificationRepository,
   notificationStorageRepository,
+  pushTokenRepository,
   children,
 }: NotificationsContextValue & { children: ReactNode }) {
   const value = useMemo(
-    () => ({ deviceNotificationRepository, notificationStorageRepository }),
-    [deviceNotificationRepository, notificationStorageRepository],
+    () => ({
+      deviceNotificationRepository,
+      notificationStorageRepository,
+      pushTokenRepository,
+    }),
+    [
+      deviceNotificationRepository,
+      notificationStorageRepository,
+      pushTokenRepository,
+    ],
   );
   return (
     <NotificationsContext.Provider value={value}>

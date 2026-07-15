@@ -104,13 +104,13 @@ chalo の中心。
 > **作成者表示**：作成者は `owner_id` を参照して表示する（所有者＝作成者。別列は持たない）。
 > **退会時の付け替え**：パートナーが退会したら、その人を指すプランの `owner_id` を残った側へ付け替える（NOT NULL 維持）。`locked_by` は null にクリア。退会者が作ったプランはメモ末尾に作成者を追記して残す（文言・詳細は `domain/pairing.md`）。
 
-### push_tokens（プッシュ送信先） [提案]
+### push_tokens（プッシュ送信先） [確定]
 
 | 列 | 型 | 説明 |
 |---|---|---|
 | id | uuid (PK) | |
-| profile_id | uuid (FK→profiles) | |
-| expo_push_token | text | Expo push token |
+| profile_id | uuid (FK→profiles、`ON DELETE CASCADE`) | |
+| expo_push_token | text | Expo push token。`profile_id` ＋ `expo_push_token` に unique 制約（`adr/0007`）。同じ端末・同じ本人での再登録は upsert で1行に保つ |
 | updated_at | timestamptz | |
 
 ### bug_reports（不具合報告 / ログ送信） [提案]
@@ -158,6 +158,7 @@ chalo の中心。
 - `profiles`：**[確定]** 本人の行に加え、同じペアの相手の行も select できる（相手の表示名取得のため）。write は本人のみ。
 - `invites`：**[確定]** 発行者本人のみ select/insert/delete。redeem は `redeem_invite_code()` RPC（SECURITY DEFINER）経由で RLS を跨ぐ（一般 SELECT で他人の招待コードを読ませない）。
 - `pairs`：**[確定]** 同じペアのメンバーのみ select 可。書き込みは RPC 経由のみ（`authenticated` への insert/update/delete grant なし）。
+- `push_tokens`：**[確定]** 本人（`profile_id = auth.uid()`）のみ select/insert/update/delete。パートナーを含む他人のトークンは読ませない。作成通知の Edge Function は service role で参照し RLS をバイパスする（`adr/0007`）。
 - すべて Supabase RLS で強制。RLS 再帰を避けるためのヘルパ関数 `current_pair_id()` は `adr/0017` を参照。
 
 ---

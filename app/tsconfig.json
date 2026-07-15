@@ -14,5 +14,8 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts"
-  ]
+  ],
+  // Edge Function の Deno エントリポイントは別ランタイム（jsr:/npm: 解決・Deno グローバル）
+  // のため tsc の対象から外す。純粋ロジック（*.test.ts から参照するファイル）は対象内に残す。
+  "exclude": ["supabase/functions/**/index.ts"]
 }
