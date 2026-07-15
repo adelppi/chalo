@@ -46,8 +46,8 @@ export function buildDeadlineNotificationContent(
   }
   const [, month, day] = plan.deadline.split("-").map(Number);
   return {
-    title: `「${plan.title}」の期限が近づいています`,
-    body: `期限は${month}月${day}日です。そろそろ予定を決めませんか？`,
+    title: `${plan.title}🐾`,
+    body: `${month}月${day}日までに予定を決めよう！`,
     url: `/plan/${plan.id}`,
   };
 }

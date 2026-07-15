@@ -84,8 +84,8 @@ describe("buildDeadlineNotificationContent", () => {
         deadline: "2026-07-28",
       }),
     ).toEqual({
-      title: "「海を見にいく」の期限が近づいています",
-      body: "期限は7月28日です。そろそろ予定を決めませんか？",
+      title: "海を見にいく🐾",
+      body: "7月28日までに予定を決めよう！",
       url: "/plan/plan-1",
     });
   });
