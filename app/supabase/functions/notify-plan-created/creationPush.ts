@@ -35,7 +35,7 @@ export function buildCreationPushMessage(input: {
   }
   return {
     to: input.tokens,
-    title: `${input.creatorName}がプランを追加したよ🐾`,
+    title: `${input.creatorName}がプランを追加しました🐾`,
     body: input.planTitle,
     // タップ遷移（useNotificationObserver・extractNotificationUrl）が読む形に揃える。
     data: { url: `/plan/${input.planId}` },

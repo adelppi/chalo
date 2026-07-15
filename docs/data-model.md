@@ -110,7 +110,7 @@ chalo の中心。
 |---|---|---|
 | id | uuid (PK) | |
 | profile_id | uuid (FK→profiles、`ON DELETE CASCADE`) | |
-| expo_push_token | text（unique） | Expo push token。同じ端末の再登録は upsert で1行に保つ |
+| expo_push_token | text | Expo push token。`profile_id` ＋ `expo_push_token` に unique 制約（`adr/0007`）。同じ端末・同じ本人での再登録は upsert で1行に保つ |
 | updated_at | timestamptz | |
 
 ### bug_reports（不具合報告 / ログ送信） [提案]

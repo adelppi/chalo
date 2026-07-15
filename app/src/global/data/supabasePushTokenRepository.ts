@@ -11,7 +11,7 @@ export const supabasePushTokenRepository: PushTokenRepository = {
         profile_id: profileId,
         expo_push_token: expoPushToken,
       },
-      { onConflict: "expo_push_token" },
+      { onConflict: "profile_id,expo_push_token" },
     );
     if (error) {
       throw error;

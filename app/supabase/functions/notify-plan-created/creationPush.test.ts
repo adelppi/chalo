@@ -31,7 +31,7 @@ describe("buildCreationPushMessage", () => {
     });
     expect(message).toEqual({
       to: ["ExponentPushToken[a]", "ExponentPushToken[b]"],
-      title: "たろうがプランを追加したよ🐾",
+      title: "たろうがプランを追加しました🐾",
       body: "水族館に行く",
       data: { url: "/plan/plan-1" },
       sound: "default",
