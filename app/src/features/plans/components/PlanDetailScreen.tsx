@@ -154,13 +154,6 @@ function PlanDetail({
 
   return (
     <View testID="plan-detail-screen" className="flex-1 bg-linen">
-      <PawPrint
-        size={130}
-        opacity={0.06}
-        rotate="-16deg"
-        style={{ position: "absolute", right: -26, top: 96 }}
-      />
-
       {/* D-1：タイトルは iOS 純正の大タイトル（headerLargeTitle）でネイティブヘッダーが描く。
           最上部は左寄せの大タイトル、スクロールでヘッダー中央の小タイトルへ収まる。
           戻る・編集・削除はネイティブヘッダーのバーボタンで描く。
@@ -187,6 +180,10 @@ function PlanDetail({
         })}
       />
 
+      {/* この ScrollView は画面ルートの「最初の子」である必要がある。
+          react-native-screens は subviews[0] を辿って大タイトル連動の ScrollView を探すため
+          （RNSScreen.mm の tryFindDescendantScrollView）、装飾の PawPrint 等を先頭に置くと
+          探索がそちらへ降りて大タイトルがスクロールで縮まなくなる。装飾は下（後ろ）に置く。 */}
       <ScrollView
         className="flex-1"
         contentContainerClassName="grow pb-6"
@@ -260,6 +257,17 @@ function PlanDetail({
           </Text>
         </View>
       </ScrollView>
+
+      {/* 肉球の装飾は ScrollView より後ろ（上）に置く。大タイトル探索を邪魔しないための配置。
+          前面に来るが opacity 0.06 で見た目は変わらず、pointerEvents none でスクロール/タップも奪わない。 */}
+      <View pointerEvents="none" className="absolute inset-0">
+        <PawPrint
+          size={130}
+          opacity={0.06}
+          rotate="-16deg"
+          style={{ position: "absolute", right: -26, top: 96 }}
+        />
+      </View>
 
       <View
         className="gap-3 px-6"
