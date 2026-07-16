@@ -5,6 +5,7 @@ export { useAuthStatus } from "./hooks/useAuthStatus";
 export { useSignInWithApple } from "./hooks/useSignInWithApple";
 export { useSignInWithGoogle } from "./hooks/useSignInWithGoogle";
 export { useSignOut } from "./hooks/useSignOut";
+export { useDeleteAccount } from "./hooks/useDeleteAccount";
 export { SignInScreen } from "./components/SignInScreen";
 
 // データ契約（Repository interface とドメイン型）。global/data の Supabase 実装が参照する。

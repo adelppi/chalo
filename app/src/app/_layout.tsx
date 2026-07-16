@@ -23,6 +23,7 @@ import {
   asyncStorageCalendarStorage,
   asyncStorageNotificationStorage,
   expoCalendarRepository,
+  expoFileShareRepository,
   expoNotificationRepository,
   supabaseAuthRepository,
   supabasePairingRepository,
@@ -89,7 +90,10 @@ export default function RootLayout() {
       >
         <PlansProvider planRepository={supabasePlanRepository}>
           <PairingProvider pairingRepository={supabasePairingRepository}>
-            <SettingsProvider settingsRepository={supabaseSettingsRepository}>
+            <SettingsProvider
+              settingsRepository={supabaseSettingsRepository}
+              fileShareRepository={expoFileShareRepository}
+            >
               <CalendarProvider
                 deviceCalendarRepository={expoCalendarRepository}
                 calendarStorageRepository={asyncStorageCalendarStorage}

@@ -5,11 +5,13 @@ export { InviteCodeScreen } from "./components/InviteCodeScreen";
 export { NotificationPrimingScreen } from "./components/NotificationPrimingScreen";
 export { PairingStartScreen } from "./components/PairingStartScreen";
 export { PairSuccessScreen } from "./components/PairSuccessScreen";
+export { PartnerLeftScreen } from "./components/PartnerLeftScreen";
 
 export { PairingProvider } from "./hooks/PairingProvider";
 export { usePairState } from "./hooks/usePairState";
 
 export { formatRemainingLabel, mapRedeemErrorReason } from "./model/invite";
+export { derivePairState, type PairStateSource } from "./model/pairState";
 
 // データ契約（Repository interface とドメイン型）。global/data のフェイク実装が参照する。
 export { PairingCodeError, type PairingRepository } from "./data";

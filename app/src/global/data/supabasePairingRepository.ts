@@ -1,4 +1,5 @@
 import {
+  derivePairState,
   PairingCodeError,
   mapRedeemErrorReason,
   type InviteCode,
@@ -40,6 +41,7 @@ export const supabasePairingRepository: PairingRepository = {
 
     if (profile.pair_id) {
       // 相手の profiles 行は profiles_select_partner ポリシー（同じ pair_id）で読める。
+      // pair_id があるのに行が無い＝パートナーがアカウント削除済み（partner-left。adr/0018）。
       const { data: partner, error: partnerError } = await supabase
         .from("profiles")
         .select("display_name")
@@ -49,11 +51,12 @@ export const supabasePairingRepository: PairingRepository = {
       if (partnerError) {
         throw partnerError;
       }
-      return {
-        status: "paired",
+      return derivePairState({
         myName: profile.display_name,
-        partnerName: partner?.display_name ?? "",
-      };
+        pairId: profile.pair_id,
+        partnerName: partner?.display_name ?? null,
+        inviteCode: null,
+      });
     }
 
     // ソロ：有効な未使用コードは常に1つ（issueInviteCode が再発行時に旧コードを消す）。
@@ -68,12 +71,14 @@ export const supabasePairingRepository: PairingRepository = {
       throw inviteError;
     }
 
-    return {
-      status: "solo",
+    return derivePairState({
+      myName: profile.display_name,
+      pairId: null,
+      partnerName: null,
       inviteCode: invite
         ? { code: invite.code, expiresAt: invite.expires_at }
         : null,
-    };
+    });
   },
 
   async issueInviteCode(): Promise<InviteCode> {

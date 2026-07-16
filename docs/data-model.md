@@ -165,11 +165,11 @@ chalo の中心。
 
 ## アカウント削除時の挙動（FK / ON DELETE）[確定]
 
-退会者（A）の削除がDB制約で失敗しないよう、Aを指すFKの扱いをあらかじめ決めておく。削除はサーバ側の関数（service role）で1トランザクションにまとめる（`domain/pairing.md` / `adr/0009`）。
+退会者（A）の削除がDB制約で失敗しないよう、Aを指すFKの扱いをあらかじめ決めておく。削除はサーバ側の関数（`delete_account_data()`。service role 専用）で1トランザクションにまとめる（`domain/pairing.md` / `adr/0009`、実装は `adr/0018`）。
 
 | Aを指す参照 | 扱い | 備考 |
 |---|---|---|
-| `plans.owner_id` | 残った側へ**付け替え** | NOT NULL 維持。付け替え前 `= A` のプランはメモに作成者を追記 |
+| `plans.owner_id` | 残った側へ**付け替え** | NOT NULL 維持。付け替え前 `= A` のプランはメモに作成者を追記。**ソロ利用中の削除は付け替え先がないため、本人の `plans` を関数内で削除**（FK は NO ACTION のまま。`adr/0018`） |
 | `plans.locked_by` | **null にクリア** | `ON DELETE SET NULL` |
 | `invites.inviter_id` | **削除** | `ON DELETE CASCADE`。Aの招待コード |
 | `push_tokens.profile_id` | **削除** | `ON DELETE CASCADE`。他人に付け替えない |

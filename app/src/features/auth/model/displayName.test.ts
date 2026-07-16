@@ -55,6 +55,23 @@ describe("resolveDisplayName", () => {
     ).toBe("hanako");
   });
 
+  it("Apple の非公開リレーメールのローカル部は使わず既定値にする", () => {
+    // 氏名が取れない再サインイン（失効前の再登録等）で
+    // ランダム文字列が表示名になるのを防ぐ。
+    expect(
+      resolveDisplayName({
+        nameHint: null,
+        email: "ghwjh7mpmd@privaterelay.appleid.com",
+      }),
+    ).toBe("ユーザー");
+    expect(
+      resolveDisplayName({
+        nameHint: null,
+        email: "abc123@PRIVATERELAY.APPLEID.COM",
+      }),
+    ).toBe("ユーザー");
+  });
+
   it("氏名もメールも無ければ既定値", () => {
     expect(resolveDisplayName({ nameHint: null, email: null })).toBe(
       "ユーザー",

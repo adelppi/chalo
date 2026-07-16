@@ -40,7 +40,9 @@
           "calendarPermission": "プランを端末のカレンダーに追加・更新するために使います。",
           "remindersPermission": false
         }
-      ]
+      ],
+      "expo-sharing",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true,

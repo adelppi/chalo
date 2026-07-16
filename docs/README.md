@@ -55,7 +55,8 @@ docs/
     ├── 0014-test-strategy.md
     ├── 0015-directory-structure.md
     ├── 0016-ui-nativewind.md
-    └── 0017-pairing-rpc-and-rls.md
+    ├── 0017-pairing-rpc-and-rls.md
+    └── 0018-account-deletion-implementation.md
 ```
 
 ## 責務分離（どこに何を書くか）
@@ -80,6 +81,7 @@ docs/
 | 同期方式 | `adr/0004` ／ 編集ロック方式 `adr/0005` |
 | ディレクトリ構成・レイヤ／依存ルール | `adr/0015` |
 | ペア成立RPC・pair境界RLSの方針 | `adr/0017` |
+| アカウント削除の実装方式（DB関数・Edge Function・Apple失効・消失検知） | `adr/0018` |
 | データアクセス抽象化・状態管理 | `adr/0003` |
 | UIスタイリング方針（NativeWind） | `adr/0016` |
 | カレンダー／アルバムの実装 | `adr/0012` ／ `adr/0013` |

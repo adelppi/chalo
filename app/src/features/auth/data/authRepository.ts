@@ -19,4 +19,9 @@ export interface AuthRepository {
 
   // サインアウト。
   signOut(): Promise<void>;
+
+  // アカウント削除（domain/pairing.md・adr/0018）。サーバ側で退会処理を行い、
+  // 成功したらローカルセッションも破棄する。Apple 連携ユーザーはトークン失効のため
+  // 再認証を挟み、ユーザーが再認証を中断したら削除せず false を返す。
+  deleteAccount(): Promise<boolean>;
 }
