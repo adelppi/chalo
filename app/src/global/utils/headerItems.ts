@@ -43,6 +43,20 @@ type BackHeaderOptionsArgs = {
   right?: NativeStackHeaderItem[];
 };
 
+// backHeaderOptions のうち静的な部分だけを切り出したもの。ルーター側（app/(app)/_layout.tsx）の
+// Stack.Screen の options に直接渡し、画面マウント時点から headerShown: true を確定させるために使う。
+// onBack 等のコールバックは画面側の Stack.Screen（backHeaderOptions）で動的に補う。
+// （Issue #48：group の既定 headerShown: false から画面マウント後に true へ切り替わると、
+// 初回プッシュ時だけヘッダー分のレイアウトが後追いで反映され、タイトルが隠れてから
+// 「ガクッ」と下がる。ルーター側で最初から headerShown: true にして防ぐ。）
+export const backHeaderStaticOptions: NativeStackNavigationOptions = {
+  headerShown: true,
+  title: "",
+  headerShadowVisible: false,
+  headerStyle: { backgroundColor: palette.linen },
+  headerBackVisible: false,
+};
+
 // 戻る（+右アクション）だけのネイティブヘッダー共通設定（旧 BackHeader 相当）。
 // タイトルは画面コンテンツ側で描くため空にし、影のない linen 背景に統一する。
 export function backHeaderOptions({
@@ -50,11 +64,7 @@ export function backHeaderOptions({
   right,
 }: BackHeaderOptionsArgs): NativeStackNavigationOptions {
   return {
-    headerShown: true,
-    title: "",
-    headerShadowVisible: false,
-    headerStyle: { backgroundColor: palette.linen },
-    headerBackVisible: false,
+    ...backHeaderStaticOptions,
     unstable_headerLeftItems: () => [
       iconHeaderItem({
         symbol: "chevron.left",
