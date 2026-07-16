@@ -50,6 +50,23 @@ Issue #8 で実装した認証を実際に動かすための、**コンソール
   ネイティブの `signInWithIdToken` では、Supabase が ID トークンの audience（= Bundle ID）を検証するため、**Bundle ID を必ず登録する**。Services ID を併記してもよい。
 - Secret Key 系（Services ID / Team ID / Key ID / `.p8`）を入力。保存。
 
+### アカウント削除時のトークン失効用シークレット（Edge Function）
+
+Edge Function `delete-account` は、Apple 連携ユーザーの削除時に Apple トークンを失効する（App Store Guideline 5.1.1(v)。方式は `adr/0018`）。そのために次の4つのシークレットを Edge Function に設定する。`.p8` 鍵は上記「Apple Developer 側」手順4で作った **Sign In with Apple 用 Key をそのまま再利用**できる。
+
+```bash
+supabase secrets set --project-ref yqroflyjbokeegpryjdr \
+  APPLE_TEAM_ID=<Team ID> \
+  APPLE_KEY_ID=<Key ID> \
+  APPLE_CLIENT_ID=com.adelppi.chalo \
+  APPLE_PRIVATE_KEY="$(cat AuthKey_<Key ID>.p8)"
+```
+
+- `APPLE_CLIENT_ID` は**アプリの Bundle ID**（ネイティブフローの client_id）。Services ID ではない。
+- **未設定でも削除自体は成功する**（失効はベストエフォートでスキップされ、警告ログのみ。`adr/0018`）。ただし App Store 提出前には必須。
+- 未設定のまま削除すると Apple 側の「Apple でサインイン」連携が残るため、**同じ端末で再サインインしても Apple から氏名が返ってこない**（氏名は連携の初回認可時にしか渡されない）。失効が効いていれば、削除後の再サインインは初回扱いになり氏名共有の同意シートが再表示される。
+- 連携が残ってしまった場合の手動リセット: iOS 設定 → 自分の名前 → 「サインインとセキュリティ」→「Apple でサインイン」→ chalo →「Apple でのサインインの使用を停止」。
+
 ## 3. リダイレクト URL（カスタムスキーム）
 
 **Dashboard → Authentication → URL Configuration → Redirect URLs** に、アプリのスキームを追加:
