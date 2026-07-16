@@ -38,7 +38,7 @@ export function DoneListScreen() {
       style={{ paddingTop: insets.top + 16 }}
     >
       <View className="px-6 pb-3">
-        <Text className="text-[32px] font-black leading-tight text-ink">
+        <Text className="text-[38px] font-bold leading-tight text-ink">
           おわったプラン
         </Text>
       </View>

@@ -6,13 +6,25 @@ module.exports = {
   presets: [require("nativewind/preset")],
   darkMode: "class",
   theme: {
+    // font-black（900）は廃止し、書けない状態にする（Issue #45）。
+    // それ以外は Tailwind 既定のウェイト一覧をそのまま踏襲する。
+    fontWeight: {
+      thin: "100",
+      extralight: "200",
+      light: "300",
+      normal: "400",
+      medium: "500",
+      semibold: "600",
+      bold: "700",
+      extrabold: "800",
+    },
     extend: {
       // chalo のデザイントークン（Claude Design 由来）。値の直書きをせず必ずここを参照する（adr/0016）。
       // 色の一次情報は src/global/constants/palette.js（SVG 等 className 不可の箇所と共有）。
       colors: palette,
       // フォントは OS 標準（iOS システムフォント。和文はヒラギノ角ゴ／英数字は SF Pro へ
       // 自動フォールバック）。fontFamily は指定せず、ウェイトのユーティリティ
-      // （font-normal / font-medium / font-bold / font-black）で階層を表す（Issue #16）。
+      // （font-normal / font-medium / font-bold）で階層を表す（Issue #16→Issue #45）。
       // 角丸は Claude Design の使い分けに忠実に合わせる（Issue #16）。
       // 円形／ピル（アバター・アイコンボタン・チップ等）は rounded-full を使う。
       borderRadius: {

@@ -26,7 +26,7 @@ export function PlanLockedScreen({ plan }: PlanLockedScreenProps) {
         options={backHeaderOptions({ onBack: () => router.back() })}
       />
       <View className="px-7 pt-6">
-        <Text className="text-2xl font-black leading-9 text-ink">
+        <Text className="text-2xl font-bold leading-9 text-ink">
           {plan.title}
         </Text>
       </View>

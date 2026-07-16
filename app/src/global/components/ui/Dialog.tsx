@@ -64,10 +64,10 @@ export function Dialog({
           {titleAccessory ? (
             <View className="flex-row items-center gap-2.5">
               {titleAccessory}
-              <Text className="text-[17px] font-black text-ink">{title}</Text>
+              <Text className="text-[17px] font-bold text-ink">{title}</Text>
             </View>
           ) : (
-            <Text className="text-[17px] font-black text-ink">{title}</Text>
+            <Text className="text-[17px] font-bold text-ink">{title}</Text>
           )}
           {message ? (
             <Text className="text-[13px] font-medium leading-6 text-taupe">

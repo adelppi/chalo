@@ -198,7 +198,7 @@ function PlanDetail({
         }
       >
         <View className="gap-3.5 px-7 pt-6">
-          <Text className="text-[28px] font-black leading-10 text-ink">
+          <Text className="text-[28px] font-bold leading-10 text-ink">
             {plan.title}
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -310,7 +310,7 @@ function PlanNotFound() {
       <Stack.Screen options={backHeaderOptions({ onBack: goBackToList })} />
       <View className="flex-1 items-center justify-center px-11">
         <PawPrint size={56} opacity={0.25} rotate="-14deg" />
-        <Text className="mt-5 text-center text-lg font-black text-ink">
+        <Text className="mt-5 text-center text-lg font-bold text-ink">
           プランが見つかりません
         </Text>
         <Text className="mt-2.5 text-center text-[13px] font-medium leading-6 text-taupe">

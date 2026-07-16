@@ -49,7 +49,7 @@ export function HomeScreen() {
       style={{ paddingTop: insets.top + 16 }}
     >
       <View className="px-6 pb-3">
-        <Text className="text-[32px] font-black leading-tight text-ink">
+        <Text className="text-[38px] font-bold leading-tight text-ink">
           プラン
         </Text>
       </View>
@@ -106,7 +106,7 @@ export function HomeScreen() {
                 <Text className="text-[11px] font-bold tracking-[1.5px] text-latte">
                   つぎの予定
                 </Text>
-                <Text className="text-[19px] font-black text-linen">
+                <Text className="text-[19px] font-bold text-linen">
                   {sections.next.title}
                 </Text>
                 <Chip

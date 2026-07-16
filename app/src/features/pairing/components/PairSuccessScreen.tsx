@@ -37,7 +37,7 @@ export function PairSuccessScreen() {
       />
 
       <ChaloFace width={128} />
-      <Text className="mt-[22px] text-center text-[28px] font-black text-ink">
+      <Text className="mt-[22px] text-center text-[28px] font-bold text-ink">
         つながりました！
       </Text>
 

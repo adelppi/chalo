@@ -87,7 +87,7 @@ export function SettingsScreen() {
       style={{ paddingTop: insets.top + 12 }}
     >
       <View className="px-6 pb-2">
-        <Text className="text-[28px] font-black leading-tight text-ink">
+        <Text className="text-[38px] font-bold leading-tight text-ink">
           設定
         </Text>
       </View>
@@ -134,7 +134,7 @@ export function SettingsScreen() {
                     招待コードを発行
                   </Text>
                   {inviteCode ? (
-                    <Text className="text-lg font-black tracking-[2.5px] text-plum">
+                    <Text className="text-lg font-bold tracking-[2.5px] text-plum">
                       {inviteCode.code}
                     </Text>
                   ) : (

@@ -55,7 +55,7 @@ export function PlanClosedScreen({ id }: PlanClosedScreenProps) {
       ) : (
         <>
           <ChaloFace width={132} light />
-          <Text className="mt-[22px] text-center text-[28px] font-black text-linen">
+          <Text className="mt-[22px] text-center text-[28px] font-bold text-linen">
             {greeting}
           </Text>
           {plan ? (
