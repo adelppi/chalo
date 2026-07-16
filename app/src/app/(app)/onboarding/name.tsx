@@ -3,10 +3,15 @@ import { useEffect } from "react";
 
 import { NameConfirmScreen, useOnboardingProgress } from "@features/onboarding";
 
-// 名前の確認（A3）。中断復帰で既に名前確認を終えていれば、
-// A4「ペアの開始」（/pairing）から再開する（domain/onboarding.md）。
-// push で進む（NameConfirmScreen の送信時と同じ遷移方法にそろえ、
-// この画面をスタックの土台として残す。Issue #40）。
+// 名前の確認（A3）。名前確認が完了すると（NameConfirmScreen の送信 → confirmName
+// 成功 → invalidateQueries）ここの progress が更新され、この useEffect が
+// A4「ペアの開始」（/pairing）へ push する。中断復帰（アプリkill後の再起動で
+// 既に名前確認済み）の場合も、この画面がマウントされた時点で同じ判定が成立し、
+// 同じ経路で /pairing へ進む。/pairing への遷移はこの useEffect が唯一の経路
+// ―― NameConfirmScreen 側では push しない（二重に遷移してしまうため。Issue #40）。
+// push で進むことで、この画面（オンボーディング開始時の唯一のスクリーン）が
+// スタックの土台として残り、ペア成立後の dismissAll 等が正しく (tabs) まで
+// 戻れるようにする。
 //
 // complete も見て判定する：オンボーディング完了（(app)/_layout のガードが
 // (tabs) に切り替わる直前）に、この画面へ一瞬 back() で戻るタイミングが

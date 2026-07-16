@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Text, TextInput, View } from "react-native";
 
@@ -31,7 +30,6 @@ export function NameConfirmScreen() {
 }
 
 function NameConfirmForm({ profile }: { profile: ProfileSettings }) {
-  const router = useRouter();
   const updateDisplayName = useUpdateDisplayName();
   const confirmName = useConfirmName();
 
@@ -48,17 +46,13 @@ function NameConfirmForm({ profile }: { profile: ProfileSettings }) {
     if (!validation.valid) {
       return;
     }
+    // A4「ペアの開始」への遷移はここでは行わない。confirmName 成功後の
+    // invalidateQueries でこの画面の親（OnboardingNameRoute）の progress が
+    // 更新され、その useEffect が /pairing へ push する（唯一の遷移経路。
+    // ここでも push すると二重に遷移してしまうため。Issue #40）。
     updateDisplayName.mutate(validation.value, {
       onSuccess: () => {
-        confirmName.mutate(undefined, {
-          onSuccess: () => {
-            // A4「ペアの開始」。デザインに専用画面は無く、既存のペア開始画面を再利用する
-            // （B-1 と同一。domain/onboarding.md）。push で積むことで、この画面
-            // （オンボーディング開始時の唯一のスクリーン）がスタックの土台として残り、
-            // ペア成立後の dismissAll 等が正しく (tabs) まで戻れるようにする（Issue #40）。
-            router.push("/pairing");
-          },
-        });
+        confirmName.mutate();
       },
     });
   };
