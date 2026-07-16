@@ -28,9 +28,13 @@ export function SignInScreen() {
   return (
     <View testID="auth-sign-in-screen" className="flex-1 bg-linen">
       <View className="flex-1 items-center justify-center px-8">
-        <ChaloFace width={112} />
-        <Text className="mt-5 text-center text-[30px] font-black leading-[45px] text-ink">
-          はじめまして{"\n"}chalo です
+        <ChaloFace width={128} />
+        <Text className="mt-5 text-center text-[30px] font-bold leading-[45px] text-ink">
+          はじめまして{"\n"}
+          <Text style={{ fontFamily: "Menlo" }} className="font-normal">
+            chalo
+          </Text>{" "}
+          です
         </Text>
         <Text className="mt-3.5 text-center text-sm font-medium text-taupe">
           やりたいことを共有しよう！
