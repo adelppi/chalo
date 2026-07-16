@@ -1,6 +1,10 @@
 import { describe, expect, it, jest } from "@jest/globals";
 
-import { backHeaderOptions, iconHeaderItem } from "./headerItems";
+import {
+  backHeaderOptions,
+  backHeaderStaticOptions,
+  iconHeaderItem,
+} from "./headerItems";
 
 describe("iconHeaderItem", () => {
   it("SF Symbol 指定・sharesBackground: false のボタンを返す", () => {
@@ -31,6 +35,17 @@ describe("iconHeaderItem", () => {
     });
 
     expect(item).toMatchObject({ tintColor: "#A8574F", disabled: true });
+  });
+});
+
+describe("backHeaderStaticOptions", () => {
+  it("headerShown: true を含む静的なヘッダー設定を返す（Issue #48：ルーター側で先に確定させ、初回プッシュ時のガクつきを防ぐ）", () => {
+    expect(backHeaderStaticOptions).toMatchObject({
+      headerShown: true,
+      title: "",
+      headerShadowVisible: false,
+      headerBackVisible: false,
+    });
   });
 });
 

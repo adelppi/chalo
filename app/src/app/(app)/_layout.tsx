@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { useOnboardingProgress } from "@features/onboarding";
 import { usePairState } from "@features/pairing";
 import { palette } from "@global/constants/palette";
+import { backHeaderStaticOptions } from "@global/utils/headerItems";
 
 // サインイン済みユーザー向けの保護グループ。
 // 作成・編集はシートではなく1枚の画面へのプッシュ遷移（デザイン TURN 5・C-3/D-2）。
@@ -38,8 +39,15 @@ export default function AppLayout() {
       <Stack.Protected guard={!partnerLeft}>
         <Stack.Protected guard={!needsOnboarding}>
           <Stack.Screen name="(tabs)" />
-          {/* プラン詳細（D-1）・作成（C-3）・編集（D-2）。戻るで閉じるフル画面。 */}
-          <Stack.Screen name="plan/[id]/index" />
+          {/* プラン詳細（D-1）・作成（C-3）・編集（D-2）。戻るで閉じるフル画面。
+              D-1 は headerShown 等の静的なヘッダー設定をここで先に確定させる。画面側の
+              Stack.Screen（backHeaderOptions）に任せると、マウント後に headerShown が
+              false→true へ切り替わる一瞬が生まれ、初回プッシュ時だけタイトルが隠れてから
+              ガクッと下がって見える（Issue #48）。 */}
+          <Stack.Screen
+            name="plan/[id]/index"
+            options={backHeaderStaticOptions}
+          />
           <Stack.Screen name="plan/new" />
           <Stack.Screen name="plan/[id]/edit" />
           {/* おしまいのお祝い（D-3）。fullScreenModal で replace するとナビバーの状態が壊れ、
