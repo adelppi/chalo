@@ -54,7 +54,7 @@ export function PlanClosedScreen({ id }: PlanClosedScreenProps) {
         <ActivityIndicator color={palette.linen} />
       ) : (
         <>
-          <ChaloFace width={132} />
+          <ChaloFace width={132} light />
           <Text className="mt-[22px] text-center text-[28px] font-black text-linen">
             {greeting}
           </Text>
