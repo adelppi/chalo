@@ -1,0 +1,49 @@
+# 設定「あなたの名前」の編集（Issue #40・features.md 9.1）。
+# A3 の名前確認と同じ更新経路（SettingsRepository.updateDisplayName）を使う。
+#
+# 「相手のよびかた」の編集はペア成立後のみ表示されるため、ソロのテスト
+# アカウントでは検証できない（成立には2アカウントが必要。
+# pairing/pairing-invite-and-errors.yaml と同じ制約でこのフローの対象外）。
+#
+# 前提: アプリがサインイン済みであること（外部認証は自動化しない）。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "tab-settings"
+- assertVisible:
+    id: "settings-screen"
+
+# 編集ダイアログを開いて、いったんキャンセル（誤操作で変わらないこと）
+- tapOn:
+    id: "settings-edit-name-button"
+- assertVisible:
+    id: "settings-edit-name-dialog"
+- tapOn:
+    id: "settings-edit-name-cancel-button"
+- assertVisible:
+    id: "settings-screen"
+
+# 空欄では保存できない（バリデーション）
+- tapOn:
+    id: "settings-edit-name-button"
+- tapOn:
+    id: "settings-edit-name-input"
+- eraseText
+- assertVisible:
+    id: "settings-edit-name-confirm-button"
+- tapOn:
+    id: "settings-edit-name-confirm-button"
+- assertVisible:
+    id: "settings-edit-name-dialog"
+
+# 保存すると即反映される
+- eraseText
+- inputText: "編集後の名前"
+- tapOn:
+    id: "settings-edit-name-confirm-button"
+- assertVisible:
+    id: "settings-screen"
+- assertVisible: "編集後の名前"

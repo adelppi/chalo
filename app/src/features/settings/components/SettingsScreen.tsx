@@ -14,10 +14,22 @@ import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 
 import { useProfileSettings } from "../hooks/useProfileSettings";
+import {
+  useUpdateDisplayName,
+  useUpdatePartnerNickname,
+} from "../hooks/useProfileMutations";
+import { EditProfileFieldDialog } from "./EditProfileFieldDialog";
 import { ExportPlansDialog } from "./ExportPlansDialog";
 import { SendLogsDialog } from "./SendLogsDialog";
 
-type OpenDialog = "export" | "logs" | "logout" | "delete-account" | null;
+type OpenDialog =
+  | "export"
+  | "logs"
+  | "logout"
+  | "delete-account"
+  | "edit-name"
+  | "edit-nickname"
+  | null;
 
 // 設定（E-1。ソロ利用中はペアセクション付きの E-1b）。
 export function SettingsScreen() {
@@ -30,6 +42,8 @@ export function SettingsScreen() {
   const { data: plans } = usePlans();
   const signOut = useSignOut();
   const deleteAccount = useDeleteAccount();
+  const updateDisplayName = useUpdateDisplayName();
+  const updatePartnerNickname = useUpdatePartnerNickname();
 
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
 
@@ -86,14 +100,20 @@ export function SettingsScreen() {
         {/* プロフィール */}
         <View className="overflow-hidden rounded-field bg-paper shadow-card">
           <SettingsRow
+            testID="settings-edit-name-button"
             label="あなたの名前"
             value={profile?.displayName}
+            chevron
+            onPress={() => setOpenDialog("edit-name")}
             showSeparator={!isSolo}
           />
           {!isSolo ? (
             <SettingsRow
+              testID="settings-edit-nickname-button"
               label="相手のよびかた"
               value={profile?.partnerNickname ?? partnerName ?? undefined}
+              chevron
+              onPress={() => setOpenDialog("edit-nickname")}
               showSeparator={false}
             />
           ) : null}
@@ -192,6 +212,54 @@ export function SettingsScreen() {
           chalo バージョン {appVersion}
         </Text>
       </ScrollView>
+
+      {/* あなたの名前を編集（E-1） */}
+      {openDialog === "edit-name" && profile ? (
+        <EditProfileFieldDialog
+          visible
+          title="名前を変更"
+          label="あなたの名前"
+          initialValue={profile.displayName}
+          isSaving={updateDisplayName.isPending}
+          testIDPrefix="settings-edit-name"
+          onClose={closeDialog}
+          onSave={(value) => {
+            updateDisplayName.mutate(value, {
+              onSuccess: closeDialog,
+              onError: () => {
+                showToast(
+                  "名前を変更できませんでした。もういちどためしてください。",
+                  { variant: "error" },
+                );
+              },
+            });
+          }}
+        />
+      ) : null}
+
+      {/* 相手のよびかたを編集（E-1） */}
+      {openDialog === "edit-nickname" ? (
+        <EditProfileFieldDialog
+          visible
+          title="よびかたを変更"
+          label="相手のよびかた"
+          initialValue={profile?.partnerNickname ?? partnerName ?? ""}
+          isSaving={updatePartnerNickname.isPending}
+          testIDPrefix="settings-edit-nickname"
+          onClose={closeDialog}
+          onSave={(value) => {
+            updatePartnerNickname.mutate(value, {
+              onSuccess: closeDialog,
+              onError: () => {
+                showToast(
+                  "よびかたを変更できませんでした。もういちどためしてください。",
+                  { variant: "error" },
+                );
+              },
+            });
+          }}
+        />
+      ) : null}
 
       {/* F-1b プランを書き出す（開くたびに新しくマウントして状態をリセット） */}
       {openDialog === "export" ? (

@@ -1,0 +1,48 @@
+# オンボーディング A3「名前の確認」→ A4「ペアの開始」→ スキップでやりたい一覧へ着地
+# （Issue #40・domain/onboarding.md）。
+#
+# 前提: サインイン直後・オンボーディング未完了（端末ローカル進捗が無い）の
+# テストユーザーでアプリが起動していること。外部認証（Google/Apple）は自動化
+# しないため、この前提は手動で用意する（`docs/README.md` 記載の実 Supabase
+# セッション作成手順に準じる。既存の pairing/pairing-invite-and-errors.yaml と
+# 同じ制約）。
+#
+# 中断からの復帰（B の acceptance）はこのフローでは検証しない：アプリの
+# kill/relaunch を要するため、`.maestro/onboarding/resume-after-kill.yaml` を
+# 別途参照。
+appId: com.adelppi.chalo
+---
+- assertVisible:
+    id: "onboarding-name-screen"
+
+# A3: 事前入力された名前を編集して確認する
+- tapOn:
+    id: "onboarding-name-input"
+- eraseText
+- inputText: "テストユーザー"
+- tapOn:
+    id: "onboarding-name-submit-button"
+
+# A4: ペアの開始（B-1 を再利用）。招待コード発行・コード入力の導線が見える
+- assertVisible:
+    id: "pairing-start-screen"
+- assertVisible: "つながろう"
+- assertVisible:
+    id: "pairing-start-invite-button"
+- assertVisible:
+    id: "pairing-start-enter-code-button"
+
+# 「後でやる（ソロで始める）」→ やりたい一覧へ着地。完了後は再表示しない
+- tapOn:
+    id: "pairing-start-solo-button"
+- extendedWaitUntil:
+    visible:
+      id: "home-screen"
+    timeout: 10000
+
+# 設定を開いても、編集した名前が反映されている（settings/edit-profile-name.yaml で編集導線を検証）
+- tapOn:
+    id: "tab-settings"
+- assertVisible:
+    id: "settings-screen"
+- assertVisible: "テストユーザー"

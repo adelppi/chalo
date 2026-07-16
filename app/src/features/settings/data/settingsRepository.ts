@@ -11,4 +11,10 @@ export type ProfileSettings = {
 // 実装（モック段階では in-memory フェイク、将来は Supabase）は global/data に置く。
 export interface SettingsRepository {
   getProfileSettings(): Promise<ProfileSettings>;
+
+  /** 「あなたの名前」を更新する（本人のみ write。data-model.md profiles） */
+  updateDisplayName(displayName: string): Promise<void>;
+
+  /** 「相手のよびかた」を更新する（本人のみ write。data-model.md profiles） */
+  updatePartnerNickname(partnerNickname: string): Promise<void>;
 }
