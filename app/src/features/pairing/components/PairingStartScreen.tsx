@@ -53,7 +53,7 @@ export function PairingStartScreen({ onSolo }: PairingStartScreenProps = {}) {
       />
 
       <View className="gap-2.5 px-7">
-        <Text className="text-[26px] font-black text-ink">つながろう</Text>
+        <Text className="text-[26px] font-bold text-ink">つながろう</Text>
         <Text className="text-[13px] font-medium leading-6 text-taupe">
           chalo
           はふたりでつかうアプリです。相手を招待するか、もらったコードで参加しましょう。

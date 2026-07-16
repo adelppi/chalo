@@ -44,7 +44,7 @@ export function PartnerLeftScreen() {
     >
       {/* 文面は domain/pairing.md「ロック画面の文面」どおり。事実を簡潔に伝え、飾らない */}
       <View className="flex-1 items-center justify-center gap-3.5">
-        <Text className="text-center text-[22px] font-black leading-snug text-ink">
+        <Text className="text-center text-[22px] font-bold leading-snug text-ink">
           パートナーがアカウントを削除しました
         </Text>
         <Text className="text-center text-[14px] font-medium leading-6 text-taupe">

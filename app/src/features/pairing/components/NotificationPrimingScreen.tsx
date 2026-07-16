@@ -48,7 +48,7 @@ export function NotificationPrimingScreen() {
             <Icon name="bell" size={17} color={palette.blush} />
           </View>
         </View>
-        <Text className="mt-[22px] text-center text-[22px] font-black text-ink">
+        <Text className="mt-[22px] text-center text-[22px] font-bold text-ink">
           通知をオンにしませんか？
         </Text>
         <Text className="mt-3 text-center text-[13px] font-medium leading-6 text-taupe">

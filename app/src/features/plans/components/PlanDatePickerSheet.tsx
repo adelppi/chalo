@@ -85,7 +85,7 @@ export function PlanDatePickerSheet({
         >
           <Icon name="chevron-left" size={14} color={palette.plum} />
         </Pressable>
-        <Text className="text-[15px] font-black text-ink">
+        <Text className="text-[15px] font-bold text-ink">
           {formatCalendarTitle(month)}
         </Text>
         <Pressable

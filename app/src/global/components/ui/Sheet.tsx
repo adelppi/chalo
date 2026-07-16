@@ -42,7 +42,7 @@ export function Sheet({
           >
             <View className="mb-[18px] h-[5px] w-10 self-center rounded-full bg-wheat" />
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-black text-ink">{title}</Text>
+              <Text className="text-lg font-bold text-ink">{title}</Text>
               {action ? (
                 <Pressable
                   onPress={action.onPress}

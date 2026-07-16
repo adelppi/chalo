@@ -60,7 +60,7 @@ function NameConfirmForm({ profile }: { profile: ProfileSettings }) {
   return (
     <View testID="onboarding-name-screen" className="flex-1 bg-linen">
       <View className="gap-2.5 px-7 pt-[84px]">
-        <Text className="text-[26px] font-black leading-10 text-ink">
+        <Text className="text-[26px] font-bold leading-10 text-ink">
           名前をおしえてください
         </Text>
         <Text className="text-[13px] font-medium leading-6 text-taupe">

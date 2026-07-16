@@ -49,7 +49,7 @@ export function EnterCodeScreen() {
         options={backHeaderOptions({ onBack: () => router.back() })}
       />
       <View className="gap-2.5 px-7 pt-5">
-        <Text className="text-[26px] font-black leading-10 text-ink">
+        <Text className="text-[26px] font-bold leading-10 text-ink">
           コードを{"\n"}入力しましょう
         </Text>
         <Text className="text-[13px] font-medium leading-6 text-taupe">
@@ -63,7 +63,7 @@ export function EnterCodeScreen() {
             errorReason ? "border-rust" : "border-ink"
           }`}
         >
-          <Text className="text-[30px] font-black tracking-[7px]">
+          <Text className="text-[30px] font-bold tracking-[7px]">
             <Text className="text-ink">{code}</Text>
             <Text className="text-latte">{filled.slice(code.length)}</Text>
           </Text>

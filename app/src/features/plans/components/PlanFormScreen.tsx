@@ -171,7 +171,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
         contentContainerStyle={{ paddingBottom: 24 }}
       >
         <View className="px-6 pt-2.5">
-          <Text className="text-[28px] font-black text-ink">
+          <Text className="text-[28px] font-bold text-ink">
             {mode === "create" ? "あたらしいプラン" : "プランを編集"}
           </Text>
         </View>

@@ -40,7 +40,7 @@ export function InviteCodeScreen() {
         options={backHeaderOptions({ onBack: () => router.back() })}
       />
       <View className="gap-2.5 px-7 pt-5">
-        <Text className="text-[26px] font-black leading-10 text-ink">
+        <Text className="text-[26px] font-bold leading-10 text-ink">
           招待コードが{"\n"}できました
         </Text>
         <Text className="text-[13px] font-medium leading-6 text-taupe">
@@ -53,7 +53,7 @@ export function InviteCodeScreen() {
           <>
             <Text
               testID="pairing-invite-code-text"
-              className="text-[38px] font-black tracking-[8px] text-ink"
+              className="text-[38px] font-bold tracking-[8px] text-ink"
             >
               {inviteCode.code}
             </Text>
