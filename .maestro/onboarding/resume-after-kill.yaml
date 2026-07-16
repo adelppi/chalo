@@ -1,0 +1,24 @@
+# 中断からの復帰（Issue #40・domain/onboarding.md）。
+# A3 を終えた直後（名前確認済み・オンボーディング未完了）にアプリを
+# キル→再起動すると、A3 からではなく A4「ペアの開始」から再開することを確認する。
+#
+# 前提: サインイン直後・オンボーディング未完了のテストユーザーでアプリが
+# 起動していること（外部認証は自動化しない。上記 name-and-pairing-start.yaml
+# と同じ前提）。
+appId: com.adelppi.chalo
+---
+- assertVisible:
+    id: "onboarding-name-screen"
+- tapOn:
+    id: "onboarding-name-submit-button"
+- assertVisible:
+    id: "pairing-start-screen"
+
+# アプリをキル→再起動。名前確認済み・未完了の進捗は端末ローカルに残っているはず
+- stopApp
+- launchApp:
+    clearState: false
+
+# A3 へ戻らず、A4 から再開する
+- assertVisible:
+    id: "pairing-start-screen"

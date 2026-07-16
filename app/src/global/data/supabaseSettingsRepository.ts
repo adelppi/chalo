@@ -19,4 +19,26 @@ export const supabaseSettingsRepository: SettingsRepository = {
       partnerNickname: data.partner_nickname,
     };
   },
+
+  async updateDisplayName(displayName: string): Promise<void> {
+    const userId = await currentUserId();
+    const { error } = await supabase
+      .from("profiles")
+      .update({ display_name: displayName })
+      .eq("id", userId);
+    if (error) {
+      throw error;
+    }
+  },
+
+  async updatePartnerNickname(partnerNickname: string): Promise<void> {
+    const userId = await currentUserId();
+    const { error } = await supabase
+      .from("profiles")
+      .update({ partner_nickname: partnerNickname })
+      .eq("id", userId);
+    if (error) {
+      throw error;
+    }
+  },
 };

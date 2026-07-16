@@ -9,6 +9,7 @@ type DialogAction = {
   onPress: () => void;
   variant?: "primary" | "destructive";
   icon?: IconName;
+  disabled?: boolean;
   testID?: string;
 };
 
@@ -92,6 +93,7 @@ export function Dialog({
                 icon={confirm.icon}
                 iconSize={15}
                 size="sm"
+                disabled={confirm.disabled}
                 testID={confirm.testID}
               />
             </View>

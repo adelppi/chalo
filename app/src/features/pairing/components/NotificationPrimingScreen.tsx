@@ -21,8 +21,17 @@ export function NotificationPrimingScreen() {
   const partnerName =
     pairState?.status === "paired" ? pairState.partnerName : "相手";
 
+  // (tabs) まで戻す。オンボーディング経由（A4 → B-3 → B-5 → B-6）だと、
+  // dismissAll() で戻る先の onboarding/name はこの時点で既にガードにより
+  // 非表示（ペア成立済み）になっている。履歴上の (tabs) まで確実に辿り着く
+  // dismissTo を使う（Issue #40）。setTimeout の理由は PairingStartScreen の
+  // handleSolo と同じ（ガード再計算のコミット前に遷移すると無反応になりうる。
+  // 実機検証は A4 スキップ側のみで確認、この B-6 finish 側は未検証だが同じ
+  // 遷移メカニズムのため同様の対策を入れている）。
   const finish = () => {
-    router.dismissAll();
+    setTimeout(() => {
+      router.dismissTo("/");
+    }, 0);
   };
 
   const handleAllow = () => {

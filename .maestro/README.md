@@ -12,6 +12,14 @@ chalo の E2E テストを Maestro で管理。
 - `pairing/pairing-invite-and-errors.yaml` … 招待コード発行・コピー・コード入力エラー（Issue #20・Supabase 実装）
   - 発行 → コピー → own-code エラー → not-found エラー
   - **成立（redeem 成功）は2アカウント同時が必要なため対象外。** RPC・RLS（ペア境界）はレビューで確認する（`adr/0014`・`adr/0017`）
+- `onboarding/name-and-pairing-start.yaml` … A3「名前の確認」→ A4「ペアの開始」→ スキップでやりたい一覧（Issue #40）
+  - 名前を編集して確認 → A4（招待コードをつくる／コードをもっています）が見える → 「ひとりではじめる」で一覧へ着地 → 設定に編集した名前が反映
+  - **前提が厳しめ**：サインイン直後・オンボーディング未完了のテストユーザーが必要（外部認証は自動化しないため手動で用意する）
+- `onboarding/resume-after-kill.yaml` … 中断からの復帰（Issue #40）
+  - A3 を終えた直後にアプリをキル→再起動し、A3 ではなく A4 から再開することを確認
+- `settings/edit-profile-name.yaml` … 設定「あなたの名前」の編集（Issue #40）
+  - キャンセル → 空欄バリデーション → 保存して反映
+  - 「相手のよびかた」の編集はペア成立後のみのため、ソロのテストアカウントでは対象外
 - `notifications/notification-priming-and-settings.yaml` … 通知権限プライミング B-6 と設定 E-1 の通知行（Issue #30）
   - 「あとで」で要求せず閉じる → 「許可する」で実要求（未確認/許可ずみの両状態で通る。拒否済み端末は対象外）→ 設定に「許可ずみ」表示
 - `notifications/deadline-notification-lifecycle.yaml` … 期限通知のライフサイクル（Issue #30）

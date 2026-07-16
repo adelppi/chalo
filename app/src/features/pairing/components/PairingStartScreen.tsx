@@ -6,10 +6,38 @@ import { PawPrint } from "@global/components/shared";
 import { Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
-// ペアをはじめる（B-1）。
-export function PairingStartScreen() {
+type PairingStartScreenProps = {
+  /**
+   * 「ひとりではじめる」タップ時、遷移前に実行する（オンボーディング完了の記録）。
+   * feature 間の直接依存を避けるため、呼び出し元のルート（app/(app)/pairing/index.tsx）
+   * から注入する（adr/0015）。
+   */
+  onSolo?: () => void | Promise<void>;
+};
+
+// ペアをはじめる（B-1。オンボーディング A4「ペアの開始」を兼ねる。domain/onboarding.md）。
+export function PairingStartScreen({ onSolo }: PairingStartScreenProps = {}) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+
+  // 「ひとりではじめる」＝ソロで続ける確定。オンボーディング中に選んでも、
+  // 設定 E-1b から開いて選んでも、以降オンボーディングは再表示しない。
+  // dismissTo("/") で (tabs) まで戻す：onSolo（オンボーディング完了の記録）の
+  // invalidateQueries が解決した直後は、(app)/_layout 側の再レンダー（ガード
+  // needsOnboarding の更新）がまだコミットされていないことがあり、その状態で
+  // 遷移すると (tabs) がまだ含まれず無反応になる。setTimeout で1マクロタスク
+  // 遅らせて緩和する（Issue #40）。
+  // 実機検証メモ：サインイン直後に自動化ツールで極端に速く A3→A4→スキップを
+  // 連続実行すると、この defer だけでは解消しないタイミング（再レンダーの
+  // 確定に数秒かかるケース）を観測した。ただし実際のユーザーは Google/Apple
+  // サインインの往復と画面を読む時間が数秒単位で必ず入るため、実運用では
+  // 再現しない前提としている。将来 UI テストで似た無反応が出た場合はここを疑う。
+  const handleSolo = async () => {
+    await onSolo?.();
+    setTimeout(() => {
+      router.dismissTo("/");
+    }, 0);
+  };
 
   return (
     <View
@@ -74,7 +102,7 @@ export function PairingStartScreen() {
         <View className="mt-1.5 items-center">
           <Pressable
             testID="pairing-start-solo-button"
-            onPress={() => router.back()}
+            onPress={handleSolo}
             hitSlop={8}
             className="border-b-[1.5px] border-ink/30 pb-0.5"
           >

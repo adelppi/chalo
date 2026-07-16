@@ -1,5 +1,6 @@
 export { asyncStorageCalendarStorage } from "./asyncStorageCalendarStorage";
 export { asyncStorageNotificationStorage } from "./asyncStorageNotificationStorage";
+export { asyncStorageOnboardingRepository } from "./asyncStorageOnboardingRepository";
 export { expoCalendarRepository } from "./expoCalendarRepository";
 export { expoFileShareRepository } from "./expoFileShareRepository";
 export { expoNotificationRepository } from "./expoNotificationRepository";

@@ -10,6 +10,8 @@ export { PartnerLeftScreen } from "./components/PartnerLeftScreen";
 export { PairingProvider } from "./hooks/PairingProvider";
 export { usePairState } from "./hooks/usePairState";
 
+export { pairingKeys } from "./data/queryKeys";
+
 export { formatRemainingLabel, mapRedeemErrorReason } from "./model/invite";
 export { derivePairState, type PairStateSource } from "./model/pairState";
 

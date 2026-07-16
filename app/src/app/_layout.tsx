@@ -14,6 +14,7 @@ import {
   useNotificationPermission,
   usePushTokenRegistration,
 } from "@features/notifications";
+import { OnboardingProvider } from "@features/onboarding";
 import { PairingProvider } from "@features/pairing";
 import { PlansProvider } from "@features/plans";
 import { SettingsProvider } from "@features/settings";
@@ -22,6 +23,7 @@ import { queryClient } from "@global/config/queryClient";
 import {
   asyncStorageCalendarStorage,
   asyncStorageNotificationStorage,
+  asyncStorageOnboardingRepository,
   expoCalendarRepository,
   expoFileShareRepository,
   expoNotificationRepository,
@@ -90,27 +92,31 @@ export default function RootLayout() {
       >
         <PlansProvider planRepository={supabasePlanRepository}>
           <PairingProvider pairingRepository={supabasePairingRepository}>
-            <SettingsProvider
-              settingsRepository={supabaseSettingsRepository}
-              fileShareRepository={expoFileShareRepository}
+            <OnboardingProvider
+              onboardingRepository={asyncStorageOnboardingRepository}
             >
-              <CalendarProvider
-                deviceCalendarRepository={expoCalendarRepository}
-                calendarStorageRepository={asyncStorageCalendarStorage}
+              <SettingsProvider
+                settingsRepository={supabaseSettingsRepository}
+                fileShareRepository={expoFileShareRepository}
               >
-                <NotificationsProvider
-                  deviceNotificationRepository={expoNotificationRepository}
-                  notificationStorageRepository={
-                    asyncStorageNotificationStorage
-                  }
-                  pushTokenRepository={supabasePushTokenRepository}
+                <CalendarProvider
+                  deviceCalendarRepository={expoCalendarRepository}
+                  calendarStorageRepository={asyncStorageCalendarStorage}
                 >
-                  <StatusBar style="dark" />
-                  <RootNavigator />
-                  <ToastHost />
-                </NotificationsProvider>
-              </CalendarProvider>
-            </SettingsProvider>
+                  <NotificationsProvider
+                    deviceNotificationRepository={expoNotificationRepository}
+                    notificationStorageRepository={
+                      asyncStorageNotificationStorage
+                    }
+                    pushTokenRepository={supabasePushTokenRepository}
+                  >
+                    <StatusBar style="dark" />
+                    <RootNavigator />
+                    <ToastHost />
+                  </NotificationsProvider>
+                </CalendarProvider>
+              </SettingsProvider>
+            </OnboardingProvider>
           </PairingProvider>
         </PlansProvider>
       </AuthProvider>
