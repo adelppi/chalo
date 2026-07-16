@@ -1,8 +1,9 @@
 import { useCallback } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, Linking, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ChaloFace } from "@global/components/shared";
+import { legalLinks } from "@global/constants/legalLinks";
 
 import { useSignInWithApple } from "../hooks/useSignInWithApple";
 import { useSignInWithGoogle } from "../hooks/useSignInWithGoogle";
@@ -59,9 +60,25 @@ export function SignInScreen() {
           onPress={() => google.mutate(undefined, { onError })}
         />
         <Text className="text-center text-[11px] leading-5 text-stone">
-          はじめると、<Text className="font-medium text-plum">利用規約</Text>と
-          <Text className="font-medium text-plum">プライバシーポリシー</Text>に
-          {"\n"}同意したことになります。
+          はじめると、
+          <Text
+            testID="sign-in-terms-link"
+            className="font-medium text-plum"
+            suppressHighlighting
+            onPress={() => Linking.openURL(legalLinks.terms)}
+          >
+            利用規約
+          </Text>
+          と
+          <Text
+            testID="sign-in-privacy-link"
+            className="font-medium text-plum"
+            suppressHighlighting
+            onPress={() => Linking.openURL(legalLinks.privacy)}
+          >
+            プライバシーポリシー
+          </Text>
+          に{"\n"}同意したことになります。
         </Text>
       </View>
     </View>

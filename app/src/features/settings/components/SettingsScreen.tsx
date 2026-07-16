@@ -1,7 +1,7 @@
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Linking, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useDeleteAccount, useSignOut } from "@features/auth";
@@ -10,6 +10,7 @@ import { NotificationPermissionRow } from "@features/notifications";
 import { usePairState } from "@features/pairing";
 import { usePlans } from "@features/plans";
 import { Dialog, Icon } from "@global/components/ui";
+import { legalLinks } from "@global/constants/legalLinks";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 
@@ -185,8 +186,18 @@ export function SettingsScreen() {
             onPress={() => setOpenDialog("export")}
             showSeparator
           />
-          <SettingsRow label="利用規約" showSeparator />
-          <SettingsRow label="プライバシーポリシー" showSeparator />
+          <SettingsRow
+            testID="settings-terms-button"
+            label="利用規約"
+            onPress={() => Linking.openURL(legalLinks.terms)}
+            showSeparator
+          />
+          <SettingsRow
+            testID="settings-privacy-button"
+            label="プライバシーポリシー"
+            onPress={() => Linking.openURL(legalLinks.privacy)}
+            showSeparator
+          />
           <SettingsRow
             testID="settings-send-logs-button"
             label="ログを送信"

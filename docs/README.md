@@ -56,7 +56,8 @@ docs/
     ├── 0015-directory-structure.md
     ├── 0016-ui-nativewind.md
     ├── 0017-pairing-rpc-and-rls.md
-    └── 0018-account-deletion-implementation.md
+    ├── 0018-account-deletion-implementation.md
+    └── 0019-legal-pages-hosting.md
 ```
 
 ## 責務分離（どこに何を書くか）
@@ -85,6 +86,7 @@ docs/
 | データアクセス抽象化・状態管理 | `adr/0003` |
 | UIスタイリング方針（NativeWind） | `adr/0016` |
 | カレンダー／アルバムの実装 | `adr/0012` ／ `adr/0013` |
+| 法的ページ（規約・ポリシー）のホスティング | `adr/0019` |
 | 導線・入力項目・権限要求のタイミング | `domain/onboarding.md` |
 | オフライン挙動・権限拒否時の挙動・エラー網羅 | `non-functional.md` |
 | 「持たないもの」 | `features.md` |
