@@ -161,12 +161,15 @@ function PlanDetail({
         style={{ position: "absolute", right: -26, top: 96 }}
       />
 
-      {/* D-1：戻る・編集・削除はネイティブヘッダーのバーボタンで描く。
+      {/* D-1：タイトルは iOS 純正の大タイトル（headerLargeTitle）でネイティブヘッダーが描く。
+          最上部は左寄せの大タイトル、スクロールでヘッダー中央の小タイトルへ収まる。
+          戻る・編集・削除はネイティブヘッダーのバーボタンで描く。
           編集・削除は sharesBackground: false で個別の背景にし、
           iOS 26 の Liquid Glass でも1つのカプセルに融合しないようにする。 */}
       <Stack.Screen
         options={backHeaderOptions({
           onBack: () => router.back(),
+          largeTitle: plan.title,
           right: [
             iconHeaderItem({
               symbol: "pencil",
@@ -189,6 +192,8 @@ function PlanDetail({
         contentContainerClassName="grow pb-6"
         showsVerticalScrollIndicator={false}
         alwaysBounceVertical
+        // headerLargeTitle の大→小の収まりと余白確定はこれが前提（headerItems.ts 参照）
+        contentInsetAdjustmentBehavior="automatic"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -197,11 +202,9 @@ function PlanDetail({
           />
         }
       >
-        <View className="gap-3.5 px-7 pt-6">
-          <Text className="text-[28px] font-black leading-10 text-ink">
-            {plan.title}
-          </Text>
-          <View className="flex-row flex-wrap gap-2">
+        {/* タイトルはネイティブヘッダーの大タイトルで描くため、ここには置かない。 */}
+        {plan.date || plan.placeName ? (
+          <View className="flex-row flex-wrap gap-2 px-7 pt-6">
             {plan.date ? (
               <Chip
                 icon="calendar"
@@ -213,7 +216,7 @@ function PlanDetail({
               <Chip icon="pin" tone="blush" size="md" label={plan.placeName} />
             ) : null}
           </View>
-        </View>
+        ) : null}
 
         {plan.memo ? (
           <View className="mx-6 mt-[22px] gap-2 rounded-card bg-paper p-[18px] shadow-card">

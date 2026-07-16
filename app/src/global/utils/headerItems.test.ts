@@ -1,5 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
 
+import { palette } from "../constants/palette";
 import { backHeaderOptions, iconHeaderItem } from "./headerItems";
 
 describe("iconHeaderItem", () => {
@@ -42,6 +43,8 @@ describe("backHeaderOptions", () => {
     expect(options.headerShown).toBe(true);
     expect(options.title).toBe("");
     expect(options.headerBackVisible).toBe(false);
+    // largeTitle 未指定なら大タイトルは無効
+    expect(options.headerLargeTitleEnabled).toBeUndefined();
 
     const leftItems = options.unstable_headerLeftItems?.({});
     expect(leftItems).toHaveLength(1);
@@ -77,5 +80,22 @@ describe("backHeaderOptions", () => {
       editItem,
       deleteItem,
     ]);
+  });
+
+  it("largeTitle を渡すと iOS 純正の大タイトルを有効化しタイトルに設定する", () => {
+    const options = backHeaderOptions({
+      onBack: jest.fn(),
+      largeTitle: "たこ焼きパーティー",
+    });
+
+    expect(options.title).toBe("たこ焼きパーティー");
+    expect(options.headerLargeTitleEnabled).toBe(true);
+    // 大タイトル部の背景も linen に統一し、影は出さない
+    expect(options.headerLargeStyle).toMatchObject({
+      backgroundColor: palette.linen,
+    });
+    expect(options.headerLargeTitleShadowVisible).toBe(false);
+    // 純正の既定スタイルに合わせるため、フォント・色は上書きしない
+    expect(options.headerLargeTitleStyle).toBeUndefined();
   });
 });
