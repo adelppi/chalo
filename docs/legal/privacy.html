@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>プライバシーポリシー — chalo</title>
+<style>
+  body {
+    margin: 0;
+    background: #F1EADA;
+    color: #261f19;
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+    line-height: 1.9;
+    font-size: 15px;
+  }
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+  }
+  h1 {
+    font-size: 26px;
+    line-height: 1.4;
+    margin: 0 0 4px;
+  }
+  .meta {
+    color: #8B7D6A;
+    font-size: 13px;
+    margin: 0 0 32px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 40px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #E7DCC5;
+  }
+  h3 {
+    font-size: 15px;
+    margin: 24px 0 4px;
+  }
+  p, ul {
+    margin: 8px 0;
+  }
+  ul {
+    padding-left: 22px;
+  }
+  li {
+    margin: 4px 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid #E7DCC5;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+    background: #FFFCF5;
+  }
+  th {
+    background: #F7F2E6;
+    white-space: nowrap;
+  }
+  a {
+    color: #8C646E;
+  }
+  .footer {
+    margin-top: 48px;
+    color: #8B7D6A;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>プライバシーポリシー</h1>
+  <p class="meta">chalo（チャロ）｜制定日: 2026年7月17日</p>
+
+  <p>chalo（以下「本アプリ」）は、カップルが「いつか一緒に行きたい所・やりたい事」を貯めて共有するための iOS アプリです。本ポリシーは、本アプリがどのような情報を取得し、どのように利用・保管・削除するかを定めるものです。</p>
+
+  <h2>1. 取得する情報</h2>
+
+  <h3>1-1. アカウント情報</h3>
+  <ul>
+    <li>Google または Apple のサインインを通じて取得するメールアドレスおよびユーザー識別子</li>
+    <li>あなたが入力する表示名・相手の呼び方</li>
+    <li>通知の配信時刻の算出に使う端末のタイムゾーン</li>
+  </ul>
+
+  <h3>1-2. プランの内容</h3>
+  <ul>
+    <li>プランのタイトル・予定日・時刻・期限・場所（名称と位置座標）・参考URL・メモ</li>
+  </ul>
+  <p>プランの内容は、ペアを組んだ相手と共有されます。ペアの相手以外の第三者に閲覧されることはありません。</p>
+
+  <h3>1-3. プッシュ通知トークン</h3>
+  <ul>
+    <li>通知の配信に必要な端末のプッシュ通知トークン（Expo push token）</li>
+  </ul>
+
+  <h3>1-4. 不具合報告として送信されたログ</h3>
+  <p>設定の「ログを送信」からあなたが送信した場合に限り、次の情報を取得します。自動では送信されません。</p>
+  <ul>
+    <li>端末内に記録された動作ログ（送信時点で端末にあった分・最大30日分）</li>
+    <li>送信時に任意で添えたコメント</li>
+    <li>アプリのバージョン・iOS のバージョン・端末のモデル名</li>
+  </ul>
+
+  <h2>2. 端末の外に出ない情報</h2>
+  <p>次の情報は端末内でのみ扱い、サーバーへ送信しません。</p>
+  <ul>
+    <li><strong>写真</strong> — アルバム機能は端末の写真ライブラリを端末内で表示するだけで、写真を外部へアップロードしません。</li>
+    <li><strong>カレンダー連携の情報</strong> — プランと端末カレンダーの対応関係は端末内にのみ保存されます。</li>
+    <li><strong>動作ログ</strong> — あなたが「ログを送信」で送信しない限り、端末内に留まります。</li>
+  </ul>
+
+  <h2>3. 利用目的</h2>
+  <table>
+    <tr><th>情報</th><th>利用目的</th></tr>
+    <tr><td>アカウント情報</td><td>ログイン・本人確認、ペアでのプラン共有、アプリ内での名前表示</td></tr>
+    <tr><td>プランの内容</td><td>ペアでの共有・同期・通知の生成</td></tr>
+    <tr><td>プッシュ通知トークン・タイムゾーン</td><td>プラン作成や振り返りなどの通知の配信</td></tr>
+    <tr><td>送信されたログ</td><td>不具合の調査・修正</td></tr>
+  </table>
+
+  <h2>4. 第三者提供・外部サービス</h2>
+  <p>取得した情報を第三者に販売・提供しません（法令に基づく場合を除く）。本アプリはサービス提供のため、次の外部サービスを利用します。</p>
+  <ul>
+    <li><strong>Supabase</strong> — データの保管・認証基盤</li>
+    <li><strong>Expo</strong> — プッシュ通知の配信</li>
+    <li><strong>Google / Apple</strong> — サインイン（認証）</li>
+  </ul>
+
+  <h2>5. データの保管と安全管理</h2>
+  <p>データはアクセス制御（Row Level Security）により、本人とペアの相手のみが読み書きできるよう制限しています。運営者がサポート目的で参照できるのは、あなたが送信した不具合報告ログに限られます。</p>
+
+  <h2>6. データの保持期間と削除</h2>
+  <ul>
+    <li>アカウントを削除すると、あなたのアカウント情報・プッシュ通知トークン・招待コード・送信済みの不具合報告ログは削除されます。アカウント削除はアプリ内（設定 &gt; アカウントを削除する）で完結します。</li>
+    <li>ペアを組んでいる状態であなたがアカウントを削除した場合、ふたりで貯めたプランは相手のために残ります。このとき、あなたが作成したプランには作成者として表示名の記録が残ります。相手もアカウントを削除すると、プランを含むすべてのデータが完全に削除されます。</li>
+    <li>送信された不具合報告ログは、あなたのアカウント削除まで保持します。</li>
+  </ul>
+
+  <h2>7. 本ポリシーの変更</h2>
+  <p>本ポリシーを変更する場合は、本ページで告知します。重要な変更の場合は、アプリ内でも分かるようにお知らせします。</p>
+
+  <h2>8. お問い合わせ</h2>
+  <p>本ポリシーに関するお問い合わせは、<a href="https://github.com/adelppi/chalo/issues">GitHub リポジトリの Issue</a> からお願いします。</p>
+
+  <p class="footer">chalo 運営者</p>
+</main>
+</body>
+</html>
