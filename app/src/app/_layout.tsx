@@ -28,21 +28,30 @@ import {
   expoFileShareRepository,
   expoNotificationRepository,
   supabaseAuthRepository,
+  supabaseBugReportRepository,
   supabasePairingRepository,
   supabasePlanRepository,
   supabaseProfileRepository,
   supabasePushTokenRepository,
   supabaseSettingsRepository,
 } from "@global/data";
+import { useScreenViewLogging } from "@global/hooks/useScreenViewLogging";
+import { setupLogging } from "@global/lib/logging";
 import { useAuthStore } from "@global/store/useAuthStore";
 
 // セッション確認が終わるまでスプラッシュを保持する（Issue #8）。
 SplashScreen.preventAutoHideAsync();
 
+// 端末内ログ（adr/0011）。未捕捉エラーの記録と BG 移行時のフラッシュを結線する。
+setupLogging();
+
 function RootNavigator() {
   const status = useAuthStatus();
   const userId = useAuthStore((state) => state.userId);
   const ready = status !== "loading";
+
+  // 画面遷移を端末内ログへ記録する（ルート名と UUID のみ。features.md 11.4）。
+  useScreenViewLogging();
 
   // 通知タップ→プラン詳細へのディープリンク（domain/notifications.md）。
   // ナビゲータのマウント前に遷移できないため ready を待つ。
@@ -98,6 +107,7 @@ export default function RootLayout() {
               <SettingsProvider
                 settingsRepository={supabaseSettingsRepository}
                 fileShareRepository={expoFileShareRepository}
+                bugReportRepository={supabaseBugReportRepository}
               >
                 <CalendarProvider
                   deviceCalendarRepository={expoCalendarRepository}

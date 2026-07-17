@@ -1,11 +1,13 @@
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 
+import type { BugReportRepository } from "../data/bugReportRepository";
 import type { FileShareRepository } from "../data/fileShareRepository";
 import type { SettingsRepository } from "../data/settingsRepository";
 
 type SettingsContextValue = {
   settingsRepository: SettingsRepository;
   fileShareRepository: FileShareRepository;
+  bugReportRepository: BugReportRepository;
 };
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
@@ -14,11 +16,12 @@ const SettingsContext = createContext<SettingsContextValue | null>(null);
 export function SettingsProvider({
   settingsRepository,
   fileShareRepository,
+  bugReportRepository,
   children,
 }: SettingsContextValue & { children: ReactNode }) {
   const value = useMemo(
-    () => ({ settingsRepository, fileShareRepository }),
-    [settingsRepository, fileShareRepository],
+    () => ({ settingsRepository, fileShareRepository, bugReportRepository }),
+    [settingsRepository, fileShareRepository, bugReportRepository],
   );
   return (
     <SettingsContext.Provider value={value}>

@@ -5,16 +5,40 @@ import { Dialog } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 
+import { useSendBugReport } from "../hooks/useSendBugReport";
+
 type SendLogsDialogProps = {
   visible: boolean;
   onClose: () => void;
 };
 
-// ログを送信ダイアログ（F-1c）。モック段階のため送信はトースト表示のみ。
+// ログを送信ダイアログ（F-1c・9.8）。端末内ログを任意コメント付きで
+// bug_reports へ送る。成功でトースト、失敗はトースト＋再試行（ダイアログは
+// 開いたままにして押し直せる。non-functional.md）。
 // 開くたびに親が新しくマウントする前提（ひとことは空欄から始まる）。
 export function SendLogsDialog({ visible, onClose }: SendLogsDialogProps) {
   const showToast = useToastStore((state) => state.show);
   const [comment, setComment] = useState("");
+  const sendBugReport = useSendBugReport();
+
+  const handleSend = () => {
+    if (sendBugReport.isPending) {
+      return;
+    }
+    sendBugReport.mutate(comment, {
+      onSuccess: () => {
+        onClose();
+        showToast("ログを送信しました。ありがとう！", {
+          icon: "check-circle",
+        });
+      },
+      onError: () => {
+        showToast("送信できませんでした。もういちどためしてください。", {
+          variant: "error",
+        });
+      },
+    });
+  };
 
   return (
     <Dialog
@@ -26,12 +50,8 @@ export function SendLogsDialog({ visible, onClose }: SendLogsDialogProps) {
       confirm={{
         label: "送信する",
         icon: "send",
-        onPress: () => {
-          onClose();
-          showToast("ログを送信しました。ありがとう！", {
-            icon: "check-circle",
-          });
-        },
+        onPress: handleSend,
+        disabled: sendBugReport.isPending,
         testID: "settings-send-logs-confirm-button",
       }}
     >

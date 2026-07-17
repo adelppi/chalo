@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { log } from "@global/lib/logging";
+
 import { calendarKeys } from "../data/queryKeys";
 import { buildCalendarEvent } from "../model/event";
 import type { CalendarLink, CalendarPlanFields } from "../model/types";
@@ -36,6 +38,7 @@ export function useAddPlanToCalendar() {
       return link;
     },
     onSuccess: (link) => {
+      log("info", "calendar_event_added", { ids: { planId: link.planId } });
       queryClient.setQueryData(calendarKeys.link(link.planId), link);
     },
   });
@@ -61,6 +64,7 @@ export function useRemovePlanFromCalendar() {
       await calendarStorageRepository.removeLink(planId);
     },
     onSuccess: (_, planId) => {
+      log("info", "calendar_event_removed", { ids: { planId } });
       queryClient.setQueryData(calendarKeys.link(planId), null);
     },
   });
@@ -104,7 +108,13 @@ export function useSyncPlanToCalendar() {
       await deviceCalendarRepository.updateEvent(link.eventId, event);
       return "updated";
     },
-    onSuccess: (_, plan) => {
+    onSuccess: (result, plan) => {
+      if (result !== "none") {
+        log("info", "calendar_event_synced", {
+          ids: { planId: plan.id },
+          detail: result,
+        });
+      }
       queryClient.invalidateQueries({ queryKey: calendarKeys.link(plan.id) });
     },
   });

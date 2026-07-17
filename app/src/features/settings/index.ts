@@ -11,10 +11,12 @@ export {
 
 // データ契約（Repository interface とドメイン型）。global/data のフェイク実装が参照する。
 export type {
+  BugReportRepository,
   FileShareRepository,
   ProfileSettings,
   SettingsRepository,
 } from "./data";
+export type { BugReportDraft } from "./model/bugReport";
 
 // 名前・相手のよびかたのバリデーション（純粋関数。adr/0014）。onboarding の A3 とも共有する。
 export {
