@@ -1,7 +1,7 @@
 // おしまい完了（D-3）の見出し。表示のたびに複数の挨拶からランダムに選ぶ（Issue #16）。
 // ランダム値を注入する純粋関数に切り出し、Jest でテストする（adr/0014）。
 
-export const CLOSED_GREETINGS = ["おつかれさま！", "おかえり！"] as const;
+export const CLOSED_GREETINGS = ["おつかれさま！", "おかえりなさい！"] as const;
 
 /**
  * 0〜1 の乱数から挨拶をえらぶ。`random` は `Math.random()`（[0, 1)）を想定する。

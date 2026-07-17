@@ -34,7 +34,7 @@ describe("日付表示の整形", () => {
 
   it("formatCreatedByLabel：作成者行", () => {
     expect(formatCreatedByLabel("ゆい", "2026-06-30")).toBe(
-      "ゆい が 6月30日に追加しました",
+      "ゆい が 6月30日に作成しました",
     );
   });
 });

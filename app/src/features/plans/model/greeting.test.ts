@@ -12,16 +12,16 @@ describe("pickClosedGreeting", () => {
   });
 
   it("中央値で2番目の挨拶に切り替わる", () => {
-    expect(pickClosedGreeting(0.5)).toBe("おかえり！");
+    expect(pickClosedGreeting(0.5)).toBe("おかえりなさい！");
   });
 
   it("上限に近い値でも配列の外を指さない", () => {
-    expect(pickClosedGreeting(0.999999)).toBe("おかえり！");
+    expect(pickClosedGreeting(0.999999)).toBe("おかえりなさい！");
   });
 
   it("範囲外の値もクランプする", () => {
     expect(pickClosedGreeting(-1)).toBe("おつかれさま！");
-    expect(pickClosedGreeting(1)).toBe("おかえり！");
+    expect(pickClosedGreeting(1)).toBe("おかえりなさい！");
   });
 
   it("常に既定の挨拶のいずれかを返す", () => {
