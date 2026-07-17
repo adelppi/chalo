@@ -48,11 +48,11 @@ export function formatMonthLabel(date: string): string {
   return `${year}年 ${month}月`;
 }
 
-/** 「ゆい が 6月30日に追加しました」（プラン詳細の作成者行） */
+/** 「ゆい が 6月30日に作成しました」（プラン詳細の作成者行） */
 export function formatCreatedByLabel(
   ownerName: string,
   createdAt: string,
 ): string {
   const { month, day } = parts(createdAt);
-  return `${ownerName} が ${month}月${day}日に追加しました`;
+  return `${ownerName} が ${month}月${day}日に作成しました`;
 }

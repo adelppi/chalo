@@ -7,7 +7,7 @@
     "icon": "./src/assets/images/icon.png",
     "scheme": "chalo",
     "userInterfaceStyle": "light",
-    "backgroundColor": "#ffffff",
+    "backgroundColor": "#F1EADA",
     "platforms": [
       "ios"
     ],
@@ -24,7 +24,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#F1EADA",
           "image": "./src/assets/images/splash-icon.png",
           "imageWidth": 76
         }

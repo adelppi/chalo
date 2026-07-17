@@ -116,7 +116,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           // （domain/notifications.md。予約失敗は静かに記録され、致命としない）。
           syncDeadlineNotification.mutate(created);
           router.back();
-          showToast(`「${created.title}」を追加しました`, {
+          showToast(`「${created.title}」を作成しました`, {
             icon: "check-circle",
           });
         },
@@ -155,11 +155,12 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
 
   return (
     // C-3/D-2：戻るで閉じるプッシュ遷移のフル画面。
-    // 追加する/保存する は画面下部に固定し、キーボードが出たらその上に逃がす。
+    // 作成する/保存する は画面下部に固定し、キーボードが出たらその上に逃がす。
     <KeyboardAvoidingView
       testID={`${screenName}-screen`}
       className="flex-1 bg-linen"
       behavior="padding"
+      keyboardVerticalOffset={insets.top + 8}
     >
       <Stack.Screen
         options={backHeaderOptions({ onBack: () => router.back() })}
@@ -237,7 +238,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
       >
         <Button
           testID={`${screenName}-submit-button`}
-          label={mode === "create" ? "追加する" : "保存する"}
+          label={mode === "create" ? "作成する" : "保存する"}
           onPress={handleSubmit}
           disabled={!canSubmit}
         />

@@ -135,7 +135,7 @@ function DoneEmptyState() {
         style={{ position: "absolute", right: 100, top: 170 }}
       />
       <Text className="text-center text-[17px] font-medium text-ink">
-        まだ「おしまい」はありません
+        まだおわったプランはありません
       </Text>
       <Text className="mt-2 text-center text-[13px] font-medium leading-6 text-taupe">
         やりたいことが終わったら、ここに並びます。
