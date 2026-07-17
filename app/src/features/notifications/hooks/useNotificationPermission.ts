@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { log } from "@global/lib/logging";
+
 import { notificationKeys } from "../data/queryKeys";
 import type { NotificationPermission } from "../model/types";
 import { useNotificationsContext } from "./NotificationsProvider";
@@ -23,6 +25,8 @@ export function useRequestNotificationPermission() {
   return useMutation({
     mutationFn: () => deviceNotificationRepository.requestPermission(),
     onSuccess: (permission: NotificationPermission) => {
+      // 権限要求の結果を記録する（features.md 11.4）
+      log("info", "notification_permission_result", { detail: permission });
       queryClient.setQueryData(notificationKeys.permission, permission);
     },
   });

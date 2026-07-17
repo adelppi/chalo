@@ -1,0 +1,42 @@
+# 不具合報告・ログ送信（Issue #51・features.md 9.8・F-1c）。
+# 設定 → ログを送信 → キャンセル → 再度開いて送信 → 成功トーストを確認する。
+# bug_reports への実 insert（logs / comment / 版・OS・端末）は実 Supabase
+# セッションで手動確認する（adr/0014。RLS の自動テストは持たない）。
+# 前提: アプリがサインイン済みであること（外部認証は自動化しない）。
+appId: com.adelppi.chalo
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "tab-settings"
+- assertVisible:
+    id: "settings-screen"
+
+# 送信ダイアログを開いて、いったんキャンセル（誤操作で送られないこと）
+# centerElement: 行が画面下端だと浮遊タブバーがタップを横取りするため中央へ寄せる
+- scrollUntilVisible:
+    element:
+      id: "settings-send-logs-button"
+    centerElement: true
+- tapOn:
+    id: "settings-send-logs-button"
+- assertVisible:
+    text: "ログを送信しますか？"
+- tapOn:
+    id: "settings-send-logs-cancel-button"
+- assertVisible:
+    id: "settings-screen"
+
+# ひとことを添えて送信 → 成功トースト
+- tapOn:
+    id: "settings-send-logs-button"
+- tapOn:
+    id: "settings-send-logs-comment-input"
+- inputText: "E2Eテスト送信"
+- tapOn:
+    id: "settings-send-logs-confirm-button"
+- extendedWaitUntil:
+    visible:
+      text: "ログを送信しました。ありがとう！"
+    timeout: 10000

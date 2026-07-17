@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { log } from "@global/lib/logging";
+
 import { pairingKeys } from "../data/queryKeys";
 import { usePairingContext } from "./PairingProvider";
 
@@ -22,6 +24,8 @@ export function useRedeemInviteCode() {
   return useMutation({
     mutationFn: (code: string) => pairingRepository.redeemInviteCode(code),
     onSuccess: () => {
+      // ペア成立イベント（features.md 11.4）。コードや相手の情報は載せない
+      log("info", "pair_established");
       queryClient.invalidateQueries({ queryKey: pairingKeys.state });
     },
   });

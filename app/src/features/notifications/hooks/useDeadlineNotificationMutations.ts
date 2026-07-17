@@ -1,5 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 
+import { log } from "@global/lib/logging";
+
 import {
   buildDeadlineNotificationContent,
   computeDeadlineNotificationFireDate,
@@ -50,8 +52,15 @@ export function useSyncDeadlineNotification() {
           planId: plan.id,
           notificationId,
         });
+        log("info", "deadline_notification_scheduled", {
+          ids: { planId: plan.id },
+        });
       } catch (error) {
-        console.warn("期限通知の予約を組み直せませんでした", error);
+        // 静かに記録し、致命としない（non-functional.md）
+        log("error", "deadline_notification_error", {
+          ids: { planId: plan.id },
+          error,
+        });
       }
     },
   });
@@ -72,8 +81,13 @@ export function useCancelDeadlineNotification() {
           link.notificationId,
         );
         await notificationStorageRepository.removeLink(planId);
+        log("info", "deadline_notification_cancelled", { ids: { planId } });
       } catch (error) {
-        console.warn("期限通知の予約を取り消せませんでした", error);
+        // 静かに記録し、致命としない（non-functional.md）
+        log("error", "deadline_notification_error", {
+          ids: { planId },
+          error,
+        });
       }
     },
   });

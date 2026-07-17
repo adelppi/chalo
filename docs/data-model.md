@@ -113,7 +113,7 @@ chalo の中心。
 | expo_push_token | text | Expo push token。`profile_id` ＋ `expo_push_token` に unique 制約（`adr/0007`）。同じ端末・同じ本人での再登録は upsert で1行に保つ |
 | updated_at | timestamptz | |
 
-### bug_reports（不具合報告 / ログ送信） [提案]
+### bug_reports（不具合報告 / ログ送信） [確定]
 
 設定の「不具合報告 / ログ送信」で送られた端末内ログを受け取る。送信1回で1行。`adr/0011-logging.md`。
 
@@ -122,7 +122,7 @@ chalo の中心。
 | id | uuid (PK) | |
 | profile_id | uuid (FK→profiles) | 送信者 |
 | comment | text? | 送信時に添えた症状（任意入力） |
-| logs | text | 端末の NDJSON をそのまま格納（送信時点で端末にあった分、最大30日） |
+| logs | text | 端末の NDJSON をそのまま格納（送信時点で端末にあった分、最大30日 / 2MB） |
 | app_version | text | 版 |
 | os_version | text | iOS 版 |
 | device_model | text | 端末 |

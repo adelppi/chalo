@@ -18,6 +18,47 @@ export type Database = {
   };
   public: {
     Tables: {
+      bug_reports: {
+        Row: {
+          app_version: string;
+          comment: string | null;
+          created_at: string;
+          device_model: string;
+          id: string;
+          logs: string;
+          os_version: string;
+          profile_id: string;
+        };
+        Insert: {
+          app_version: string;
+          comment?: string | null;
+          created_at?: string;
+          device_model: string;
+          id?: string;
+          logs: string;
+          os_version: string;
+          profile_id: string;
+        };
+        Update: {
+          app_version?: string;
+          comment?: string | null;
+          created_at?: string;
+          device_model?: string;
+          id?: string;
+          logs?: string;
+          os_version?: string;
+          profile_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bug_reports_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       invites: {
         Row: {
           code: string;

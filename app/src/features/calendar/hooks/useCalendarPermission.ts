@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { log } from "@global/lib/logging";
+
 import { calendarKeys } from "../data/queryKeys";
 import type { CalendarPermission } from "../model/types";
 import { useCalendarContext } from "./CalendarProvider";
@@ -23,6 +25,8 @@ export function useRequestCalendarPermission() {
   return useMutation({
     mutationFn: () => deviceCalendarRepository.requestPermission(),
     onSuccess: (permission: CalendarPermission) => {
+      // 権限要求の結果を記録する（features.md 11.4）
+      log("info", "calendar_permission_result", { detail: permission });
       queryClient.setQueryData(calendarKeys.permission, permission);
       // 許可されるとカレンダー一覧・端末デフォルトが読めるようになる
       queryClient.invalidateQueries({ queryKey: calendarKeys.calendars });
