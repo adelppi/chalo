@@ -13,8 +13,18 @@ import type { RedeemErrorReason } from "../model/types";
 
 const CODE_LENGTH = 6;
 
+type EnterCodeScreenProps = {
+  /**
+   * コード入力でペアが成立したとき（redeem 成功時）に実行する
+   * （オンボーディング完了の記録。domain/onboarding.md）。feature 間の直接依存を
+   * 避けるため、呼び出し元のルート（app/(app)/pairing/code.tsx）から注入する
+   * （adr/0015）。
+   */
+  onPaired?: () => void | Promise<void>;
+};
+
 // コード入力（B-3）。エラーはインライン表示（B-4・F-3）。戻るはネイティブヘッダー。
-export function EnterCodeScreen() {
+export function EnterCodeScreen({ onPaired }: EnterCodeScreenProps = {}) {
   const router = useRouter();
   const redeem = useRedeemInviteCode();
   const [code, setCode] = useState("");
@@ -29,7 +39,8 @@ export function EnterCodeScreen() {
 
   const handleSubmit = () => {
     redeem.mutate(code, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        await onPaired?.();
         router.replace("/pairing/success");
       },
       onError: (error) => {

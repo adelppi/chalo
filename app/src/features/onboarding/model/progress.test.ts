@@ -4,6 +4,7 @@ import {
   needsOnboarding,
   parseOnboardingProgress,
   serializeOnboardingProgress,
+  shouldWaitForPairState,
 } from "./progress";
 
 describe("parseOnboardingProgress", () => {
@@ -74,6 +75,44 @@ describe("needsOnboarding", () => {
   it("ローカル進捗が失われていてもペア済みなら不要（安全ネット）", () => {
     expect(
       needsOnboarding({ nameConfirmed: false, complete: false }, true),
+    ).toBe(false);
+  });
+});
+
+describe("shouldWaitForPairState", () => {
+  it("ローカルで完了済みなら、取得中でも待たない", () => {
+    expect(
+      shouldWaitForPairState(
+        { nameConfirmed: true, complete: true },
+        { isPending: true, isPaused: false },
+      ),
+    ).toBe(false);
+  });
+
+  it("未完了・取得中・通信中なら待つ", () => {
+    expect(
+      shouldWaitForPairState(
+        { nameConfirmed: false, complete: false },
+        { isPending: true, isPaused: false },
+      ),
+    ).toBe(true);
+  });
+
+  it("未完了・取得中でもオフライン等で通信が止まっていれば待たない", () => {
+    expect(
+      shouldWaitForPairState(
+        { nameConfirmed: false, complete: false },
+        { isPending: true, isPaused: true },
+      ),
+    ).toBe(false);
+  });
+
+  it("未完了でも取得が解決済みなら待たない", () => {
+    expect(
+      shouldWaitForPairState(
+        { nameConfirmed: false, complete: false },
+        { isPending: false, isPaused: false },
+      ),
     ).toBe(false);
   });
 });
