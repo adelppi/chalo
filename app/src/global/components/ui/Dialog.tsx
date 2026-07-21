@@ -23,7 +23,8 @@ type DialogProps = {
   children?: ReactNode;
   cancelLabel?: string;
   onCancel: () => void;
-  confirm: DialogAction;
+  /** 省略すると1ボタン表示（閉じるだけ）になる。既定は2ボタン */
+  confirm?: DialogAction;
   cancelTestID?: string;
   testID?: string;
 };
@@ -80,23 +81,25 @@ export function Dialog({
               <Button
                 label={cancelLabel}
                 onPress={onCancel}
-                variant="outline"
+                variant={confirm ? "outline" : "primary"}
                 size="sm"
                 testID={cancelTestID}
               />
             </View>
-            <View className="flex-1">
-              <Button
-                label={confirm.label}
-                onPress={confirm.onPress}
-                variant={confirm.variant ?? "primary"}
-                icon={confirm.icon}
-                iconSize={15}
-                size="sm"
-                disabled={confirm.disabled}
-                testID={confirm.testID}
-              />
-            </View>
+            {confirm ? (
+              <View className="flex-1">
+                <Button
+                  label={confirm.label}
+                  onPress={confirm.onPress}
+                  variant={confirm.variant ?? "primary"}
+                  icon={confirm.icon}
+                  iconSize={15}
+                  size="sm"
+                  disabled={confirm.disabled}
+                  testID={confirm.testID}
+                />
+              </View>
+            ) : null}
           </View>
         </Pressable>
       </Pressable>

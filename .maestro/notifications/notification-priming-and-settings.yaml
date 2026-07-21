@@ -35,9 +35,10 @@ appId: com.adelppi.chalo
 - assertVisible:
     id: "home-screen"
 
-# 設定 E-1 の通知行が「許可ずみ」を表示する（features.md 9.4）
+# 許可ずみのとき、設定 E-1 の通知行は表示されない（features.md 9.4）
 - tapOn:
     id: "tab-settings"
 - assertVisible:
     id: "settings-screen"
-- assertVisible: "許可ずみ"
+- assertNotVisible:
+    id: "settings-notification-permission-button"
