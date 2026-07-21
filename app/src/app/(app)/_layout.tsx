@@ -1,9 +1,16 @@
 import { Stack } from "expo-router";
 
-import { useOnboardingProgress } from "@features/onboarding";
+import {
+  needsOnboarding as computeNeedsOnboarding,
+  shouldWaitForPairState,
+  useOnboardingProgress,
+} from "@features/onboarding";
+import { useNotificationObserver } from "@features/notifications";
 import { usePairState } from "@features/pairing";
 import { palette } from "@global/constants/palette";
 import { backHeaderStaticOptions } from "@global/utils/headerItems";
+
+const EMPTY_PROGRESS = { nameConfirmed: false, complete: false };
 
 // サインイン済みユーザー向けの保護グループ。
 // 作成・編集はシートではなく1枚の画面へのプッシュ遷移（デザイン TURN 5・C-3/D-2）。
@@ -14,19 +21,44 @@ import { backHeaderStaticOptions } from "@global/utils/headerItems";
 export default function AppLayout() {
   // パートナー消失（partner-left）を検知したら全画面ロックに入る（domain/pairing.md・adr/0018）。
   // 検知は起動・フォアグラウンド復帰時の再取得（adr/0004）に乗る。取得中（undefined）は通常表示。
-  const { data: pairState } = usePairState();
+  const {
+    data: pairState,
+    isPending: pairStatePending,
+    isPaused: pairStatePaused,
+  } = usePairState();
   const { data: onboardingProgress, isPending: onboardingPending } =
     useOnboardingProgress();
   const partnerLeft = pairState?.status === "partner-left";
   const paired = pairState?.status === "paired";
+  const progress = onboardingProgress ?? EMPTY_PROGRESS;
 
-  // オンボーディング進捗（端末ローカル）の読み込み待ち。ネットワーク不要で一瞬なので、
-  // ここで待たないとオンボーディング未完了の新規ユーザーが一瞬 (tabs) を見てしまう
-  // （Issue #40。pairState はネットワーク取得のため待たず、取得中は「未ペア」扱いで進める）。
-  if (onboardingPending) {
+  // pairState（サーバのペア状態）の解決を待つ。ローカル進捗だけで即「未ペア」
+  // 扱いに決め打ちすると、招待コードでペアが成立した側が再起動直後にオンボー
+  // ディングへ逆戻りする（Issue #56。ローカルで完了済み・オフライン等で通信が
+  // 止まっている場合は待たない。詳細は shouldWaitForPairState のコメント）。
+  const waitingForPairState = shouldWaitForPairState(progress, {
+    isPending: pairStatePending,
+    isPaused: pairStatePaused,
+  });
+  const needsOnboarding = computeNeedsOnboarding(progress, paired);
+
+  // 通知タップ→プラン詳細（domain/notifications.md）。plan/[id] は
+  // needsOnboarding ガードの内側でのみ登録されるため、ここでガードが確定して
+  // この Stack がその構成で描画される回になるまで発行を待つ（Issue #56。
+  // 認証確定だけを条件にしていた app/_layout.tsx から移設。取りこぼし防止）。
+  useNotificationObserver(
+    !onboardingPending &&
+      !waitingForPairState &&
+      !partnerLeft &&
+      !needsOnboarding,
+  );
+
+  // オンボーディング進捗（端末ローカル）・pairState の解決待ち。進捗はネット
+  // ワーク不要で一瞬なので、ここで待たないとオンボーディング未完了の新規
+  // ユーザーが一瞬 (tabs) を見てしまう（Issue #40）。
+  if (onboardingPending || waitingForPairState) {
     return null;
   }
-  const needsOnboarding = !paired && !(onboardingProgress?.complete ?? false);
 
   return (
     <Stack

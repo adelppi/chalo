@@ -52,3 +52,19 @@ export function needsOnboarding(
 ): boolean {
   return !paired && !progress.complete;
 }
+
+/**
+ * 起動ゲートで pairState（サーバのペア状態）の解決を待つべきか。
+ * ローカルで既に完了済みなら待たない（オフラインでも即座に表示できる）。
+ * 取得中でも、通信が止まっている（オフライン等で isPaused）場合は待たず、
+ * ローカル進捗にフォールバックする（Issue #56。フォールバック方針は
+ * `[保留]` → docs/open-questions.md Q-ONB-1）。
+ */
+export function shouldWaitForPairState(
+  progress: OnboardingProgress,
+  pairStateQuery: { isPending: boolean; isPaused: boolean },
+): boolean {
+  return (
+    !progress.complete && pairStateQuery.isPending && !pairStateQuery.isPaused
+  );
+}

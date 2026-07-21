@@ -10,7 +10,6 @@ import { AuthProvider, useAuthStatus } from "@features/auth";
 import { CalendarProvider } from "@features/calendar";
 import {
   NotificationsProvider,
-  useNotificationObserver,
   useNotificationPermission,
   usePushTokenRegistration,
 } from "@features/notifications";
@@ -53,9 +52,10 @@ function RootNavigator() {
   // 画面遷移を端末内ログへ記録する（ルート名と UUID のみ。features.md 11.4）。
   useScreenViewLogging();
 
-  // 通知タップ→プラン詳細へのディープリンク（domain/notifications.md）。
-  // ナビゲータのマウント前に遷移できないため ready を待つ。
-  useNotificationObserver(ready);
+  // 通知タップ→プラン詳細へのディープリンク（domain/notifications.md）は
+  // (app)/_layout.tsx（AppLayout）側で結線する：plan/[id] はオンボーディング・
+  // ペアの各ガードが確定してから登録されるため、認証確定（ready）だけを条件に
+  // ここで発行すると、ガード確定前の push が取りこぼされる（Issue #56）。
 
   // 作成通知（サーバ push）の宛先登録。権限が許可されていれば
   // Expo push token を push_tokens に upsert する（domain/notifications.md 1）。

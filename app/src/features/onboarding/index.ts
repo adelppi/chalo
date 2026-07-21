@@ -18,5 +18,6 @@ export {
   needsOnboarding,
   parseOnboardingProgress,
   serializeOnboardingProgress,
+  shouldWaitForPairState,
 } from "./model/progress";
 export type { OnboardingProgress } from "./model/progress";
