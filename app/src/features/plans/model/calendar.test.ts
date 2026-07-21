@@ -1,12 +1,15 @@
 import { describe, expect, it } from "@jest/globals";
 
 import {
+  combineTime,
   formatCalendarTitle,
   getCalendarWeeks,
-  getTimeWheelOptions,
+  getHourWheelOptions,
+  getMinuteWheelOptions,
   isPastDate,
   monthOf,
   shiftMonth,
+  splitTime,
   TIME_NONE,
   toDateString,
 } from "./calendar";
@@ -34,15 +37,45 @@ describe("getCalendarWeeks", () => {
   });
 });
 
-describe("getTimeWheelOptions", () => {
-  it("全49項目・0:00〜11:30 → なし → 12:00〜23:30 の並び", () => {
-    const options = getTimeWheelOptions();
-    expect(options.length).toBe(49);
-    expect(options[0]).toEqual({ label: "00:00", value: "00:00" });
-    expect(options[23]).toEqual({ label: "11:30", value: "11:30" });
-    expect(options[24]).toEqual({ label: "なし", value: TIME_NONE });
-    expect(options[25]).toEqual({ label: "12:00", value: "12:00" });
-    expect(options[48]).toEqual({ label: "23:30", value: "23:30" });
+describe("getHourWheelOptions", () => {
+  it("全25項目・先頭が「なし」、続けて00〜23時", () => {
+    const options = getHourWheelOptions();
+    expect(options.length).toBe(25);
+    expect(options[0]).toEqual({ label: "なし", value: TIME_NONE });
+    expect(options[1]).toEqual({ label: "00", value: "00" });
+    expect(options[24]).toEqual({ label: "23", value: "23" });
+  });
+});
+
+describe("getMinuteWheelOptions", () => {
+  it("10分きざみの全6項目", () => {
+    const options = getMinuteWheelOptions();
+    expect(options.map((o) => o.value)).toEqual([
+      "00",
+      "10",
+      "20",
+      "30",
+      "40",
+      "50",
+    ]);
+  });
+});
+
+describe("combineTime / splitTime", () => {
+  it("時が「なし」なら null になる", () => {
+    expect(combineTime(TIME_NONE, "30")).toBeNull();
+  });
+
+  it("時・分から HH:MM を組み立てる", () => {
+    expect(combineTime("14", "30")).toBe("14:30");
+  });
+
+  it("null からは「なし」・00分を得る", () => {
+    expect(splitTime(null)).toEqual({ hour: TIME_NONE, minute: "00" });
+  });
+
+  it("HH:MM から時・分を得る", () => {
+    expect(splitTime("09:40")).toEqual({ hour: "09", minute: "40" });
   });
 });
 

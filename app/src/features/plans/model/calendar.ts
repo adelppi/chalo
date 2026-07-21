@@ -58,32 +58,48 @@ export function monthOf(date: string): CalendarMonth {
   return { year, month };
 }
 
-/** 時刻ホイールで「時刻なし」を表す値（time = null に対応。Issue #58） */
+/** 時刻ダイヤルで「時刻なし」を表す値（time = null に対応。Issue #58） */
 export const TIME_NONE = "none";
 
 export type TimeWheelOption = { label: string; value: string };
 
-/** 30分きざみの時刻を HH:MM で返す（0〜47 → 00:00〜23:30） */
-function formatTimeSlot(index: number): string {
-  const hour = String(Math.floor(index / 2)).padStart(2, "0");
-  const minute = index % 2 === 0 ? "00" : "30";
-  return `${hour}:${minute}`;
-}
-
 /**
- * 時刻ホイールの選択肢（全49項目）。0:00〜11:30 → なし → 12:00〜23:30 の並びにし、
- * よく使う「なし」を中央に置く（Issue #58）。
+ * 時ダイヤルの選択肢（全25項目）。先頭が「なし」、続けて 00〜23 時（Issue #58 フォローアップ）。
+ * 「なし」を選ぶと分の値によらず time = null になる。
  */
-export function getTimeWheelOptions(): TimeWheelOption[] {
-  const morning = Array.from({ length: 24 }, (_, i) => formatTimeSlot(i));
-  const afternoon = Array.from({ length: 24 }, (_, i) =>
-    formatTimeSlot(i + 24),
+export function getHourWheelOptions(): TimeWheelOption[] {
+  const hours = Array.from({ length: 24 }, (_, i) =>
+    String(i).padStart(2, "0"),
   );
   return [
-    ...morning.map((value) => ({ label: value, value })),
     { label: "なし", value: TIME_NONE },
-    ...afternoon.map((value) => ({ label: value, value })),
+    ...hours.map((value) => ({ label: value, value })),
   ];
+}
+
+/** 分ダイヤルの選択肢（10分きざみ・全6項目。Issue #58 フォローアップ） */
+export function getMinuteWheelOptions(): TimeWheelOption[] {
+  return ["00", "10", "20", "30", "40", "50"].map((value) => ({
+    label: value,
+    value,
+  }));
+}
+
+/** 時・分ダイヤルの値から time("HH:MM" または null)を組み立てる。時が「なし」なら null */
+export function combineTime(hour: string, minute: string): string | null {
+  return hour === TIME_NONE ? null : `${hour}:${minute}`;
+}
+
+/** time("HH:MM" または null)からダイヤルの初期値(時・分)を得る */
+export function splitTime(time: string | null): {
+  hour: string;
+  minute: string;
+} {
+  if (time === null) {
+    return { hour: TIME_NONE, minute: "00" };
+  }
+  const [hour, minute] = time.split(":");
+  return { hour, minute };
 }
 
 /**

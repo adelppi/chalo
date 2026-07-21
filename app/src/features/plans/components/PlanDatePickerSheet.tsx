@@ -1,17 +1,20 @@
 import { Picker } from "@react-native-picker/picker";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
 import { Button, Icon, Sheet } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
 import {
+  combineTime,
   formatCalendarTitle,
   getCalendarWeeks,
-  getTimeWheelOptions,
+  getHourWheelOptions,
+  getMinuteWheelOptions,
   isPastDate,
   monthOf,
   shiftMonth,
+  splitTime,
   TIME_NONE,
   toDateString,
   type CalendarMonth,
@@ -19,8 +22,9 @@ import {
 
 const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
 
-// 時刻ホイールの選択肢（全49項目・「なし」が中央。Issue #58）。固定値なのでモジュール直下で作る。
-const TIME_WHEEL_OPTIONS = getTimeWheelOptions();
+// 時・分ダイヤルの選択肢（Issue #58 フォローアップ）。固定値なのでモジュール直下で作る。
+const HOUR_OPTIONS = getHourWheelOptions();
+const MINUTE_OPTIONS = getMinuteWheelOptions();
 
 function todayDateString(): string {
   const now = new Date();
@@ -62,11 +66,38 @@ export function PlanDatePickerSheet({
     initialDate ? monthOf(initialDate) : currentMonth(),
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
-  const [time, setTime] = useState<string | null>(initialTime);
+  const [timeParts, setTimeParts] = useState(() => splitTime(initialTime));
   // 開くたびに新しくマウントする前提なので、今日は初回レンダーの値で固定して良い（Issue #58）。
   const [today] = useState(todayDateString);
+  const time = combineTime(timeParts.hour, timeParts.minute);
 
   const weeks = getCalendarWeeks(month.year, month.month);
+
+  // Picker.Item の配列を毎レンダー作り直すと、iOS ネイティブのホイールが選択直後に
+  // 高速で再スクロールするちらつきが起きるため、固定値として一度だけ作る(フォローアップ修正)。
+  const hourItems = useMemo(
+    () =>
+      HOUR_OPTIONS.map((option) => (
+        <Picker.Item
+          key={option.value}
+          label={option.label}
+          value={option.value}
+          color={option.value === TIME_NONE ? palette.taupe : undefined}
+        />
+      )),
+    [],
+  );
+  const minuteItems = useMemo(
+    () =>
+      MINUTE_OPTIONS.map((option) => (
+        <Picker.Item
+          key={option.value}
+          label={option.label}
+          value={option.value}
+        />
+      )),
+    [],
+  );
 
   return (
     <Sheet
@@ -159,26 +190,37 @@ export function PlanDatePickerSheet({
       {withTime ? (
         <View className="mt-3.5 overflow-hidden rounded-button bg-cream px-4 pb-1 pt-3">
           <Text className="text-sm font-medium text-ink">時刻</Text>
-          {/* iOS ネイティブのホイールピッカー（Issue #16）。0:00〜11:30 → なし → 12:00〜23:30
-              の並びで「なし」を中央に置く（Issue #58）。時刻による選択不可はない。 */}
-          <Picker
-            testID="plan-date-picker-time-picker"
-            selectedValue={time ?? TIME_NONE}
-            onValueChange={(value) =>
-              setTime(value === TIME_NONE ? null : String(value))
-            }
-            itemStyle={{ fontSize: 22, color: palette.ink }}
-            style={{ height: 160 }}
-          >
-            {TIME_WHEEL_OPTIONS.map((option) => (
-              <Picker.Item
-                key={option.value}
-                label={option.label}
-                value={option.value}
-                color={option.value === TIME_NONE ? palette.taupe : undefined}
-              />
-            ))}
-          </Picker>
+          {/* iOS ネイティブのホイールピッカー（Issue #16）。時・分を別ダイヤルに分け、
+              分は10分きざみにする（Issue #58 フォローアップ）。時刻による選択不可はない。 */}
+          <View className="flex-row">
+            <Picker
+              testID="plan-date-picker-hour-picker"
+              selectedValue={timeParts.hour}
+              onValueChange={(value) =>
+                setTimeParts((prev) => ({ ...prev, hour: String(value) }))
+              }
+              itemStyle={{ fontSize: 22, color: palette.ink }}
+              style={{ height: 160, flex: 1 }}
+            >
+              {hourItems}
+            </Picker>
+            <Picker
+              testID="plan-date-picker-minute-picker"
+              enabled={timeParts.hour !== TIME_NONE}
+              selectedValue={timeParts.minute}
+              onValueChange={(value) =>
+                setTimeParts((prev) => ({ ...prev, minute: String(value) }))
+              }
+              itemStyle={{ fontSize: 22, color: palette.ink }}
+              style={{
+                height: 160,
+                flex: 1,
+                opacity: timeParts.hour === TIME_NONE ? 0.35 : 1,
+              }}
+            >
+              {minuteItems}
+            </Picker>
+          </View>
         </View>
       ) : null}
 
