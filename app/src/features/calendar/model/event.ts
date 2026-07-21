@@ -8,7 +8,7 @@ export const CALENDAR_SIGNATURE = "チャロが追加🐾";
 /** 時刻ありイベントの長さ：1時間（domain/calendar.md [提案]） */
 const TIMED_EVENT_DURATION_MS = 60 * 60 * 1000;
 
-/** 日付なしプランは追加不可＝ボタン非活性（domain/calendar.md） */
+// 日付なしプランは追加不可（押すと案内モーダルを表示するだけ。domain/calendar.md）
 export function canAddToCalendar(plan: Pick<CalendarPlanFields, "date">) {
   return plan.date !== null;
 }

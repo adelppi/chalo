@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Linking, Text, View } from "react-native";
+import { Linking, View } from "react-native";
 
 import { Button, Dialog } from "@global/components/ui";
 import { useToastStore } from "@global/store/useToastStore";
@@ -29,9 +29,9 @@ export function PlanCalendarButton({ plan }: PlanCalendarButtonProps) {
   const requestPermission = useRequestCalendarPermission();
   const addToCalendar = useAddPlanToCalendar();
   const removeFromCalendar = useRemovePlanFromCalendar();
-  const [openDialog, setOpenDialog] = useState<"priming" | "denied" | null>(
-    null,
-  );
+  const [openDialog, setOpenDialog] = useState<
+    "priming" | "denied" | "no-date" | null
+  >(null);
 
   const linkable = canAddToCalendar(plan);
   const busy =
@@ -56,7 +56,9 @@ export function PlanCalendarButton({ plan }: PlanCalendarButtonProps) {
   // 権限は初回操作時に JIT で要求する（domain/onboarding.md）。
   // 未確認ならプライミング（F-4）を挟み、拒否済みなら iOS 設定への導線を出す。
   const handleAdd = () => {
-    if (permission === "granted") {
+    if (!linkable) {
+      setOpenDialog("no-date");
+    } else if (permission === "granted") {
       runAdd();
     } else if (permission === "denied") {
       setOpenDialog("denied");
@@ -110,15 +112,19 @@ export function PlanCalendarButton({ plan }: PlanCalendarButtonProps) {
           icon="calendar-plus"
           variant="outline"
           onPress={handleAdd}
-          disabled={!linkable || busy}
+          disabled={busy}
         />
       )}
-      {!linkable ? (
-        // 日付なしプランは追加不可。日付を入れると追加できる旨を補足する
-        <Text className="text-center text-xs font-medium text-taupe">
-          日付を入れると、カレンダーに追加できます
-        </Text>
-      ) : null}
+
+      {/* 日付なしプランを押したとき：追加できない旨を伝えるだけの1ボタンモーダル */}
+      <Dialog
+        visible={openDialog === "no-date"}
+        title="日付がまだ入っていません"
+        message="日付を入れると、カレンダーに追加できます。"
+        cancelLabel="わかった"
+        onCancel={() => setOpenDialog(null)}
+        cancelTestID="plan-detail-calendar-no-date-close-button"
+      />
 
       {/* F-4 カレンダー許可のプライミング（JIT） */}
       <Dialog
