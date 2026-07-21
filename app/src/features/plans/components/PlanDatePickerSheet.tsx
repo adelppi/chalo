@@ -8,23 +8,24 @@ import { palette } from "@global/constants/palette";
 import {
   formatCalendarTitle,
   getCalendarWeeks,
+  getTimeWheelOptions,
+  isPastDate,
   monthOf,
   shiftMonth,
+  TIME_NONE,
   toDateString,
   type CalendarMonth,
 } from "../model/calendar";
 
 const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
 
-// 「時刻なし」を表すホイールの先頭項目（time = null）。
-const TIME_NONE = "none";
+// 時刻ホイールの選択肢（全49項目・「なし」が中央。Issue #58）。固定値なのでモジュール直下で作る。
+const TIME_WHEEL_OPTIONS = getTimeWheelOptions();
 
-// 30分きざみの時刻候補（ネイティブのホイールピッカーの選択肢。Issue #16）
-const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
-  const hour = String(Math.floor(i / 2)).padStart(2, "0");
-  const minute = i % 2 === 0 ? "00" : "30";
-  return `${hour}:${minute}`;
-});
+function todayDateString(): string {
+  const now = new Date();
+  return toDateString(now.getFullYear(), now.getMonth() + 1, now.getDate());
+}
 
 type PlanDatePickerSheetProps = {
   visible: boolean;
@@ -62,6 +63,8 @@ export function PlanDatePickerSheet({
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
   const [time, setTime] = useState<string | null>(initialTime);
+  // 開くたびに新しくマウントする前提なので、今日は初回レンダーの値で固定して良い（Issue #58）。
+  const [today] = useState(todayDateString);
 
   const weeks = getCalendarWeeks(month.year, month.month);
 
@@ -118,6 +121,9 @@ export function PlanDatePickerSheet({
               }
               const dateString = toDateString(month.year, month.month, day);
               const selected = dateString === selectedDate;
+              // 今日より前は押せずグレー表示。既に選択済み（編集で開いた過去日付）は
+              // 選択スタイルを優先して見せるが、押し直しはできない（Issue #58）。
+              const past = isPastDate(dateString, today);
               return (
                 <View
                   key={dayIndex}
@@ -126,13 +132,18 @@ export function PlanDatePickerSheet({
                   <Pressable
                     testID={`plan-date-picker-day-${dateString}`}
                     onPress={() => setSelectedDate(dateString)}
+                    disabled={past}
                     className={`h-[34px] w-[34px] items-center justify-center rounded-full ${
                       selected ? "bg-ink" : ""
                     }`}
                   >
                     <Text
                       className={`text-sm font-medium ${
-                        selected ? "text-linen" : "text-ink"
+                        selected
+                          ? "text-linen"
+                          : past
+                            ? "text-latte"
+                            : "text-ink"
                       }`}
                     >
                       {day}
@@ -148,7 +159,8 @@ export function PlanDatePickerSheet({
       {withTime ? (
         <View className="mt-3.5 overflow-hidden rounded-button bg-cream px-4 pb-1 pt-3">
           <Text className="text-sm font-medium text-ink">時刻</Text>
-          {/* iOS ネイティブのホイールピッカー（Issue #16）。先頭は「なし」= time 未設定。 */}
+          {/* iOS ネイティブのホイールピッカー（Issue #16）。0:00〜11:30 → なし → 12:00〜23:30
+              の並びで「なし」を中央に置く（Issue #58）。時刻による選択不可はない。 */}
           <Picker
             testID="plan-date-picker-time-picker"
             selectedValue={time ?? TIME_NONE}
@@ -158,9 +170,13 @@ export function PlanDatePickerSheet({
             itemStyle={{ fontSize: 22, color: palette.ink }}
             style={{ height: 160 }}
           >
-            <Picker.Item label="なし" value={TIME_NONE} color={palette.taupe} />
-            {TIME_OPTIONS.map((option) => (
-              <Picker.Item key={option} label={option} value={option} />
+            {TIME_WHEEL_OPTIONS.map((option) => (
+              <Picker.Item
+                key={option.value}
+                label={option.label}
+                value={option.value}
+                color={option.value === TIME_NONE ? palette.taupe : undefined}
+              />
             ))}
           </Picker>
         </View>

@@ -6,7 +6,10 @@ export type CalendarMonth = {
   month: number;
 };
 
-/** 月のカレンダー行列（日曜はじまり）。月外のマスは null */
+/** カレンダーの行数（週数）。月によらず固定し、ピッカーの高さをがたつかせない（Issue #58） */
+const WEEK_ROWS = 6;
+
+/** 月のカレンダー行列（日曜はじまり・常に6行）。月外のマスは null */
 export function getCalendarWeeks(
   year: number,
   month: number,
@@ -18,7 +21,7 @@ export function getCalendarWeeks(
     ...Array.from({ length: firstWeekday }, () => null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
-  while (cells.length % 7 !== 0) {
+  while (cells.length < WEEK_ROWS * 7) {
     cells.push(null);
   }
 
@@ -53,4 +56,40 @@ export function toDateString(year: number, month: number, day: number): string {
 export function monthOf(date: string): CalendarMonth {
   const [year, month] = date.split("-").map(Number);
   return { year, month };
+}
+
+/** 時刻ホイールで「時刻なし」を表す値（time = null に対応。Issue #58） */
+export const TIME_NONE = "none";
+
+export type TimeWheelOption = { label: string; value: string };
+
+/** 30分きざみの時刻を HH:MM で返す（0〜47 → 00:00〜23:30） */
+function formatTimeSlot(index: number): string {
+  const hour = String(Math.floor(index / 2)).padStart(2, "0");
+  const minute = index % 2 === 0 ? "00" : "30";
+  return `${hour}:${minute}`;
+}
+
+/**
+ * 時刻ホイールの選択肢（全49項目）。0:00〜11:30 → なし → 12:00〜23:30 の並びにし、
+ * よく使う「なし」を中央に置く（Issue #58）。
+ */
+export function getTimeWheelOptions(): TimeWheelOption[] {
+  const morning = Array.from({ length: 24 }, (_, i) => formatTimeSlot(i));
+  const afternoon = Array.from({ length: 24 }, (_, i) =>
+    formatTimeSlot(i + 24),
+  );
+  return [
+    ...morning.map((value) => ({ label: value, value })),
+    { label: "なし", value: TIME_NONE },
+    ...afternoon.map((value) => ({ label: value, value })),
+  ];
+}
+
+/**
+ * 過去日付か（"YYYY-MM-DD" のゼロ埋め文字列比較。today 当日は過去に含まない）。
+ * 今日の日付を引数で受けることでテストから固定できる（Issue #58）。
+ */
+export function isPastDate(date: string, today: string): boolean {
+  return date < today;
 }

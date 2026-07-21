@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Linking, Pressable, ScrollView, Text, View } from "react-native";
+import { Linking, Pressable, Text, View } from "react-native";
 
 import { Icon, Sheet } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
@@ -118,10 +118,7 @@ export function DefaultCalendarRow() {
         onClose={() => setSheetVisible(false)}
         testID="settings-default-calendar-sheet"
       >
-        <ScrollView
-          className="mt-3 max-h-96"
-          showsVerticalScrollIndicator={false}
-        >
+        <View className="mt-3">
           {calendars?.length ? (
             calendars.map((calendar, index) => (
               <Pressable
@@ -149,7 +146,7 @@ export function DefaultCalendarRow() {
               書き込めるカレンダーが見つかりません
             </Text>
           )}
-        </ScrollView>
+        </View>
       </Sheet>
     </>
   );

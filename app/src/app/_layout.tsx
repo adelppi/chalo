@@ -1,10 +1,12 @@
 import "../global.css";
 
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { AuthProvider, useAuthStatus } from "@features/auth";
 import { CalendarProvider } from "@features/calendar";
@@ -93,43 +95,51 @@ function RootNavigator() {
 export default function RootLayout() {
   // フォントは OS 標準（システムフォント）。読み込み待ちは不要（Issue #16・adr/0016）。
   // 合成ルート：Repository interface と実装をここで結線する（adr/0003・adr/0015）。
+  // GestureHandlerRootView / BottomSheetModalProvider はシート（Sheet.tsx）の
+  // ジェスチャーとポータルの前提のためツリー最上位に置く（adr/0020）。
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider
-        authRepository={supabaseAuthRepository}
-        profileRepository={supabaseProfileRepository}
-      >
-        <PlansProvider planRepository={supabasePlanRepository}>
-          <PairingProvider pairingRepository={supabasePairingRepository}>
-            <OnboardingProvider
-              onboardingRepository={asyncStorageOnboardingRepository}
-            >
-              <SettingsProvider
-                settingsRepository={supabaseSettingsRepository}
-                fileShareRepository={expoFileShareRepository}
-                bugReportRepository={supabaseBugReportRepository}
-              >
-                <CalendarProvider
-                  deviceCalendarRepository={expoCalendarRepository}
-                  calendarStorageRepository={asyncStorageCalendarStorage}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider
+            authRepository={supabaseAuthRepository}
+            profileRepository={supabaseProfileRepository}
+          >
+            <PlansProvider planRepository={supabasePlanRepository}>
+              <PairingProvider pairingRepository={supabasePairingRepository}>
+                <OnboardingProvider
+                  onboardingRepository={asyncStorageOnboardingRepository}
                 >
-                  <NotificationsProvider
-                    deviceNotificationRepository={expoNotificationRepository}
-                    notificationStorageRepository={
-                      asyncStorageNotificationStorage
-                    }
-                    pushTokenRepository={supabasePushTokenRepository}
+                  <SettingsProvider
+                    settingsRepository={supabaseSettingsRepository}
+                    fileShareRepository={expoFileShareRepository}
+                    bugReportRepository={supabaseBugReportRepository}
                   >
-                    <StatusBar style="dark" />
-                    <RootNavigator />
-                    <ToastHost />
-                  </NotificationsProvider>
-                </CalendarProvider>
-              </SettingsProvider>
-            </OnboardingProvider>
-          </PairingProvider>
-        </PlansProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+                    <CalendarProvider
+                      deviceCalendarRepository={expoCalendarRepository}
+                      calendarStorageRepository={asyncStorageCalendarStorage}
+                    >
+                      <NotificationsProvider
+                        deviceNotificationRepository={
+                          expoNotificationRepository
+                        }
+                        notificationStorageRepository={
+                          asyncStorageNotificationStorage
+                        }
+                        pushTokenRepository={supabasePushTokenRepository}
+                      >
+                        <StatusBar style="dark" />
+                        <RootNavigator />
+                        <ToastHost />
+                      </NotificationsProvider>
+                    </CalendarProvider>
+                  </SettingsProvider>
+                </OnboardingProvider>
+              </PairingProvider>
+            </PlansProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
