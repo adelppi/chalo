@@ -3,8 +3,7 @@ import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useDeleteAccount } from "@features/auth";
-import { usePlans } from "@features/plans";
-import { ExportPlansDialog } from "@global/components/shared";
+import { ExportPlansDialog, usePlans } from "@features/plans";
 import { Button, Dialog } from "@global/components/ui";
 import { useToastStore } from "@global/store/useToastStore";
 

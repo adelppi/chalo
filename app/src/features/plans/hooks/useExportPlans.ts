@@ -1,12 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 
-import {
-  buildPlansExportText,
-  EXPORT_FILE_NAME,
-  type Plan,
-} from "@features/plans";
+import { useFileShareContext } from "@global/hooks/FileShareProvider";
 
-import { useFileShareContext } from "./FileShareProvider";
+import { buildPlansExportText, EXPORT_FILE_NAME } from "../model/exportText";
+import type { Plan } from "../model/types";
 
 // プランの書き出し（F-1b・domain/pairing.md「書き出し / エクスポート」）。
 // 全プランを1つのテキストに整形し、.txt にして iOS 共有シートへ渡す。

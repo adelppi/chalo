@@ -4,8 +4,8 @@ import type { FileShareRepository } from "@global/@types/fileShareRepository";
 
 const FileShareContext = createContext<FileShareRepository | null>(null);
 
-// Repository を注入で受け取る合成ルート（adr/0003）。settings・pairing の両方から
-// 使うため、単一 feature の Provider には束ねず global に置く（Issue #64）。
+// Repository を注入で受け取る合成ルート（adr/0003）。ファイル共有は特定 feature の
+// 関心ではない基盤のため、単一 feature の Provider には束ねず global に置く（Issue #64）。
 export function FileShareProvider({
   fileShareRepository,
   children,

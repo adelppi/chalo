@@ -1,6 +1,8 @@
 // plans feature の公開 API（バレル）。外部はここ経由でのみ参照する（adr/0015）。
 
 export { DoneListScreen } from "./components/DoneListScreen";
+// 書き出しダイアログ（F-1b）。settings（E-1）と pairing（partner-left）から使う。
+export { ExportPlansDialog } from "./components/ExportPlansDialog";
 export { HomeScreen } from "./components/HomeScreen";
 export { PlanClosedScreen } from "./components/PlanClosedScreen";
 export { PlanDetailScreen } from "./components/PlanDetailScreen";

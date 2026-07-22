@@ -36,7 +36,7 @@ RN + Expo（Expo Router）で、プラン・アルバム・ペア・通知・カ
 
 ### 依存の方向（アーキテクチャ）
 
-- `app → features → global`。逆流させない。
+- `app → features → global`。逆流させない。**lint で強制する**：`src/global/`（`global/data/` を除く）から `@features/*` を import すると ESLint エラーになる（`no-restricted-imports`）。逆流は require cycle を生むため、共有したい部品は該当 feature に置き、そのバレルから公開する。
 - **feature 間は直接 import しない**。参照は相手の `index.ts`（バレル）経由に限る。連携は global の共有サービス／状態を通す。
 - **業務ロジック・フックは抽象（Repository interface）だけに依存**する。Supabase 実装（`global/data`・`global/lib/supabase`）へは直接依存しない。
 - interface と実装の結線は**合成ルート**（アプリ起動時のプロバイダ）で行う。`global/data` が feature の interface を実装する向きで、依存はドメイン契約へ内向きに集まる。feature 側は実装の存在を知らない。基盤の差し替えは `global/lib/supabase`・`global/data` の付け替えだけで済み、feature は不変（`adr/0003`）。
