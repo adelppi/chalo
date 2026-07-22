@@ -6,7 +6,10 @@ export type CalendarMonth = {
   month: number;
 };
 
-/** 月のカレンダー行列（日曜はじまり）。月外のマスは null */
+/** カレンダーの行数（週数）。月によらず固定し、ピッカーの高さをがたつかせない（Issue #58） */
+const WEEK_ROWS = 6;
+
+/** 月のカレンダー行列（日曜はじまり・常に6行）。月外のマスは null */
 export function getCalendarWeeks(
   year: number,
   month: number,
@@ -18,7 +21,7 @@ export function getCalendarWeeks(
     ...Array.from({ length: firstWeekday }, () => null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
-  while (cells.length % 7 !== 0) {
+  while (cells.length < WEEK_ROWS * 7) {
     cells.push(null);
   }
 
@@ -53,4 +56,56 @@ export function toDateString(year: number, month: number, day: number): string {
 export function monthOf(date: string): CalendarMonth {
   const [year, month] = date.split("-").map(Number);
   return { year, month };
+}
+
+/** 時刻ダイヤルで「時刻なし」を表す値（time = null に対応。Issue #58） */
+export const TIME_NONE = "none";
+
+export type TimeWheelOption = { label: string; value: string };
+
+/**
+ * 時ダイヤルの選択肢（全25項目）。先頭が「なし」、続けて 00〜23 時（Issue #58 フォローアップ）。
+ * 「なし」を選ぶと分の値によらず time = null になる。
+ */
+export function getHourWheelOptions(): TimeWheelOption[] {
+  const hours = Array.from({ length: 24 }, (_, i) =>
+    String(i).padStart(2, "0"),
+  );
+  return [
+    { label: "なし", value: TIME_NONE },
+    ...hours.map((value) => ({ label: value, value })),
+  ];
+}
+
+/** 分ダイヤルの選択肢（10分きざみ・全6項目。Issue #58 フォローアップ） */
+export function getMinuteWheelOptions(): TimeWheelOption[] {
+  return ["00", "10", "20", "30", "40", "50"].map((value) => ({
+    label: value,
+    value,
+  }));
+}
+
+/** 時・分ダイヤルの値から time("HH:MM" または null)を組み立てる。時が「なし」なら null */
+export function combineTime(hour: string, minute: string): string | null {
+  return hour === TIME_NONE ? null : `${hour}:${minute}`;
+}
+
+/** time("HH:MM" または null)からダイヤルの初期値(時・分)を得る */
+export function splitTime(time: string | null): {
+  hour: string;
+  minute: string;
+} {
+  if (time === null) {
+    return { hour: TIME_NONE, minute: "00" };
+  }
+  const [hour, minute] = time.split(":");
+  return { hour, minute };
+}
+
+/**
+ * 過去日付か（"YYYY-MM-DD" のゼロ埋め文字列比較。today 当日は過去に含まない）。
+ * 今日の日付を引数で受けることでテストから固定できる（Issue #58）。
+ */
+export function isPastDate(date: string, today: string): boolean {
+  return date < today;
 }

@@ -93,12 +93,15 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   const screenName = mode === "create" ? "plan-create" : "plan-edit";
   const isSaving = createPlan.isPending || updatePlan.isPending;
   const canSubmit = title.trim().length > 0 && !isSaving;
+  // 日付が入っているあいだ、期限は選べない（期限は日付なしプランの通知専用。Issue #58・
+  // docs/domain/plan-lifecycle.md）。
+  const deadlineLocked = date !== null;
 
   const buildDraft = (): PlanDraft => ({
     title: title.trim(),
     date,
     time: date ? time : null,
-    deadline,
+    deadline: deadlineLocked ? null : deadline,
     referenceUrl,
     memo,
   });
@@ -208,9 +211,12 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             testID={`${screenName}-deadline-row`}
             icon="clock"
             label="期限"
-            value={deadline ? formatDateShort(deadline) : null}
+            value={
+              !deadlineLocked && deadline ? formatDateShort(deadline) : null
+            }
             onPress={() => setOpenSheet("deadline")}
             showSeparator
+            disabled={deadlineLocked}
           />
           <FormFieldRow
             testID={`${screenName}-url-row`}
@@ -255,6 +261,8 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           onConfirm={(nextDate, nextTime) => {
             setDate(nextDate);
             setTime(nextTime);
+            // 日付を入れた時点で期限を消す（domain/plan-lifecycle.md。Issue #58）
+            setDeadline(null);
             setOpenSheet(null);
           }}
           onClear={() => {
@@ -327,6 +335,8 @@ type FormFieldRowProps = {
   onPress: () => void;
   showSeparator: boolean;
   testID: string;
+  /** 押せず・グレー表示にする（例：日付ありのときの期限行。Issue #58） */
+  disabled?: boolean;
 };
 
 // 項目の行（C-3）。行を押すとピッカー・入力シートが下から重なる。
@@ -337,12 +347,14 @@ function FormFieldRow({
   onPress,
   showSeparator,
   testID,
+  disabled = false,
 }: FormFieldRowProps) {
   const filled = value !== null;
   return (
     <Pressable
       testID={testID}
       onPress={onPress}
+      disabled={disabled}
       className={`flex-row items-center gap-3 px-4 py-3 active:opacity-70 ${
         showSeparator ? "border-b border-sand" : ""
       }`}
@@ -350,12 +362,16 @@ function FormFieldRow({
       <Icon
         name={icon}
         size={15}
-        color={filled ? palette.ink : palette.taupe}
+        color={disabled ? palette.latte : filled ? palette.ink : palette.taupe}
       />
-      <Text className="flex-1 text-sm font-medium text-ink">{label}</Text>
+      <Text
+        className={`flex-1 text-sm font-medium ${disabled ? "text-latte" : "text-ink"}`}
+      >
+        {label}
+      </Text>
       <Text
         className={`max-w-[150px] text-sm font-medium ${
-          filled ? "text-plum" : "text-latte"
+          disabled ? "text-latte" : filled ? "text-plum" : "text-latte"
         }`}
         numberOfLines={1}
       >
