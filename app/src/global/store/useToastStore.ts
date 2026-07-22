@@ -1,17 +1,11 @@
 import { create } from "zustand";
+import Toast from "react-native-toast-message";
 
 import { type IconName } from "@global/components/ui/Icon";
 
 export type ToastVariant = "default" | "error";
 
-type Toast = {
-  message: string;
-  icon?: IconName;
-  variant: ToastVariant;
-};
-
 type ToastState = {
-  toast: Toast | null;
   show: (
     message: string,
     options?: { icon?: IconName; variant?: ToastVariant },
@@ -21,32 +15,19 @@ type ToastState = {
 
 const TOAST_DURATION_MS = 2500;
 
-let hideTimer: ReturnType<typeof setTimeout> | null = null;
-
-// 画面下部トースト（F-2）のクライアント状態。表示は ToastHost が担う。
-export const useToastStore = create<ToastState>((set) => ({
-  toast: null,
+// 画面下部トースト（F-2）の呼び出しファサード。表示は react-native-toast-message
+// （ルートにマウントした <Toast />）が担う。呼び出し側の show(message, options) の
+// シグネチャは自作実装からの置き換え前後で変えない（Issue #62）。
+export const useToastStore = create<ToastState>(() => ({
   show: (message, options) => {
-    if (hideTimer) {
-      clearTimeout(hideTimer);
-    }
-    set({
-      toast: {
-        message,
-        icon: options?.icon,
-        variant: options?.variant ?? "default",
-      },
+    Toast.show({
+      type: options?.variant ?? "default",
+      text1: message,
+      props: { icon: options?.icon },
+      visibilityTime: TOAST_DURATION_MS,
     });
-    hideTimer = setTimeout(() => {
-      set({ toast: null });
-      hideTimer = null;
-    }, TOAST_DURATION_MS);
   },
   hide: () => {
-    if (hideTimer) {
-      clearTimeout(hideTimer);
-      hideTimer = null;
-    }
-    set({ toast: null });
+    Toast.hide();
   },
 }));

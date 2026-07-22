@@ -7,6 +7,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 import { AuthProvider, useAuthStatus } from "@features/auth";
 import { CalendarProvider } from "@features/calendar";
@@ -19,7 +21,6 @@ import { OnboardingProvider } from "@features/onboarding";
 import { PairingProvider } from "@features/pairing";
 import { PlansProvider } from "@features/plans";
 import { SettingsProvider } from "@features/settings";
-import { ToastHost } from "@global/components/shared";
 import { queryClient } from "@global/config/queryClient";
 import {
   asyncStorageCalendarStorage,
@@ -38,6 +39,7 @@ import {
 } from "@global/data";
 import { useScreenViewLogging } from "@global/hooks/useScreenViewLogging";
 import { setupLogging } from "@global/lib/logging";
+import { toastConfig } from "@global/lib/toast";
 import { useAuthStore } from "@global/store/useAuthStore";
 
 // セッション確認が終わるまでスプラッシュを保持する（Issue #8）。
@@ -97,6 +99,9 @@ export default function RootLayout() {
   // 合成ルート：Repository interface と実装をここで結線する（adr/0003・adr/0015）。
   // GestureHandlerRootView / BottomSheetModalProvider はシート（Sheet.tsx）の
   // ジェスチャーとポータルの前提のためツリー最上位に置く（adr/0020）。
+  // useSafeAreaInsets はここでは Expo Router がルートに敷く SafeAreaProvider に乗る。
+  const insets = useSafeAreaInsets();
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
@@ -130,7 +135,17 @@ export default function RootLayout() {
                       >
                         <StatusBar style="dark" />
                         <RootNavigator />
-                        <ToastHost />
+                        {/* 見た目は toastConfig（F-2 の角丸ピル）で再現。swipeable は
+                        ライブラリ既定で true のためスワイプで手動で閉じられる（Issue #62）。
+                        avoidKeyboard はキーボード表示中に確定した showToast 呼び出し
+                        （例：プラン作成フォーム送信）でキーボード分オフセットがずれるため無効化し、
+                        常に insets.bottom + 96 の固定位置を保つ。 */}
+                        <Toast
+                          config={toastConfig}
+                          position="bottom"
+                          bottomOffset={insets.bottom + 96}
+                          avoidKeyboard={false}
+                        />
                       </NotificationsProvider>
                     </CalendarProvider>
                   </SettingsProvider>
