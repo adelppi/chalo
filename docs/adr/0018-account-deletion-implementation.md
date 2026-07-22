@@ -56,7 +56,7 @@ Supabase のネイティブ Apple サインイン（`signInWithIdToken`）は id
 ### 書き出しの実装
 
 - テキスト整形は純粋関数 `buildPlansExportText()`（`features/plans/model/exportText.ts`）。含める項目は `domain/pairing.md` の目安どおり（場所の座標は v1 で入力 UI がなく常に空のため名称のみ）。
-- ファイル生成と共有シートは `FileShareRepository`（interface は `features/settings/data`、実装 `expoFileShareRepository` は `global/data`。`adr/0003`）。`expo-file-system` でキャッシュ領域に `chalo-plans.txt` を書き、`expo-sharing` の共有シートに渡す。
+- ファイル生成と共有シートは `FileShareRepository`（interface・`useExportPlans`・`ExportPlansDialog` は設定・パートナー消失ロック画面の両方から使うため `global`。実装 `expoFileShareRepository` は `global/data`。`adr/0003`・`adr/0015`。settings⇄pairing の require cycle 解消のため Issue #64 で `features/settings` から移動）。`expo-file-system` でキャッシュ領域に `chalo-plans.txt` を書き、`expo-sharing` の共有シートに渡す。
 - 設定（F-1b）とロック画面で**同一実装**（`ExportPlansDialog` ＋ `useExportPlans`）を使う。
 
 ## 結果

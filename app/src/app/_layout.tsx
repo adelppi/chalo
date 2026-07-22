@@ -37,6 +37,7 @@ import {
   supabasePushTokenRepository,
   supabaseSettingsRepository,
 } from "@global/data";
+import { FileShareProvider } from "@global/hooks/FileShareProvider";
 import { useScreenViewLogging } from "@global/hooks/useScreenViewLogging";
 import { setupLogging } from "@global/lib/logging";
 import { toastConfig } from "@global/lib/toast";
@@ -117,37 +118,40 @@ export default function RootLayout() {
                 >
                   <SettingsProvider
                     settingsRepository={supabaseSettingsRepository}
-                    fileShareRepository={expoFileShareRepository}
                     bugReportRepository={supabaseBugReportRepository}
                   >
-                    <CalendarProvider
-                      deviceCalendarRepository={expoCalendarRepository}
-                      calendarStorageRepository={asyncStorageCalendarStorage}
+                    <FileShareProvider
+                      fileShareRepository={expoFileShareRepository}
                     >
-                      <NotificationsProvider
-                        deviceNotificationRepository={
-                          expoNotificationRepository
-                        }
-                        notificationStorageRepository={
-                          asyncStorageNotificationStorage
-                        }
-                        pushTokenRepository={supabasePushTokenRepository}
+                      <CalendarProvider
+                        deviceCalendarRepository={expoCalendarRepository}
+                        calendarStorageRepository={asyncStorageCalendarStorage}
                       >
-                        <StatusBar style="dark" />
-                        <RootNavigator />
-                        {/* 見た目は toastConfig（F-2 の角丸ピル）で再現。swipeable は
-                        ライブラリ既定で true のためスワイプで手動で閉じられる（Issue #62）。
-                        avoidKeyboard はキーボード表示中に確定した showToast 呼び出し
-                        （例：プラン作成フォーム送信）でキーボード分オフセットがずれるため無効化し、
-                        常に insets.bottom + 96 の固定位置を保つ。 */}
-                        <Toast
-                          config={toastConfig}
-                          position="bottom"
-                          bottomOffset={insets.bottom + 96}
-                          avoidKeyboard={false}
-                        />
-                      </NotificationsProvider>
-                    </CalendarProvider>
+                        <NotificationsProvider
+                          deviceNotificationRepository={
+                            expoNotificationRepository
+                          }
+                          notificationStorageRepository={
+                            asyncStorageNotificationStorage
+                          }
+                          pushTokenRepository={supabasePushTokenRepository}
+                        >
+                          <StatusBar style="dark" />
+                          <RootNavigator />
+                          {/* 見た目は toastConfig（F-2 の角丸ピル）で再現。swipeable は
+                          ライブラリ既定で true のためスワイプで手動で閉じられる（Issue #62）。
+                          avoidKeyboard はキーボード表示中に確定した showToast 呼び出し
+                          （例：プラン作成フォーム送信）でキーボード分オフセットがずれるため無効化し、
+                          常に insets.bottom + 96 の固定位置を保つ。 */}
+                          <Toast
+                            config={toastConfig}
+                            position="bottom"
+                            bottomOffset={insets.bottom + 96}
+                            avoidKeyboard={false}
+                          />
+                        </NotificationsProvider>
+                      </CalendarProvider>
+                    </FileShareProvider>
                   </SettingsProvider>
                 </OnboardingProvider>
               </PairingProvider>

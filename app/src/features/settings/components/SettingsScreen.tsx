@@ -9,6 +9,7 @@ import { CalendarPermissionRow, DefaultCalendarRow } from "@features/calendar";
 import { NotificationPermissionRow } from "@features/notifications";
 import { usePairState } from "@features/pairing";
 import { usePlans } from "@features/plans";
+import { ExportPlansDialog } from "@global/components/shared";
 import { Dialog, Icon } from "@global/components/ui";
 import { legalLinks } from "@global/constants/legalLinks";
 import { palette } from "@global/constants/palette";
@@ -20,7 +21,6 @@ import {
   useUpdatePartnerNickname,
 } from "../hooks/useProfileMutations";
 import { EditProfileFieldDialog } from "./EditProfileFieldDialog";
-import { ExportPlansDialog } from "./ExportPlansDialog";
 import { SendLogsDialog } from "./SendLogsDialog";
 
 type OpenDialog =
