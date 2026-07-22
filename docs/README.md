@@ -79,6 +79,7 @@ docs/
 | 事実 | 一次情報（正） |
 |---|---|
 | ステータス定義・遷移／アルバム対象日 | `domain/plan-lifecycle.md` |
+| 相手の名前の表示規則（呼び方の優先） | `domain/pairing.md` |
 | 通知の種類・条件・タイミング | `domain/notifications.md` |
 | 通知の実装方式 | `adr/0007` |
 | 同期方式 | `adr/0004` ／ 編集ロック方式 `adr/0005` |

@@ -32,7 +32,7 @@ export const supabasePairingRepository: PairingRepository = {
     const userId = await currentUserId();
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("display_name, pair_id")
+      .select("display_name, pair_id, partner_nickname")
       .eq("id", userId)
       .single();
     if (profileError) {
@@ -54,7 +54,8 @@ export const supabasePairingRepository: PairingRepository = {
       return derivePairState({
         myName: profile.display_name,
         pairId: profile.pair_id,
-        partnerName: partner?.display_name ?? null,
+        partnerDisplayName: partner?.display_name ?? null,
+        partnerNickname: profile.partner_nickname,
         inviteCode: null,
       });
     }
@@ -74,7 +75,8 @@ export const supabasePairingRepository: PairingRepository = {
     return derivePairState({
       myName: profile.display_name,
       pairId: null,
-      partnerName: null,
+      partnerDisplayName: null,
+      partnerNickname: profile.partner_nickname,
       inviteCode: invite
         ? { code: invite.code, expiresAt: invite.expires_at }
         : null,

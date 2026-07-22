@@ -1,5 +1,6 @@
 import type { Plan, PlanDraft } from "@features/plans";
 import type { Database } from "@global/lib/supabase";
+import { type NameViewer, resolvePersonName } from "@global/utils/personName";
 
 // plans の行⇄ドメイン型マッピング。実装内に閉じる純粋関数（adr/0003・adr/0014）。
 
@@ -27,8 +28,12 @@ export function toLocalDateString(iso: string): string {
   return `${date.getFullYear()}-${mm}-${dd}`;
 }
 
-/** 行 → ドメイン型 */
-export function toPlan(row: PlanRowWithNames): Plan {
+/**
+ * 行 → ドメイン型。
+ * 作成者・ロック保持者の名前は viewer（自分の id とよびかた）の視点で解決する
+ * （domain/pairing.md「相手の名前の表示」。画面はそのまま表示するだけ）。
+ */
+export function toPlan(row: PlanRowWithNames, viewer: NameViewer): Plan {
   return {
     id: row.id,
     title: row.title,
@@ -43,8 +48,17 @@ export function toPlan(row: PlanRowWithNames): Plan {
     lockedAt: row.locked_at,
     // owner / locker はペアの相手でも profiles RLS で読める（#20）。
     // 万一読めなかった場合は空欄・null にフォールバックして表示を壊さない。
-    ownerName: row.owner?.display_name ?? "",
-    lockedByName: row.locked_by ? (row.locker?.display_name ?? null) : null,
+    ownerName:
+      resolvePersonName(
+        { id: row.owner_id, displayName: row.owner?.display_name ?? null },
+        viewer,
+      ) ?? "",
+    lockedByName: row.locked_by
+      ? resolvePersonName(
+          { id: row.locked_by, displayName: row.locker?.display_name ?? null },
+          viewer,
+        )
+      : null,
     createdAt: toLocalDateString(row.created_at),
   };
 }

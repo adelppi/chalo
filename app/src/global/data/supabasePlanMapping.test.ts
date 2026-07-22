@@ -9,11 +9,17 @@ import {
   toUpdateRow,
 } from "./supabasePlanMapping";
 
+const ME = "5f0c2c74-0000-0000-0000-0000000000aa";
+const PARTNER = "5f0c2c74-0000-0000-0000-0000000000bb";
+
+/** 自分が作成者・よびかた未設定の既定の視点 */
+const VIEWER = { viewerId: ME, partnerNickname: null };
+
 function makeRow(overrides: Partial<PlanRowWithNames>): PlanRowWithNames {
   return {
     id: "5f0c2c74-0000-0000-0000-000000000001",
     pair_id: null,
-    owner_id: "5f0c2c74-0000-0000-0000-0000000000aa",
+    owner_id: ME,
     title: "チームラボプラネッツ",
     date: null,
     time: null,
@@ -69,7 +75,7 @@ describe("toPlan", () => {
       memo: "チケットは前日までに",
       closed_at: "2026-07-10",
     });
-    expect(toPlan(row)).toEqual({
+    expect(toPlan(row, VIEWER)).toEqual({
       id: row.id,
       title: "チームラボプラネッツ",
       date: "2026-07-15",
@@ -89,33 +95,60 @@ describe("toPlan", () => {
 
   it("locked_by / locked_at を行のまま写す（TTL 判定は model/editLock が担う）", () => {
     const row = makeRow({
-      locked_by: "5f0c2c74-0000-0000-0000-0000000000bb",
+      locked_by: PARTNER,
       locked_at: "2026-07-14T12:00:00+00:00",
       locker: { display_name: "そうた" },
     });
-    const plan = toPlan(row);
-    expect(plan.lockedBy).toBe("5f0c2c74-0000-0000-0000-0000000000bb");
+    const plan = toPlan(row, VIEWER);
+    expect(plan.lockedBy).toBe(PARTNER);
     expect(plan.lockedAt).toBe("2026-07-14T12:00:00+00:00");
   });
 
   it("owner が読めない行は ownerName を空欄にする", () => {
-    expect(toPlan(makeRow({ owner: null })).ownerName).toBe("");
+    expect(toPlan(makeRow({ owner: null }), VIEWER).ownerName).toBe("");
   });
 
   it("locked_by があり locker が読めれば表示名を解決する", () => {
     const row = makeRow({
-      locked_by: "5f0c2c74-0000-0000-0000-0000000000bb",
+      locked_by: PARTNER,
       locker: { display_name: "そうた" },
     });
-    expect(toPlan(row).lockedByName).toBe("そうた");
+    expect(toPlan(row, VIEWER).lockedByName).toBe("そうた");
   });
 
   it("locked_by があっても locker が読めなければ null", () => {
     const row = makeRow({
-      locked_by: "5f0c2c74-0000-0000-0000-0000000000bb",
+      locked_by: PARTNER,
       locker: null,
     });
-    expect(toPlan(row).lockedByName).toBeNull();
+    expect(toPlan(row, VIEWER).lockedByName).toBeNull();
+  });
+
+  it("相手が作成者なら、よびかたを作成者名に使う（domain/pairing.md）", () => {
+    const row = makeRow({
+      owner_id: PARTNER,
+      owner: { display_name: "そうた" },
+    });
+    expect(
+      toPlan(row, { viewerId: ME, partnerNickname: "そうちゃん" }).ownerName,
+    ).toBe("そうちゃん");
+  });
+
+  it("自分が作成者なら、よびかたを設定していても自分の表示名のまま", () => {
+    const row = makeRow({ owner_id: ME, owner: { display_name: "ゆい" } });
+    expect(
+      toPlan(row, { viewerId: ME, partnerNickname: "そうちゃん" }).ownerName,
+    ).toBe("ゆい");
+  });
+
+  it("相手がロック中なら、よびかたを lockedByName に使う", () => {
+    const row = makeRow({
+      locked_by: PARTNER,
+      locker: { display_name: "そうた" },
+    });
+    expect(
+      toPlan(row, { viewerId: ME, partnerNickname: "そうちゃん" }).lockedByName,
+    ).toBe("そうちゃん");
   });
 });
 

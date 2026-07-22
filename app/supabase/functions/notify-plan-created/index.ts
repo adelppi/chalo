@@ -8,6 +8,7 @@ import {
   buildCreationPushMessage,
   collectPushErrors,
   pickPartner,
+  resolveCreatorLabel,
 } from "./creationPush.ts";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
@@ -67,9 +68,10 @@ Deno.serve(async (req: Request) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
   );
 
+  // partner_nickname は受信者（パートナー）から見た作成者の呼び方に使う（domain/pairing.md）。
   const { data: members, error: profilesError } = await supabase
     .from("profiles")
-    .select("id, display_name")
+    .select("id, display_name, partner_nickname")
     .eq("pair_id", pairId);
   if (profilesError) {
     console.error("プロフィールの取得に失敗しました", profilesError);
@@ -81,6 +83,7 @@ Deno.serve(async (req: Request) => {
     (members ?? []).map((member) => ({
       id: member.id,
       displayName: member.display_name,
+      partnerNickname: member.partner_nickname,
     })),
     ownerId,
   );
@@ -100,7 +103,10 @@ Deno.serve(async (req: Request) => {
 
   const message = buildCreationPushMessage({
     tokens: (tokenRows ?? []).map((row) => row.expo_push_token),
-    creatorName: creator?.display_name ?? "相手",
+    creatorName: resolveCreatorLabel({
+      recipientNickname: partner.partnerNickname,
+      creatorDisplayName: creator?.display_name ?? null,
+    }),
     planTitle: title,
     planId,
   });

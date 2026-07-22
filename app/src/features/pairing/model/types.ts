@@ -17,7 +17,16 @@ export type PairState =
       status: "paired";
       /** 自分の表示名（B-5 の名前ピルに使う） */
       myName: string;
+      /**
+       * 相手の名前の表示用ラベル。よびかたがあればそれ、無ければ表示名
+       * （domain/pairing.md「相手の名前の表示」）。画面はこれをそのまま出す。
+       */
       partnerName: string;
+      /**
+       * 相手の表示名（原名）。よびかたを上書きしない生の名前が要る場所
+       * （設定 E-1「相手のよびかた」の行・編集ダイアログ）だけで使う。
+       */
+      partnerDisplayName: string;
     }
   | {
       /** パートナーがアカウント削除済み。全画面ロックに入る（domain/pairing.md「残った側（B）の状態」） */

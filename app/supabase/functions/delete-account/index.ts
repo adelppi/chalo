@@ -146,7 +146,7 @@ Deno.serve(async (req: Request) => {
   // メモ追記の文言用に表示名を読む（profiles が既に無い再試行時は null）。
   const { data: profile, error: profileError } = await admin
     .from("profiles")
-    .select("display_name")
+    .select("display_name, pair_id")
     .eq("id", user.id)
     .maybeSingle();
   if (profileError) {
@@ -154,10 +154,33 @@ Deno.serve(async (req: Request) => {
     return new Response("internal error", { status: 500 });
   }
 
+  // メモを読むのは残る側なので、追記の名前は残る側のよびかたを優先する
+  // （domain/pairing.md）。退会者の行が消える前に、両方をここで読んでおく。
+  let partnerNickname: string | null = null;
+  if (profile?.pair_id) {
+    const { data: partner, error: partnerError } = await admin
+      .from("profiles")
+      .select("partner_nickname")
+      .eq("pair_id", profile.pair_id)
+      .neq("id", user.id)
+      .maybeSingle();
+    if (partnerError) {
+      console.error(
+        "delete-account: パートナーの profiles の取得に失敗しました",
+        partnerError,
+      );
+      return new Response("internal error", { status: 500 });
+    }
+    partnerNickname = partner?.partner_nickname ?? null;
+  }
+
   // 退会者を指す FK の付け替え・削除（1トランザクション。adr/0018）。
   const { error: dataError } = await admin.rpc("delete_account_data", {
     p_profile_id: user.id,
-    p_attribution: buildDeletedOwnerAttribution(profile?.display_name ?? ""),
+    p_attribution: buildDeletedOwnerAttribution({
+      displayName: profile?.display_name ?? null,
+      partnerNickname,
+    }),
   });
   if (dataError) {
     console.error(

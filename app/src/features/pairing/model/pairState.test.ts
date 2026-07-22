@@ -9,7 +9,8 @@ describe("derivePairState", () => {
       derivePairState({
         myName: "ゆい",
         pairId: null,
-        partnerName: null,
+        partnerDisplayName: null,
+        partnerNickname: null,
         inviteCode,
       }),
     ).toEqual({ status: "solo", inviteCode });
@@ -20,7 +21,8 @@ describe("derivePairState", () => {
       derivePairState({
         myName: "ゆい",
         pairId: null,
-        partnerName: null,
+        partnerDisplayName: null,
+        partnerNickname: null,
         inviteCode: null,
       }),
     ).toEqual({ status: "solo", inviteCode: null });
@@ -31,10 +33,45 @@ describe("derivePairState", () => {
       derivePairState({
         myName: "ゆい",
         pairId: "pair-1",
-        partnerName: "たろう",
+        partnerDisplayName: "たろう",
+        partnerNickname: null,
         inviteCode: null,
       }),
-    ).toEqual({ status: "paired", myName: "ゆい", partnerName: "たろう" });
+    ).toEqual({
+      status: "paired",
+      myName: "ゆい",
+      partnerName: "たろう",
+      partnerDisplayName: "たろう",
+    });
+  });
+
+  it("よびかたがあれば partnerName に反映し、原名は partnerDisplayName に残す", () => {
+    expect(
+      derivePairState({
+        myName: "ゆい",
+        pairId: "pair-1",
+        partnerDisplayName: "たろう",
+        partnerNickname: "たろちゃん",
+        inviteCode: null,
+      }),
+    ).toEqual({
+      status: "paired",
+      myName: "ゆい",
+      partnerName: "たろちゃん",
+      partnerDisplayName: "たろう",
+    });
+  });
+
+  it("よびかたが空白のみなら表示名にもどる", () => {
+    expect(
+      derivePairState({
+        myName: "ゆい",
+        pairId: "pair-1",
+        partnerDisplayName: "たろう",
+        partnerNickname: "   ",
+        inviteCode: null,
+      }),
+    ).toMatchObject({ partnerName: "たろう" });
   });
 
   it("pair_id はあるのに相手の行が無ければ partner-left（パートナー削除済み）", () => {
@@ -42,7 +79,8 @@ describe("derivePairState", () => {
       derivePairState({
         myName: "ゆい",
         pairId: "pair-1",
-        partnerName: null,
+        partnerDisplayName: null,
+        partnerNickname: "たろちゃん",
         inviteCode: null,
       }),
     ).toEqual({ status: "partner-left" });
@@ -53,9 +91,15 @@ describe("derivePairState", () => {
       derivePairState({
         myName: "ゆい",
         pairId: "pair-1",
-        partnerName: "",
+        partnerDisplayName: "",
+        partnerNickname: null,
         inviteCode: null,
       }),
-    ).toEqual({ status: "paired", myName: "ゆい", partnerName: "" });
+    ).toEqual({
+      status: "paired",
+      myName: "ゆい",
+      partnerName: "",
+      partnerDisplayName: "",
+    });
   });
 });

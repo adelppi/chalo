@@ -15,6 +15,9 @@ export interface SettingsRepository {
   /** 「あなたの名前」を更新する（本人のみ write。data-model.md profiles） */
   updateDisplayName(displayName: string): Promise<void>;
 
-  /** 「相手のよびかた」を更新する（本人のみ write。data-model.md profiles） */
-  updatePartnerNickname(partnerNickname: string): Promise<void>;
+  /**
+   * 「相手のよびかた」を更新する（本人のみ write。data-model.md profiles）。
+   * null を渡すと未設定に戻り、以後は相手の表示名で表示される（domain/pairing.md）。
+   */
+  updatePartnerNickname(partnerNickname: string | null): Promise<void>;
 }

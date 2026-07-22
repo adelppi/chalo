@@ -20,6 +20,11 @@ export type { BugReportDraft } from "./model/bugReport";
 export {
   PROFILE_NAME_MAX_LENGTH,
   profileNameErrorMessage,
+  validatePartnerNickname,
   validateProfileName,
 } from "./model/profileValidation";
-export type { ProfileNameValidation } from "./model/profileValidation";
+export type {
+  PartnerNicknameValidation,
+  ProfileFieldValidation,
+  ProfileNameValidation,
+} from "./model/profileValidation";
