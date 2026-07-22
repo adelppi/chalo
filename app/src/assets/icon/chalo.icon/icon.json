@@ -12,7 +12,7 @@
             },
             {
               "appearance" : "dark",
-              "value" : "plus-lighter"
+              "value" : "multiply"
             }
           ],
           "fill-specializations" : [
@@ -22,18 +22,39 @@
             {
               "appearance" : "dark",
               "value" : {
-                "solid" : "display-p3:0.56354,0.54928,0.54629,1.00000"
+                "solid" : "display-p3:1.00000,0.97844,0.91377,1.00000"
               }
+            }
+          ],
+          "glass-specializations" : [
+            {
+              "value" : false
+            },
+            {
+              "appearance" : "dark",
+              "value" : true
+            },
+            {
+              "appearance" : "tinted",
+              "value" : true
             }
           ],
           "hidden" : false,
           "image-name" : "chalo_dark.png",
           "name" : "chalo_dark",
-          "opacity" : 1,
+          "opacity-specializations" : [
+            {
+              "value" : 1
+            },
+            {
+              "appearance" : "dark",
+              "value" : 1
+            }
+          ],
           "position" : {
-            "scale" : 0.93,
+            "scale" : 0.65,
             "translation-in-points" : [
-              10.1484375,
+              15.3359375,
               0
             ]
           }
