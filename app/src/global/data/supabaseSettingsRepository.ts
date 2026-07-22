@@ -31,7 +31,7 @@ export const supabaseSettingsRepository: SettingsRepository = {
     }
   },
 
-  async updatePartnerNickname(partnerNickname: string): Promise<void> {
+  async updatePartnerNickname(partnerNickname: string | null): Promise<void> {
     const userId = await currentUserId();
     const { error } = await supabase
       .from("profiles")

@@ -3,6 +3,7 @@ import { describe, expect, it } from "@jest/globals";
 import {
   PROFILE_NAME_MAX_LENGTH,
   profileNameErrorMessage,
+  validatePartnerNickname,
   validateProfileName,
 } from "./profileValidation";
 
@@ -39,6 +40,40 @@ describe("validateProfileName", () => {
       valid: false,
       reason: "too-long",
     });
+  });
+});
+
+describe("validatePartnerNickname", () => {
+  it("空欄は有効（null ＝未設定に戻す。以後は相手の表示名で表示される）", () => {
+    expect(validatePartnerNickname("")).toEqual({ valid: true, value: null });
+  });
+
+  it("空白のみも未設定に戻す", () => {
+    expect(validatePartnerNickname("   ")).toEqual({
+      valid: true,
+      value: null,
+    });
+  });
+
+  it("前後の空白を除去して有効値を返す", () => {
+    expect(validatePartnerNickname("  ゆいちゃん  ")).toEqual({
+      valid: true,
+      value: "ゆいちゃん",
+    });
+  });
+
+  it(`${PROFILE_NAME_MAX_LENGTH}文字ちょうどは有効`, () => {
+    const nickname = "あ".repeat(PROFILE_NAME_MAX_LENGTH);
+    expect(validatePartnerNickname(nickname)).toEqual({
+      valid: true,
+      value: nickname,
+    });
+  });
+
+  it(`${PROFILE_NAME_MAX_LENGTH}文字を超えると無効`, () => {
+    expect(
+      validatePartnerNickname("あ".repeat(PROFILE_NAME_MAX_LENGTH + 1)),
+    ).toEqual({ valid: false, reason: "too-long" });
   });
 });
 

@@ -5,6 +5,8 @@
 export type PairMember = {
   id: string;
   displayName: string;
+  /** そのメンバーが設定した「相手のよびかた」（未設定なら null） */
+  partnerNickname: string | null;
 };
 
 /** ペアの2人から作成者以外（＝パートナー）を選ぶ。ペア未成立なら null */
@@ -13,6 +15,22 @@ export function pickPartner(
   creatorId: string,
 ): PairMember | null {
   return members.find((member) => member.id !== creatorId) ?? null;
+}
+
+/**
+ * 通知本文に出す作成者の名前。よびかたは各自の見え方なので、**受信者の**よびかたを使う
+ * （domain/pairing.md「相手の名前の表示」）。未設定なら作成者の表示名、
+ * それも取れなければ「相手」へフォールバックする。
+ */
+export function resolveCreatorLabel(input: {
+  recipientNickname: string | null;
+  creatorDisplayName: string | null;
+}): string {
+  return (
+    input.recipientNickname?.trim() ||
+    input.creatorDisplayName?.trim() ||
+    "相手"
+  );
 }
 
 export type ExpoPushMessage = {

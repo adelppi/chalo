@@ -50,18 +50,57 @@ describe("pickAppleRevokeConfig", () => {
 });
 
 describe("buildDeletedOwnerAttribution", () => {
-  it("表示名を実名のまま埋め込む（domain/pairing.md の文言）", () => {
-    expect(buildDeletedOwnerAttribution("ゆい")).toBe(
-      "（このプランは ゆい（削除済み）が作成）",
-    );
+  it("よびかたが未設定なら退会者の表示名を実名のまま埋め込む（domain/pairing.md の文言）", () => {
+    expect(
+      buildDeletedOwnerAttribution({
+        displayName: "ゆい",
+        partnerNickname: null,
+      }),
+    ).toBe("（このプランは ゆい（削除済み）が作成）");
   });
 
-  it("表示名が空ならフォールバック文言", () => {
-    expect(buildDeletedOwnerAttribution("")).toBe(
-      "（このプランは 削除済みのユーザーが作成）",
-    );
-    expect(buildDeletedOwnerAttribution("  ")).toBe(
-      "（このプランは 削除済みのユーザーが作成）",
-    );
+  it("残る側のよびかたがあればそれを使う", () => {
+    expect(
+      buildDeletedOwnerAttribution({
+        displayName: "ゆい",
+        partnerNickname: "ゆいちゃん",
+      }),
+    ).toBe("（このプランは ゆいちゃん（削除済み）が作成）");
+  });
+
+  it("よびかたが空白のみなら表示名にもどる", () => {
+    expect(
+      buildDeletedOwnerAttribution({
+        displayName: "ゆい",
+        partnerNickname: "   ",
+      }),
+    ).toBe("（このプランは ゆい（削除済み）が作成）");
+  });
+
+  it("表示名が読めなくても、よびかたがあればそれを使う", () => {
+    expect(
+      buildDeletedOwnerAttribution({
+        displayName: null,
+        partnerNickname: "ゆいちゃん",
+      }),
+    ).toBe("（このプランは ゆいちゃん（削除済み）が作成）");
+  });
+
+  it("どちらも空ならフォールバック文言", () => {
+    expect(
+      buildDeletedOwnerAttribution({ displayName: "", partnerNickname: null }),
+    ).toBe("（このプランは 削除済みのユーザーが作成）");
+    expect(
+      buildDeletedOwnerAttribution({
+        displayName: "  ",
+        partnerNickname: "  ",
+      }),
+    ).toBe("（このプランは 削除済みのユーザーが作成）");
+    expect(
+      buildDeletedOwnerAttribution({
+        displayName: null,
+        partnerNickname: null,
+      }),
+    ).toBe("（このプランは 削除済みのユーザーが作成）");
   });
 });

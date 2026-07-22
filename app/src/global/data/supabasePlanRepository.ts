@@ -1,6 +1,7 @@
 import type { Plan, PlanDraft, PlanRepository } from "@features/plans";
 import { supabase } from "@global/lib/supabase";
 
+import { currentNameViewer } from "./currentNameViewer";
 import { currentUserId } from "./currentUserId";
 import { toInsertRow, toPlan, toUpdateRow } from "./supabasePlanMapping";
 
@@ -17,55 +18,62 @@ export const supabasePlanRepository: PlanRepository = {
   async list(): Promise<Plan[]> {
     // 並び・グループ化は純粋関数（features/plans/model/sections）が担うため、
     // ここでは同日作成の順序が安定するよう created_at 昇順にだけ揃える。
-    const { data, error } = await supabase
-      .from("plans")
-      .select(PLAN_SELECT)
-      .order("created_at", { ascending: true });
+    // 名前解決の視点（自分のよびかた）は別クエリになるため、往復を増やさないよう並行に読む。
+    const [viewer, { data, error }] = await Promise.all([
+      currentNameViewer(),
+      supabase
+        .from("plans")
+        .select(PLAN_SELECT)
+        .order("created_at", { ascending: true }),
+    ]);
     if (error) {
       throw error;
     }
-    return data.map(toPlan);
+    return data.map((row) => toPlan(row, viewer));
   },
 
   async get(id: string): Promise<Plan | null> {
-    const { data, error } = await supabase
-      .from("plans")
-      .select(PLAN_SELECT)
-      .eq("id", id)
-      .maybeSingle();
+    const [viewer, { data, error }] = await Promise.all([
+      currentNameViewer(),
+      supabase.from("plans").select(PLAN_SELECT).eq("id", id).maybeSingle(),
+    ]);
     if (error) {
       if (error.code === INVALID_UUID_CODE) {
         return null;
       }
       throw error;
     }
-    return data ? toPlan(data) : null;
+    return data ? toPlan(data, viewer) : null;
   },
 
   async create(draft: PlanDraft): Promise<Plan> {
-    const ownerId = await currentUserId();
+    // owner_id に自分の id が要るため、insert の前に視点を解決する。
+    const viewer = await currentNameViewer();
     const { data, error } = await supabase
       .from("plans")
-      .insert(toInsertRow(draft, ownerId))
+      .insert(toInsertRow(draft, viewer.viewerId))
       .select(PLAN_SELECT)
       .single();
     if (error) {
       throw error;
     }
-    return toPlan(data);
+    return toPlan(data, viewer);
   },
 
   async update(id: string, draft: PlanDraft): Promise<Plan> {
-    const { data, error } = await supabase
-      .from("plans")
-      .update(toUpdateRow(draft))
-      .eq("id", id)
-      .select(PLAN_SELECT)
-      .single();
+    const [viewer, { data, error }] = await Promise.all([
+      currentNameViewer(),
+      supabase
+        .from("plans")
+        .update(toUpdateRow(draft))
+        .eq("id", id)
+        .select(PLAN_SELECT)
+        .single(),
+    ]);
     if (error) {
       throw error;
     }
-    return toPlan(data);
+    return toPlan(data, viewer);
   },
 
   async remove(id: string): Promise<void> {
@@ -76,16 +84,19 @@ export const supabasePlanRepository: PlanRepository = {
   },
 
   async close(id: string, closedAt: string): Promise<Plan> {
-    const { data, error } = await supabase
-      .from("plans")
-      .update({ closed_at: closedAt })
-      .eq("id", id)
-      .select(PLAN_SELECT)
-      .single();
+    const [viewer, { data, error }] = await Promise.all([
+      currentNameViewer(),
+      supabase
+        .from("plans")
+        .update({ closed_at: closedAt })
+        .eq("id", id)
+        .select(PLAN_SELECT)
+        .single(),
+    ]);
     if (error) {
       throw error;
     }
-    return toPlan(data);
+    return toPlan(data, viewer);
   },
 
   async acquireLock(id: string): Promise<void> {

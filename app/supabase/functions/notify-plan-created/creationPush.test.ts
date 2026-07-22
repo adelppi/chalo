@@ -4,20 +4,66 @@ import {
   buildCreationPushMessage,
   collectPushErrors,
   pickPartner,
+  resolveCreatorLabel,
 } from "./creationPush";
 
 describe("pickPartner", () => {
   it("作成者以外のメンバーを返す", () => {
     const members = [
-      { id: "a", displayName: "たろう" },
-      { id: "b", displayName: "はなこ" },
+      { id: "a", displayName: "たろう", partnerNickname: null },
+      { id: "b", displayName: "はなこ", partnerNickname: "たろちゃん" },
     ];
-    expect(pickPartner(members, "a")).toEqual({ id: "b", displayName: "はなこ" });
+    expect(pickPartner(members, "a")).toEqual({
+      id: "b",
+      displayName: "はなこ",
+      partnerNickname: "たろちゃん",
+    });
   });
 
   it("ペアが未成立（1人だけ）なら null", () => {
-    const members = [{ id: "a", displayName: "たろう" }];
+    const members = [{ id: "a", displayName: "たろう", partnerNickname: null }];
     expect(pickPartner(members, "a")).toBeNull();
+  });
+});
+
+describe("resolveCreatorLabel", () => {
+  it("受信者のよびかたを優先する", () => {
+    expect(
+      resolveCreatorLabel({
+        recipientNickname: "たろちゃん",
+        creatorDisplayName: "たろう",
+      }),
+    ).toBe("たろちゃん");
+  });
+
+  it("よびかたが未設定なら作成者の表示名", () => {
+    expect(
+      resolveCreatorLabel({
+        recipientNickname: null,
+        creatorDisplayName: "たろう",
+      }),
+    ).toBe("たろう");
+  });
+
+  it("よびかたが空白のみでも作成者の表示名にもどる", () => {
+    expect(
+      resolveCreatorLabel({
+        recipientNickname: "  ",
+        creatorDisplayName: "たろう",
+      }),
+    ).toBe("たろう");
+  });
+
+  it("どちらも取れなければ「相手」へフォールバックする", () => {
+    expect(
+      resolveCreatorLabel({
+        recipientNickname: null,
+        creatorDisplayName: null,
+      }),
+    ).toBe("相手");
+    expect(
+      resolveCreatorLabel({ recipientNickname: "", creatorDisplayName: "  " }),
+    ).toBe("相手");
   });
 });
 

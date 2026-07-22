@@ -20,6 +20,10 @@ import {
   useUpdateDisplayName,
   useUpdatePartnerNickname,
 } from "../hooks/useProfileMutations";
+import {
+  validatePartnerNickname,
+  validateProfileName,
+} from "../model/profileValidation";
 import { EditProfileFieldDialog } from "./EditProfileFieldDialog";
 import { SendLogsDialog } from "./SendLogsDialog";
 
@@ -50,8 +54,13 @@ export function SettingsScreen() {
 
   const isSolo = pairState?.status === "solo";
   const inviteCode = pairState?.status === "solo" ? pairState.inviteCode : null;
+  // partnerName は表示用（よびかた優先）。よびかたの行・編集ダイアログだけは
+  // 原名（partnerDisplayName）を出す。よびかたで上書きすると何を変えているのか
+  // 分からなくなるため（domain/pairing.md「相手の名前の表示」）。
   const partnerName =
     pairState?.status === "paired" ? pairState.partnerName : null;
+  const partnerDisplayName =
+    pairState?.status === "paired" ? pairState.partnerDisplayName : null;
   const appVersion = Constants.expoConfig?.version ?? "1.0.0";
 
   const closeDialog = () => setOpenDialog(null);
@@ -112,7 +121,9 @@ export function SettingsScreen() {
             <SettingsRow
               testID="settings-edit-nickname-button"
               label="相手のよびかた"
-              value={profile?.partnerNickname ?? partnerName ?? undefined}
+              value={
+                profile?.partnerNickname ?? partnerDisplayName ?? undefined
+              }
               chevron
               onPress={() => setOpenDialog("edit-nickname")}
               showSeparator={false}
@@ -232,9 +243,14 @@ export function SettingsScreen() {
           label="あなたの名前"
           initialValue={profile.displayName}
           isSaving={updateDisplayName.isPending}
+          validate={validateProfileName}
           testIDPrefix="settings-edit-name"
           onClose={closeDialog}
           onSave={(value) => {
+            // validateProfileName は空欄を弾くため、ここに null は来ない。
+            if (value === null) {
+              return;
+            }
             updateDisplayName.mutate(value, {
               onSuccess: closeDialog,
               onError: () => {
@@ -254,8 +270,17 @@ export function SettingsScreen() {
           visible
           title="よびかたを変更"
           label="相手のよびかた"
-          initialValue={profile?.partnerNickname ?? partnerName ?? ""}
+          // 未設定なら空欄で開く。原名はプレースホルダで示し、
+          // 空欄で保存すると表示名にもどることを補足に書く（Issue #66）。
+          initialValue={profile?.partnerNickname ?? ""}
           isSaving={updatePartnerNickname.isPending}
+          validate={validatePartnerNickname}
+          placeholder={partnerDisplayName ?? undefined}
+          hint={
+            partnerDisplayName
+              ? `空欄にすると、相手の表示名（${partnerDisplayName}）にもどります。`
+              : "空欄にすると、相手の表示名にもどります。"
+          }
           testIDPrefix="settings-edit-nickname"
           onClose={closeDialog}
           onSave={(value) => {

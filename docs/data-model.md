@@ -48,7 +48,7 @@ Supabase Auth のユーザーに 1:1 で対応。
 | id | uuid (PK) | auth.users.id と一致 |
 | display_name | text | 表示名 |
 | avatar_url | text? | アバター |
-| partner_nickname | text? | 相手の呼び方（このユーザー視点） |
+| partner_nickname | text? | 相手の呼び方（このユーザー視点。未設定なら null。表示規則は `domain/pairing.md`） |
 | pair_id | uuid? (FK→pairs) | 所属するペア。未ペアなら null |
 | timezone | text | 通知時刻算出用 |
 | created_at | timestamptz | |
