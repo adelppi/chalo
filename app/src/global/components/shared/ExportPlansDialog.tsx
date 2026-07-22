@@ -8,9 +8,8 @@ import {
 } from "@features/plans";
 import { Dialog, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
+import { useExportPlans } from "@global/hooks/useExportPlans";
 import { useToastStore } from "@global/store/useToastStore";
-
-import { useExportPlans } from "../hooks/useExportPlans";
 
 type ExportPlansDialogProps = {
   visible: boolean;
@@ -21,7 +20,7 @@ type ExportPlansDialogProps = {
 
 // プランを書き出すダイアログ（F-1b）。確認 → 完了の2段階。
 // 「書き出す」でテキストを整形し、「共有」で .txt を iOS 共有シートへ渡す。
-// 設定（E-1）とロック画面（partner-left）で共通。
+// 設定（E-1）とロック画面（partner-left）で共通のため global に置く（Issue #64）。
 // 開くたびに親が新しくマウントする前提（step は confirm から始まる）。
 export function ExportPlansDialog({
   visible,
