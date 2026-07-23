@@ -2,6 +2,7 @@ import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Pressable,
   ScrollView,
@@ -24,9 +25,9 @@ import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 import { backHeaderOptions } from "@global/utils/headerItems";
 
+import { usePlansContext } from "../hooks/PlansProvider";
 import { usePlan } from "../hooks/usePlan";
 import { useCreatePlan, useUpdatePlan } from "../hooks/usePlanMutations";
-import { usePlansContext } from "../hooks/PlansProvider";
 import { formatDateShort } from "../model/format";
 import type { Plan, PlanDraft } from "../model/types";
 import { PlanDatePickerSheet } from "./PlanDatePickerSheet";
@@ -98,9 +99,33 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
     session: number;
   } | null>(null);
 
+  // シートの中の入力欄で出たキーボードでは、うしろのフォームを持ち上げない。どうせシートに
+  // 隠れる位置なのに、開いた瞬間だけ「保存する」がせり上がるのが見えて不格好なため。
+  // 戻すのはキーボードが消えきってから：出ているうちに戻すと、抑えていた余白が一気に入って跳ねる。
+  const [avoidsKeyboard, setAvoidsKeyboard] = useState(true);
+
+  useEffect(() => {
+    if (openSheet !== null) {
+      return;
+    }
+    const subscription = Keyboard.addListener("keyboardDidHide", () =>
+      setAvoidsKeyboard(true),
+    );
+    return () => subscription.remove();
+  }, [openSheet]);
+
   const openSheetNamed = (name: SheetName) => {
     setMountedSheet((prev) => ({ name, session: (prev?.session ?? 0) + 1 }));
     setOpenSheet(name);
+    setAvoidsKeyboard(false);
+  };
+
+  const closeSheet = () => {
+    setOpenSheet(null);
+    // 日時・期限シートのようにキーボードを出さないシートは、待たずにそのまま戻す。
+    if (!Keyboard.isVisible()) {
+      setAvoidsKeyboard(true);
+    }
   };
 
   const screenName = mode === "create" ? "plan-create" : "plan-edit";
@@ -176,6 +201,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
       testID={`${screenName}-screen`}
       className="flex-1 bg-linen"
       behavior="padding"
+      enabled={avoidsKeyboard}
       keyboardVerticalOffset={insets.top + 8}
     >
       <Stack.Screen
@@ -278,14 +304,14 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             setTime(nextTime);
             // 日付を入れた時点で期限を消す（domain/plan-lifecycle.md。Issue #58）
             setDeadline(null);
-            setOpenSheet(null);
+            closeSheet();
           }}
           onClear={() => {
             setDate(null);
             setTime(null);
-            setOpenSheet(null);
+            closeSheet();
           }}
-          onClose={() => setOpenSheet(null)}
+          onClose={closeSheet}
         />
       ) : null}
 
@@ -299,13 +325,13 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           initialTime={null}
           onConfirm={(selected) => {
             setDeadline(selected);
-            setOpenSheet(null);
+            closeSheet();
           }}
           onClear={() => {
             setDeadline(null);
-            setOpenSheet(null);
+            closeSheet();
           }}
-          onClose={() => setOpenSheet(null)}
+          onClose={closeSheet}
         />
       ) : null}
 
@@ -319,9 +345,9 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           keyboardType="url"
           onConfirm={(value) => {
             setReferenceUrl(value);
-            setOpenSheet(null);
+            closeSheet();
           }}
-          onClose={() => setOpenSheet(null)}
+          onClose={closeSheet}
           testID={`${screenName}-url-sheet`}
         />
       ) : null}
@@ -336,9 +362,9 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           multiline
           onConfirm={(value) => {
             setMemo(value);
-            setOpenSheet(null);
+            closeSheet();
           }}
-          onClose={() => setOpenSheet(null)}
+          onClose={closeSheet}
           testID={`${screenName}-memo-sheet`}
         />
       ) : null}
