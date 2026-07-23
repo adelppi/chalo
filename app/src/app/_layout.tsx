@@ -1,6 +1,5 @@
 import "../global.css";
 
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -98,67 +97,65 @@ function RootNavigator() {
 export default function RootLayout() {
   // フォントは OS 標準（システムフォント）。読み込み待ちは不要（Issue #16・adr/0016）。
   // 合成ルート：Repository interface と実装をここで結線する（adr/0003・adr/0015）。
-  // GestureHandlerRootView / BottomSheetModalProvider はシート（Sheet.tsx）の
-  // ジェスチャーとポータルの前提のためツリー最上位に置く（adr/0020）。
+  // GestureHandlerRootView はシートの前提ではなくなった（adr/0022 でネイティブのシートに
+  // 置き換え）が、expo-router（React Navigation）のジェスチャーが要求するため残す。
   // useSafeAreaInsets はここでは Expo Router がルートに敷く SafeAreaProvider に乗る。
   const insets = useSafeAreaInsets();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider
-            authRepository={supabaseAuthRepository}
-            profileRepository={supabaseProfileRepository}
-          >
-            <PlansProvider planRepository={supabasePlanRepository}>
-              <PairingProvider pairingRepository={supabasePairingRepository}>
-                <OnboardingProvider
-                  onboardingRepository={asyncStorageOnboardingRepository}
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider
+          authRepository={supabaseAuthRepository}
+          profileRepository={supabaseProfileRepository}
+        >
+          <PlansProvider planRepository={supabasePlanRepository}>
+            <PairingProvider pairingRepository={supabasePairingRepository}>
+              <OnboardingProvider
+                onboardingRepository={asyncStorageOnboardingRepository}
+              >
+                <SettingsProvider
+                  settingsRepository={supabaseSettingsRepository}
+                  bugReportRepository={supabaseBugReportRepository}
                 >
-                  <SettingsProvider
-                    settingsRepository={supabaseSettingsRepository}
-                    bugReportRepository={supabaseBugReportRepository}
+                  <FileShareProvider
+                    fileShareRepository={expoFileShareRepository}
                   >
-                    <FileShareProvider
-                      fileShareRepository={expoFileShareRepository}
+                    <CalendarProvider
+                      deviceCalendarRepository={expoCalendarRepository}
+                      calendarStorageRepository={asyncStorageCalendarStorage}
                     >
-                      <CalendarProvider
-                        deviceCalendarRepository={expoCalendarRepository}
-                        calendarStorageRepository={asyncStorageCalendarStorage}
+                      <NotificationsProvider
+                        deviceNotificationRepository={
+                          expoNotificationRepository
+                        }
+                        notificationStorageRepository={
+                          asyncStorageNotificationStorage
+                        }
+                        pushTokenRepository={supabasePushTokenRepository}
                       >
-                        <NotificationsProvider
-                          deviceNotificationRepository={
-                            expoNotificationRepository
-                          }
-                          notificationStorageRepository={
-                            asyncStorageNotificationStorage
-                          }
-                          pushTokenRepository={supabasePushTokenRepository}
-                        >
-                          <StatusBar style="dark" />
-                          <RootNavigator />
-                          {/* 見た目は toastConfig（F-2 の角丸ピル）で再現。swipeable は
+                        <StatusBar style="dark" />
+                        <RootNavigator />
+                        {/* 見た目は toastConfig（F-2 の角丸ピル）で再現。swipeable は
                           ライブラリ既定で true のためスワイプで手動で閉じられる（Issue #62）。
                           avoidKeyboard はキーボード表示中に確定した showToast 呼び出し
                           （例：プラン作成フォーム送信）でキーボード分オフセットがずれるため無効化し、
                           常に insets.bottom + 96 の固定位置を保つ。 */}
-                          <Toast
-                            config={toastConfig}
-                            position="bottom"
-                            bottomOffset={insets.bottom + 96}
-                            avoidKeyboard={false}
-                          />
-                        </NotificationsProvider>
-                      </CalendarProvider>
-                    </FileShareProvider>
-                  </SettingsProvider>
-                </OnboardingProvider>
-              </PairingProvider>
-            </PlansProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </BottomSheetModalProvider>
+                        <Toast
+                          config={toastConfig}
+                          position="bottom"
+                          bottomOffset={insets.bottom + 96}
+                          avoidKeyboard={false}
+                        />
+                      </NotificationsProvider>
+                    </CalendarProvider>
+                  </FileShareProvider>
+                </SettingsProvider>
+              </OnboardingProvider>
+            </PairingProvider>
+          </PlansProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

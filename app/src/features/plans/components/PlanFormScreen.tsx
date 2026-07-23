@@ -66,7 +66,8 @@ function EditLoader({ id }: { id: string }) {
   return <PlanForm mode="edit" plan={plan} />;
 }
 
-type OpenSheet = "date" | "deadline" | "url" | "memo" | null;
+type SheetName = "date" | "deadline" | "url" | "memo";
+type OpenSheet = SheetName | null;
 
 function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   const insets = useSafeAreaInsets();
@@ -89,6 +90,18 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   );
   const [memo, setMemo] = useState<string | null>(plan?.memo ?? null);
   const [openSheet, setOpenSheet] = useState<OpenSheet>(null);
+  // いまマウントしているシート。閉じても外さない：ネイティブのシートは表示中に
+  // アンマウントすると画面に残ってしまう（adr/0022）。session は「開くたびに中身を
+  // 作り直す」ための key で、開くたびに増やす。
+  const [mountedSheet, setMountedSheet] = useState<{
+    name: SheetName;
+    session: number;
+  } | null>(null);
+
+  const openSheetNamed = (name: SheetName) => {
+    setMountedSheet((prev) => ({ name, session: (prev?.session ?? 0) + 1 }));
+    setOpenSheet(name);
+  };
 
   const screenName = mode === "create" ? "plan-create" : "plan-edit";
   const isSaving = createPlan.isPending || updatePlan.isPending;
@@ -204,7 +217,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             icon="calendar"
             label="日時"
             value={date ? formatDateShort(date, time) : null}
-            onPress={() => setOpenSheet("date")}
+            onPress={() => openSheetNamed("date")}
             showSeparator
           />
           <FormFieldRow
@@ -214,7 +227,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             value={
               !deadlineLocked && deadline ? formatDateShort(deadline) : null
             }
-            onPress={() => setOpenSheet("deadline")}
+            onPress={() => openSheetNamed("deadline")}
             showSeparator
             disabled={deadlineLocked}
           />
@@ -223,7 +236,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             icon="link"
             label="参考URL"
             value={referenceUrl?.replace(/^https?:\/\//, "") ?? null}
-            onPress={() => setOpenSheet("url")}
+            onPress={() => openSheetNamed("url")}
             showSeparator
           />
           <FormFieldRow
@@ -231,7 +244,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             icon="note"
             label="メモ"
             value={memo}
-            onPress={() => setOpenSheet("memo")}
+            onPress={() => openSheetNamed("memo")}
             showSeparator={false}
           />
         </View>
@@ -250,10 +263,12 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
         />
       </View>
 
-      {/* シートは開くたびに新しくマウントする（初期値のリセットを兼ねる） */}
-      {openSheet === "date" ? (
+      {/* シートは開くたびに session を変えて中身を作り直す（初期値のリセットを兼ねる）。
+          閉じたあともマウントしたままにする（adr/0022） */}
+      {mountedSheet?.name === "date" ? (
         <PlanDatePickerSheet
-          visible
+          key={mountedSheet.session}
+          visible={openSheet === "date"}
           title="日時をえらぶ"
           withTime
           initialDate={date}
@@ -274,9 +289,10 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
         />
       ) : null}
 
-      {openSheet === "deadline" ? (
+      {mountedSheet?.name === "deadline" ? (
         <PlanDatePickerSheet
-          visible
+          key={mountedSheet.session}
+          visible={openSheet === "deadline"}
           title="期限をえらぶ"
           withTime={false}
           initialDate={deadline}
@@ -293,9 +309,10 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
         />
       ) : null}
 
-      {openSheet === "url" ? (
+      {mountedSheet?.name === "url" ? (
         <PlanTextFieldSheet
-          visible
+          key={mountedSheet.session}
+          visible={openSheet === "url"}
           title="参考URL"
           initialValue={referenceUrl}
           placeholder="https://…"
@@ -309,9 +326,10 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
         />
       ) : null}
 
-      {openSheet === "memo" ? (
+      {mountedSheet?.name === "memo" ? (
         <PlanTextFieldSheet
-          visible
+          key={mountedSheet.session}
+          visible={openSheet === "memo"}
           title="メモ"
           initialValue={memo}
           placeholder="メモをかく"
