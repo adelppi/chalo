@@ -2,6 +2,7 @@ import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Pressable,
   ScrollView,
@@ -24,9 +25,9 @@ import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 import { backHeaderOptions } from "@global/utils/headerItems";
 
+import { usePlansContext } from "../hooks/PlansProvider";
 import { usePlan } from "../hooks/usePlan";
 import { useCreatePlan, useUpdatePlan } from "../hooks/usePlanMutations";
-import { usePlansContext } from "../hooks/PlansProvider";
 import { formatDateShort } from "../model/format";
 import type { Plan, PlanDraft } from "../model/types";
 import { PlanDatePickerSheet } from "./PlanDatePickerSheet";
@@ -66,7 +67,8 @@ function EditLoader({ id }: { id: string }) {
   return <PlanForm mode="edit" plan={plan} />;
 }
 
-type OpenSheet = "date" | "deadline" | "url" | "memo" | null;
+type SheetName = "date" | "deadline" | "url" | "memo";
+type OpenSheet = SheetName | null;
 
 function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   const insets = useSafeAreaInsets();
@@ -89,6 +91,42 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   );
   const [memo, setMemo] = useState<string | null>(plan?.memo ?? null);
   const [openSheet, setOpenSheet] = useState<OpenSheet>(null);
+  // いまマウントしているシート。閉じても外さない：ネイティブのシートは表示中に
+  // アンマウントすると画面に残ってしまう（adr/0022）。session は「開くたびに中身を
+  // 作り直す」ための key で、開くたびに増やす。
+  const [mountedSheet, setMountedSheet] = useState<{
+    name: SheetName;
+    session: number;
+  } | null>(null);
+
+  // シートの中の入力欄で出たキーボードでは、うしろのフォームを持ち上げない。どうせシートに
+  // 隠れる位置なのに、開いた瞬間だけ「保存する」がせり上がるのが見えて不格好なため。
+  // 戻すのはキーボードが消えきってから：出ているうちに戻すと、抑えていた余白が一気に入って跳ねる。
+  const [avoidsKeyboard, setAvoidsKeyboard] = useState(true);
+
+  useEffect(() => {
+    if (openSheet !== null) {
+      return;
+    }
+    const subscription = Keyboard.addListener("keyboardDidHide", () =>
+      setAvoidsKeyboard(true),
+    );
+    return () => subscription.remove();
+  }, [openSheet]);
+
+  const openSheetNamed = (name: SheetName) => {
+    setMountedSheet((prev) => ({ name, session: (prev?.session ?? 0) + 1 }));
+    setOpenSheet(name);
+    setAvoidsKeyboard(false);
+  };
+
+  const closeSheet = () => {
+    setOpenSheet(null);
+    // 日時・期限シートのようにキーボードを出さないシートは、待たずにそのまま戻す。
+    if (!Keyboard.isVisible()) {
+      setAvoidsKeyboard(true);
+    }
+  };
 
   const screenName = mode === "create" ? "plan-create" : "plan-edit";
   const isSaving = createPlan.isPending || updatePlan.isPending;
@@ -163,6 +201,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
       testID={`${screenName}-screen`}
       className="flex-1 bg-linen"
       behavior="padding"
+      enabled={avoidsKeyboard}
       keyboardVerticalOffset={insets.top + 8}
     >
       <Stack.Screen
@@ -204,7 +243,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             icon="calendar"
             label="日時"
             value={date ? formatDateShort(date, time) : null}
-            onPress={() => setOpenSheet("date")}
+            onPress={() => openSheetNamed("date")}
             showSeparator
           />
           <FormFieldRow
@@ -214,7 +253,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             value={
               !deadlineLocked && deadline ? formatDateShort(deadline) : null
             }
-            onPress={() => setOpenSheet("deadline")}
+            onPress={() => openSheetNamed("deadline")}
             showSeparator
             disabled={deadlineLocked}
           />
@@ -223,7 +262,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             icon="link"
             label="参考URL"
             value={referenceUrl?.replace(/^https?:\/\//, "") ?? null}
-            onPress={() => setOpenSheet("url")}
+            onPress={() => openSheetNamed("url")}
             showSeparator
           />
           <FormFieldRow
@@ -231,7 +270,7 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             icon="note"
             label="メモ"
             value={memo}
-            onPress={() => setOpenSheet("memo")}
+            onPress={() => openSheetNamed("memo")}
             showSeparator={false}
           />
         </View>
@@ -250,10 +289,12 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
         />
       </View>
 
-      {/* シートは開くたびに新しくマウントする（初期値のリセットを兼ねる） */}
-      {openSheet === "date" ? (
+      {/* シートは開くたびに session を変えて中身を作り直す（初期値のリセットを兼ねる）。
+          閉じたあともマウントしたままにする（adr/0022） */}
+      {mountedSheet?.name === "date" ? (
         <PlanDatePickerSheet
-          visible
+          key={mountedSheet.session}
+          visible={openSheet === "date"}
           title="日時をえらぶ"
           withTime
           initialDate={date}
@@ -263,64 +304,67 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
             setTime(nextTime);
             // 日付を入れた時点で期限を消す（domain/plan-lifecycle.md。Issue #58）
             setDeadline(null);
-            setOpenSheet(null);
+            closeSheet();
           }}
           onClear={() => {
             setDate(null);
             setTime(null);
-            setOpenSheet(null);
+            closeSheet();
           }}
-          onClose={() => setOpenSheet(null)}
+          onClose={closeSheet}
         />
       ) : null}
 
-      {openSheet === "deadline" ? (
+      {mountedSheet?.name === "deadline" ? (
         <PlanDatePickerSheet
-          visible
+          key={mountedSheet.session}
+          visible={openSheet === "deadline"}
           title="期限をえらぶ"
           withTime={false}
           initialDate={deadline}
           initialTime={null}
           onConfirm={(selected) => {
             setDeadline(selected);
-            setOpenSheet(null);
+            closeSheet();
           }}
           onClear={() => {
             setDeadline(null);
-            setOpenSheet(null);
+            closeSheet();
           }}
-          onClose={() => setOpenSheet(null)}
+          onClose={closeSheet}
         />
       ) : null}
 
-      {openSheet === "url" ? (
+      {mountedSheet?.name === "url" ? (
         <PlanTextFieldSheet
-          visible
+          key={mountedSheet.session}
+          visible={openSheet === "url"}
           title="参考URL"
           initialValue={referenceUrl}
           placeholder="https://…"
           keyboardType="url"
           onConfirm={(value) => {
             setReferenceUrl(value);
-            setOpenSheet(null);
+            closeSheet();
           }}
-          onClose={() => setOpenSheet(null)}
+          onClose={closeSheet}
           testID={`${screenName}-url-sheet`}
         />
       ) : null}
 
-      {openSheet === "memo" ? (
+      {mountedSheet?.name === "memo" ? (
         <PlanTextFieldSheet
-          visible
+          key={mountedSheet.session}
+          visible={openSheet === "memo"}
           title="メモ"
           initialValue={memo}
           placeholder="メモをかく"
           multiline
           onConfirm={(value) => {
             setMemo(value);
-            setOpenSheet(null);
+            closeSheet();
           }}
-          onClose={() => setOpenSheet(null)}
+          onClose={closeSheet}
           testID={`${screenName}-memo-sheet`}
         />
       ) : null}

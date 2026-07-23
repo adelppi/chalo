@@ -1,7 +1,11 @@
 # ADR-0020: ボトムシート基盤に @gorhom/bottom-sheet を採用する
 
-- ステータス: 採用 [提案→要承認]
-- 関連: adr/0014, adr/0015, adr/0016, docs/domain/plan-lifecycle.md, Issue #58
+- ステータス: **廃止（superseded by adr/0022）** [確定]
+- 関連: adr/0014, adr/0015, adr/0016, adr/0022, docs/domain/plan-lifecycle.md, Issue #58, Issue #76
+
+> **この ADR は `adr/0022` で置き換えられた。** シートの中の入力欄で iOS の日本語 IME の
+> 未確定文字列が壊れる問題（Issue #74）が、`@gorhom/bottom-sheet` のコンテナ側に起因していたため、
+> ボトムシート基盤を `@expo/ui` のネイティブシートへ移した（Issue #76）。以下は当時の判断の記録。
 
 ## コンテキスト
 
