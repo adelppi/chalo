@@ -41,6 +41,14 @@
   ジェスチャーを両立させる。
 - **キーボード**：`keyboardBehavior="interactive"` でキーボード追従を `BottomSheetModal` に任せ、
   自前の `KeyboardAvoidingView` は撤去する。
+- **シート内の入力欄は `SheetTextInput`（`global/components/ui`）を使う**（`Issue #74` で追加）[確定]：
+  中身は react-native の `TextInput` のままにし、シートがキーボードを避けるために要る登録
+  （フォーカス中の入力欄のノードを `useBottomSheetInternal` の `animatedKeyboardState.target` に
+  出し入れする）だけを自前で行う。ライブラリ提供の `BottomSheetTextInput` は**使わない**。
+  あちらは中身が react-native-gesture-handler の `TextInput`（ネイティブのテキストビューを
+  `NativeViewGestureHandler` で包んだもの）で、iOS の未確定文字列（marked text）が1打鍵ごとに
+  壊れ、日本語のトグル入力・漢字変換ができなくなる。この登録が無いと、シートはキーボード表示
+  イベントを保留したまま位置を合わせず、入力欄がキーボードに完全に隠れる。
 - **見た目は変えない**：背景色・角丸（`sheet` トークン 28px）・ハンドル（`wheat` 色の横棒）・
   余白は既存デザインを踏襲し、`backgroundStyle` / `handleIndicatorStyle` で同じ値を再現する
   （スコープ外。Issue #58）。
@@ -53,7 +61,8 @@
 - 留意点：`BottomSheetModal` はポータル経由で描画されるため、`GestureHandlerRootView` /
   `BottomSheetModalProvider` の設置漏れがあると即座に壊れる（ルート1箇所に集約して防ぐ）。
   ライブラリの API（`present`/`dismiss`）と既存の `visible` props の橋渡しコードが `Sheet.tsx` に
-  残り続ける。
+  残り続ける。`SheetTextInput` はライブラリの内部コンテキスト（`useBottomSheetInternal`）に依存する
+  ため、`@gorhom/bottom-sheet` の更新時はキーボード状態の形（`animatedKeyboardState`）の変化に注意する。
 
 ## 検討した代替案
 

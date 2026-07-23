@@ -1,8 +1,7 @@
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { useState } from "react";
 import { View } from "react-native";
 
-import { Button, Sheet } from "@global/components/ui";
+import { Button, Sheet, SheetTextInput } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
 type PlanTextFieldSheetProps = {
@@ -45,9 +44,9 @@ export function PlanTextFieldSheet({
       }}
     >
       <View className="mt-4">
-        {/* @gorhom/bottom-sheet 提供の入力欄。シートの内部キーボード追従に登録され、
-            通常の TextInput と違いキーボードに隠れずに表示され続ける(フォローアップ修正)。 */}
-        <BottomSheetTextInput
+        {/* シート用の入力欄。キーボードに隠れずに表示され続けるようシートへ登録しつつ、
+            中身は通常の TextInput のままで日本語の未確定入力を壊さない(adr/0020)。 */}
+        <SheetTextInput
           testID={testID ? `${testID}-input` : undefined}
           value={value}
           onChangeText={setValue}

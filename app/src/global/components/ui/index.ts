@@ -6,3 +6,4 @@ export { Dialog } from "./Dialog";
 export { Icon, type IconName } from "./Icon";
 export { IconButton } from "./IconButton";
 export { Sheet } from "./Sheet";
+export { SheetTextInput } from "./SheetTextInput";
