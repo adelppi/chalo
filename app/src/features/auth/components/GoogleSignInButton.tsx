@@ -24,7 +24,9 @@ export function GoogleSignInButton({ onPress, disabled, loading }: Props) {
       ) : (
         <>
           <GoogleLogo size={18} />
-          <Text className="text-lg font-medium text-cocoa">Googleで続ける</Text>
+          <Text className="text-[22.1px] font-medium text-cocoa">
+            Googleで続ける
+          </Text>
         </>
       )}
     </Pressable>
