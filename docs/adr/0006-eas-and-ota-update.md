@@ -1,7 +1,8 @@
 # ADR-0006: EAS の運用と eas update（OTA）の方針
 
-- ステータス: 採用（**OTA 配信は未設定**。`features.md`「未実装」11.5。EAS Build / Submit は稼働中）
 - 関連: non-functional.md
+
+> **OTA 配信は未設定**（`features.md`「未実装」11.5）。EAS Build / Submit は稼働中。
 
 ## コンテキスト
 

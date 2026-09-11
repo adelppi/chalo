@@ -1,6 +1,5 @@
 # ADR-0021: 画面下部トーストに react-native-toast-message を採用する
 
-- ステータス: 採用
 - 関連: adr/0014, adr/0015, adr/0016, adr/0020, docs/domain/calendar.md, docs/non-functional.md, Issue #62
 
 ## コンテキスト

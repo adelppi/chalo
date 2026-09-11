@@ -1,6 +1,5 @@
 # ADR-0011: ログは端末内・低負荷
 
-- ステータス: 採用
 - 関連: non-functional.md, data-model.md
 
 ## コンテキスト

@@ -1,6 +1,5 @@
 # ADR-0015: ディレクトリ構成・アーキテクチャ（feature-based）
 
-- ステータス: 採用
 - 関連: adr/0002, adr/0003, features.md, glossary.md
 - 参考: React feature-based folder structure（https://ahmad2point0.medium.com/react-app-feature-based-folder-structure-guide-848ddc7447d5）
 

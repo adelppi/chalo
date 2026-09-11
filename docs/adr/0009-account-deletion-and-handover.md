@@ -1,6 +1,5 @@
 # ADR-0009: アカウント削除と退会時のデータ取り扱い
 
-- ステータス: 採用
 - 関連: domain/pairing.md, non-functional.md, data-model.md
 
 ## コンテキスト

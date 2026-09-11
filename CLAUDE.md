@@ -36,7 +36,7 @@ React Native + Expo + Supabase。日本語のみ・iOS のみ・ライトモー�
 
 ## docs の更新ルール
 
-- 技術的な意思決定をしたら ADR に記録する(`/create-adr`)。既存 ADR を覆す場合は旧 ADR を「廃止(superseded)」にする。
+- 技術的な意思決定をしたら ADR に記録する(`/create-adr`)。ADR にステータス行は持たない(あるものは有効な決定)。既存 ADR を覆す場合は、旧 ADR の冒頭に「`adr/XXXX` で置き換えられた」の注記を置き、本文は当時の記録として残す。
 - 仕様(状態・条件・タイミング)を変えたら `domain/` を同じ PR で更新する。コードだけ変えて docs を放置しない。
 - 未確定事項は勝手に決めない。`open-questions.md` に Q-ID 付きで登録し、本文からは「未確定(`open-questions.md` Q-〈領域〉-〈番号〉)」の形で参照して、ユーザーに確認する。
 

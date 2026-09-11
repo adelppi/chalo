@@ -1,6 +1,5 @@
 # ADR-0012: 端末カレンダー連携は expo-calendar による一方向追加とする
 
-- ステータス: 採用
 - 関連: domain/calendar.md, adr/0008
 
 ## コンテキスト

@@ -1,6 +1,5 @@
 # ADR-0018: アカウント削除の実装（DB関数 + Edge Function・Apple失効・パートナー消失検知）
 
-- ステータス: 採用
 - 関連: adr/0003, adr/0004, adr/0007, adr/0009, adr/0017, domain/pairing.md, data-model.md, non-functional.md
 
 ## コンテキスト

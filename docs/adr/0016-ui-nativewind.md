@@ -1,6 +1,5 @@
 # ADR-0016: UIスタイリングに NativeWind を採用する
 
-- ステータス: 採用
 - 関連: adr/0015, features.md, glossary.md
 - 参考: NativeWind（https://www.nativewind.dev/）
 
