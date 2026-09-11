@@ -1,6 +1,5 @@
 # ADR-0004: 同期は起動/復帰時の再取得とする
 
-- ステータス: 採用 [確定]
 - 関連: adr/0003, adr/0005, adr/0008
 
 ## コンテキスト
@@ -13,7 +12,7 @@
 - 一覧・詳細画面（ホーム・おわったプラン・プラン詳細）には **pull-to-refresh** を備え、ユーザーが任意のタイミングで再取得できる。
 - 編集ロックの判定だけは別扱い：**編集ボタンを押した瞬間に、その1件だけ最新取得**してロック状態を確認する（`adr/0005`）。
 
-### 実現方法（TanStack Query） [確定]
+### 実現方法（TanStack Query）
 
 - **stale-while-revalidate**：`staleTime: 0`（`global/config/queryClient.ts`）でキャッシュを常に stale 扱いにし、キャッシュを即表示しつつ裏で再取得する。全画面スピナーは初回ロード（キャッシュなし）のみ。
 - **フォアグラウンド復帰**：React Native には window focus がないため、`AppState` の `active` 遷移を `focusManager.setFocused()` に結線する（TanStack Query 公式の React Native パターン）。復帰時に表示中のクエリが再取得される。

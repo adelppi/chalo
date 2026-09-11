@@ -1,6 +1,5 @@
 # ADR-0007: 通知アーキテクチャ（2系統）
 
-- ステータス: 採用 [確定]
 - 関連: domain/notifications.md, adr/0001
 
 ## コンテキスト
@@ -30,7 +29,7 @@
 - 通知先プランが削除済みなら「見つかりません」。
 - 通知許可はペア成立直後に要求（JIT＋プライミング、`domain/onboarding.md`）。拒否時は設定→iOS設定へ。
 
-### 作成通知の具体的な実装 [確定]（#31）
+### 作成通知の具体的な実装（#31）
 
 - **トークン登録**：端末は通知権限が許可されていれば `getExpoPushTokenAsync` で Expo push token を取得し、`push_tokens`（`profile_id` ＋ `expo_push_token` に unique 制約）へ upsert する。`addPushTokenListener` はネイティブトークン変更の合図に過ぎず、受け取るのは APNs の生トークンで Expo push token とは別物のため、通知が来たら `getExpoPushTokenAsync` を呼び直して保存する。
 - **トリガー方式**：`plans` への `AFTER INSERT` トリガー（`public.notify_plan_created()`、`SECURITY DEFINER`）が `pg_net`（`net.http_post`）で Edge Function `notify-plan-created` を非同期に呼ぶ。`pair_id is null`（ソロ）なら何もしない。`pg_net` は fire-and-forget のため INSERT トランザクションをブロックせず、呼び出し自体が失敗しても例外を握りつぶしてプラン作成は成功させる。
@@ -44,6 +43,6 @@
 - 良い点：各通知の性質に最適な方式を選べる／1年先予約のローカル不安定さ（iOS上限・再インストール）を回避。
 - 留意点：2系統あるため、プラン編集時に「ローカル予約の組み直し」と「サーバ状態の更新」の両方を忘れない。テスト観点に含める。
 
-## 確定させたい論点 [保留]
+## 未確定の論点
 
-- 振り返りで同日に複数該当した場合（プランごと送付 or まとめて1通）。`open-questions.md` Q-NOTIF-2。
+- 振り返りで同日に複数該当した場合（プランごと送付 or まとめて1通）は未確定。`open-questions.md` Q-NOTIF-2。
