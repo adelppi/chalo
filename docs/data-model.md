@@ -52,7 +52,7 @@ erDiagram
 
 ## 設計判断（この文書が正）
 
-### ステータスは保存しない（完全導出） [確定]
+### ステータスは保存しない（完全導出）
 
 `plans` に status 列を持たない。`date` / `time` / `closed_at` から読み取り時に導出する。
 
@@ -62,26 +62,26 @@ erDiagram
 
 判定は**端末のタイムゾーン基準**。自動おしまいのために誰も書き込まない（バッチもクライアントの更新処理も持たない。`domain/plan-lifecycle.md`）。
 
-### おしまい日とアルバム対象日の導出 [確定]
+### おしまい日とアルバム対象日の導出
 
 - **おしまい日** = `closed_at ?? date`（自動おしまいは書き込まないため、`closed_at` が無ければ `date` がおしまい日）
 - **アルバム対象日** = `date ?? closed_at`（例外は `domain/plan-lifecycle.md`）
 
-### ソロ時の所属とペア成立時の合流 [確定]
+### ソロ時の所属とペア成立時の合流
 
 - ペア未成立のプランは `pair_id` が null で、`owner_id` によって本人に紐づく。
 - ペア成立時は、成立処理と同一トランザクションのサーバ側関数（`redeem_invite_code()`。`adr/0017`）が両者のソロプランへ `pair_id` を付与して共有プールへ移す。
 - ペア成立後に新規作成するプランは `BEFORE INSERT` トリガー（`set_plan_pair_id()`）が作成者の `pair_id` を自動で付与する。
 
-### 作成者は `owner_id` で表す [確定]
+### 作成者は `owner_id` で表す
 
 作成者専用の列は持たず、所有者＝作成者として `owner_id` を表示に使う。パートナー退会時は `owner_id` を残った側へ付け替えるため、退会者が作ったプランは**メモ末尾に元の作成者を追記**して残す（文言は `domain/pairing.md`）。
 
-### 端末トークンは付け替えない [確定]
+### 端末トークンは付け替えない
 
 `push_tokens` は `profile_id` ＋ `expo_push_token` に unique 制約を置き、同じ端末・同じ本人での再登録は upsert で1行に保つ（`adr/0007`）。退会時は削除し、他人には付け替えない（端末トークンを回すと通知の誤送信になる）。
 
-### 不具合報告ログの持ち方 [確定]
+### 不具合報告ログの持ち方
 
 `bug_reports.logs` は端末の NDJSON を**そのままテキストで**格納する（ログ1行 = 1レコードにはしない）。保持はアカウント削除まで（自動パージなし）。中を SQL 検索する要件が出たら jsonb 化を検討する（`adr/0011`）。
 
@@ -100,7 +100,7 @@ erDiagram
 
 ---
 
-## アクセス制御（RLS）方針 [確定]
+## アクセス制御（RLS）方針
 
 - `plans`：`owner_id = auth.uid()`（ソロ境界）**または**同じ `pair_id` のメンバー（`pair_id = current_pair_id()`）の行を select/update/delete できる。insert は `owner_id = auth.uid()` のみ。権限は `authenticated` ロールにのみ grant し、`anon` には付与しない。
 - `profiles`：本人の行に加え、同じペアの相手の行も select できる（相手の表示名取得のため）。write は本人のみ。
@@ -114,7 +114,7 @@ erDiagram
 
 ---
 
-## アカウント削除時の挙動（FK / ON DELETE）[確定]
+## アカウント削除時の挙動（FK / ON DELETE）
 
 退会者（A）の削除がDB制約で失敗しないよう、Aを指すFKの扱いをあらかじめ決めておく。削除はサーバ側の関数（`delete_account_data()`。service role 専用）で1トランザクションにまとめる（`domain/pairing.md` / `adr/0009`、実装は `adr/0018`）。
 

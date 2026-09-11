@@ -1,6 +1,6 @@
 # ADR-0017: ペア成立 RPC と pair 境界 RLS
 
-- ステータス: 採用 [提案→要承認]
+- ステータス: 採用
 - 関連: adr/0001, adr/0003, adr/0009, adr/0015, data-model.md, domain/pairing.md
 
 ## コンテキスト

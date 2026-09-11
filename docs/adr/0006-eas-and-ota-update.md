@@ -1,6 +1,6 @@
 # ADR-0006: EAS の運用と eas update（OTA）の方針
 
-- ステータス: 採用 [確定]（**OTA 配信は未設定**。`features.md`「未実装」11.5。EAS Build / Submit は稼働中）
+- ステータス: 採用（**OTA 配信は未設定**。`features.md`「未実装」11.5。EAS Build / Submit は稼働中）
 - 関連: non-functional.md
 
 ## コンテキスト
@@ -27,7 +27,7 @@ EAS、特に **`eas update`** を積極活用したい。AI駆動開発で反復
 - 良い点：JSレベルの不具合修正・文言調整を審査なしで即配信できる／検証チャネルで安全に試せる。
 - 留意点：OTAとストアビルドの境界は fingerprint ポリシーで自動管理されるが、チャネルの使い分け（`preview` で検証してから `production` へ）は人が守る。
 
-## 環境変数・シークレットの登録手順 [確定]
+## 環境変数・シークレットの登録手順
 
 EAS プロジェクトは `eas init` で作成・紐付け済み(`app.json` の `extra.eas.projectId`)。環境変数は EAS Environments(`development` / `preview` / `production`)で管理する。プレーンな値は `plaintext`、機密値は `sensitive` または `secret` を使う(`secret` は登録後に値を参照できない)。
 

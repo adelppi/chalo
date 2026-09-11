@@ -1,6 +1,6 @@
 # ADR-0015: ディレクトリ構成・アーキテクチャ（feature-based）
 
-- ステータス: 採用 [確定]
+- ステータス: 採用
 - 関連: adr/0002, adr/0003, features.md, glossary.md
 - 参考: React feature-based folder structure（https://ahmad2point0.medium.com/react-app-feature-based-folder-structure-guide-848ddc7447d5）
 
@@ -94,7 +94,7 @@ src/
 └── assets/                      # images / icons
 ```
 
-### feature の割り付け（`features.md` / `domain/` と対応）[提案]
+### feature の割り付け（`features.md` / `domain/` と対応）
 
 - `plans`（コア：作成・編集・一覧・検索・ステータス。`domain/plan-lifecycle.md`）
 - `album`（`domain/album.md`）
@@ -103,7 +103,7 @@ src/
 - `onboarding`（導線・権限要求。`domain/onboarding.md`）
 - `notifications`（作成・期限・振り返り。`domain/notifications.md`・`adr/0007`）
 - `calendar`（端末カレンダー連携。`domain/calendar.md`・`adr/0012`）
-- `place`（地図・場所・Appleマップ受け渡し）
+- `place`（地図・場所・Appleマップ受け渡し。`features.md` 7 が未実装のため、ディレクトリはまだ無い）
 - `settings`（設定・不具合報告／ログ送信。`adr/0011`）
 
 粒度は実装時に調整する。

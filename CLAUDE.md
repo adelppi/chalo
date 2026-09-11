@@ -25,7 +25,7 @@ React Native + Expo + Supabase。日本語のみ・iOS のみ・ライトモー�
 | `/create-issue <一文>` | 大まかな要求から質問で詳細を掘り下げ、Issue を起票 |
 | `/implement-issue <番号>` | Issue を読み、ブランチ作成→実装→テスト→PR 作成まで実行 |
 | `/create-adr <テーマ>` | 既存形式・採番に従って ADR を作成し、目次を更新 |
-| `/check-docs` | docs/ の整合性(リンク・重複・目次・保留事項)を検査 |
+| `/check-docs` | docs/ の整合性(リンク・重複・目次・未確定事項)を検査 |
 
 ## コーディング規約(正は各 ADR)
 
@@ -38,8 +38,7 @@ React Native + Expo + Supabase。日本語のみ・iOS のみ・ライトモー�
 
 - 技術的な意思決定をしたら ADR に記録する(`/create-adr`)。既存 ADR を覆す場合は旧 ADR を「廃止(superseded)」にする。
 - 仕様(状態・条件・タイミング)を変えたら `domain/` を同じ PR で更新する。コードだけ変えて docs を放置しない。
-- 未確定事項は勝手に決めない。`[保留]` を付けて `open-questions.md` に登録し、ユーザーに確認する。
-- 記述には `[確定]` / `[提案]` / `[保留]` のステータス印を付ける(定義は `docs/README.md`)。
+- 未確定事項は勝手に決めない。`open-questions.md` に Q-ID 付きで登録し、本文からは「未確定(`open-questions.md` Q-〈領域〉-〈番号〉)」の形で参照して、ユーザーに確認する。
 
 ## 品質チェック
 
