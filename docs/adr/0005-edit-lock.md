@@ -1,6 +1,5 @@
 # ADR-0005: 編集ロックで競合を防ぐ（TTLあり）
 
-- ステータス: 採用 [確定]
 - 関連: adr/0004, data-model.md, domain/plan-lifecycle.md
 
 ## コンテキスト

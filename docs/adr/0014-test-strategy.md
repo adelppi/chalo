@@ -1,6 +1,5 @@
 # ADR-0014: テスト戦略
 
-- ステータス: 採用 [提案→要承認]
 - 関連: adr/0001, adr/0006, non-functional.md
 
 ## コンテキスト
@@ -20,7 +19,7 @@ AI駆動開発で実装が速く動く分、回帰を機械的に検知したい
 - **E2E は機能単位**で構成する。1機能につき、その機能の王道の使い方を通す正常系と、権限拒否・オフライン・入力不備などの異常系を両方カバーする。
 - **E2E は実行の動画を記録して格納する**。`maestro record --local <flow.yaml> <output.mp4>` でローカルレンダリングした動画を `.maestro/recordings/` に保存し、テスト失敗時に画面の動きから原因をたどれるようにする。
 
-## testID 命名規則 [提案]
+## testID 命名規則
 
 E2E（Maestro）の要素特定には `testID`（iOS の accessibility identifier）を使う。表示文言だけに頼ると、文言調整のたびにフローが壊れる。
 
@@ -29,7 +28,7 @@ E2E（Maestro）の要素特定には `testID`（iOS の accessibility identifie
 - 一覧の行など動的に繰り返す要素は末尾にIDを付ける（例：`plans-list-item-{planId}`）。
 - E2E が実際に操作・検証する要素にのみ付ける。装飾目的の要素には付けない。
 
-## `.maestro/` ディレクトリ構成 [提案]
+## `.maestro/` ディレクトリ構成
 
 機能単位のサブフォルダに分ける（`src/features/` の機能名に対応させる。例：`auth/`）。
 
