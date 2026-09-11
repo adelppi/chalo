@@ -10,7 +10,7 @@
 |---|---|
 | 要求・コンセプト | `overview.md` |
 | **何が実装済みで、何がまだ無いか** | `features.md` |
-| 言葉の定義を揃えたい（人もAIも） | `glossary.md` |
+| 言葉の定義・概念と UI 表示の対応・UI 文言の文体を揃えたい（人もAIも） | `glossary.md` |
 | ドメインのルール（状態・条件・タイミング） | `domain/` |
 | データ構造の設計意図・RLS 方針 | `data-model.md`（列と型の正は `app/supabase/migrations/`） |
 | 非機能・品質・公開要件 | `non-functional.md` |

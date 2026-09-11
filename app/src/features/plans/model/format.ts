@@ -36,13 +36,13 @@ export function formatDeadlineLabel(deadline: string): string {
   return `${month}/${day} まで`;
 }
 
-/** 「7月12日に おしまい」（おしまい一覧の行） */
+/** 「7月12日に おしまい」（おわったプランの行） */
 export function formatClosedLabel(closedDate: string): string {
   const { month, day } = parts(closedDate);
   return `${month}月${day}日に おしまい`;
 }
 
-/** 「2026年 7月」（おしまい一覧の月見出し） */
+/** 「2026年 7月」（おわったプランの月見出し） */
 export function formatMonthLabel(date: string): string {
   const [year, month] = date.split("-").map(Number);
   return `${year}年 ${month}月`;

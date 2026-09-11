@@ -2,7 +2,7 @@ import { formatMonthLabel } from "./format";
 import { deriveClosedDate, derivePlanStatus } from "./status";
 import type { Plan } from "./types";
 
-// ホーム（C-1b）とおしまい一覧（D-4）の並び・グループ化。純粋関数（adr/0014）。
+// ホーム（C-1b）とおわったプラン（D-4）の並び・グループ化。純粋関数（adr/0014）。
 
 export type HomeSections = {
   /** つぎの予定（いちばん近い「予定」。マホガニーカードの主役） */
@@ -39,7 +39,7 @@ export type DoneMonthGroup = {
   plans: Plan[];
 };
 
-/** おしまい一覧。おしまい日の新しい順に、月ごとへグループ化する */
+/** おわったプラン。おしまい日の新しい順に、月ごとへグループ化する */
 export function groupDoneByMonth(plans: Plan[], now: Date): DoneMonthGroup[] {
   const done = plans
     .filter(

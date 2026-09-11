@@ -52,7 +52,7 @@ RN + Expo（Expo Router）で、プラン・アルバム・ペア・通知・カ
 src/
 ├── app/                         # Expo Router：画面のみ（adr/0002）
 │   ├── (tabs)/
-│   │   ├── index.tsx            # やりたい一覧（ホーム）
+│   │   ├── index.tsx            # プラン（ホームの一覧）
 │   │   ├── album.tsx
 │   │   └── _layout.tsx
 │   ├── plan/[id].tsx            # プラン詳細（通知ディープリンク先）

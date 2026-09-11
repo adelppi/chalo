@@ -24,7 +24,7 @@ describe("日付表示の整形", () => {
     expect(formatDeadlineLabel("2026-07-21")).toBe("7/21 まで");
   });
 
-  it("formatClosedLabel：おしまい一覧の行", () => {
+  it("formatClosedLabel：おわったプランの行", () => {
     expect(formatClosedLabel("2026-07-12")).toBe("7月12日に おしまい");
   });
 

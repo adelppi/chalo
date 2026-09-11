@@ -1,4 +1,4 @@
-# オンボーディング A3「名前の確認」→ A4「ペアの開始」→ スキップでやりたい一覧へ着地
+# オンボーディング A3「名前の確認」→ A4「ペアの開始」→ スキップで「プラン」（ホーム）へ着地
 # （Issue #40・domain/onboarding.md）。
 #
 # 前提: サインイン直後・オンボーディング未完了（端末ローカル進捗が無い）の
@@ -32,7 +32,7 @@ appId: com.adelppi.chalo
 - assertVisible:
     id: "pairing-start-enter-code-button"
 
-# 「後でやる（ソロで始める）」→ やりたい一覧へ着地。完了後は再表示しない
+# 「後でやる（ソロで始める）」→「プラン」（ホーム）へ着地。完了後は再表示しない
 - tapOn:
     id: "pairing-start-solo-button"
 - extendedWaitUntil:
