@@ -17,7 +17,7 @@ RN + Expo（Expo Router）で、プラン・アルバム・ペア・通知・カ
 - **app/** … Expo Router の画面のみ（ルーティング。`adr/0002`）。画面は feature の公開APIを組み立てるだけで、業務ロジックを持たない。
 - **features/** … 機能単位の業務ロジック。各 feature が自分の `components` / `hooks` / `data` / `model` / `utils` を持ち、`index.ts`（バレル）だけを外へ公開する。
 - **global/** … 全機能で共有する基盤。共通UI・共通フック・設定・サードパーティのラッパー（Supabase 等）・状態ストア・データアクセスの実装を置く。
-- **assets/** … フォント・画像・アイコン・Rive 等の静的資産。
+- **assets/** … 画像・アイコン等の静的資産。
 
 ### feature の内部構成（例：`features/plans/`）
 
@@ -91,7 +91,7 @@ src/
 │   ├── data/                    # Repository の Supabase 実装を集約（差し替え対象）
 │   └── index.ts
 │
-└── assets/                      # fonts / images / icons / rive
+└── assets/                      # images / icons
 ```
 
 ### feature の割り付け（`features.md` / `domain/` と対応）[提案]
