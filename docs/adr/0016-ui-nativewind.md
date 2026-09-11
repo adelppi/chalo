@@ -1,7 +1,7 @@
 # ADR-0016: UIスタイリングに NativeWind を採用する
 
 - ステータス: 採用 [確定]
-- 関連: adr/0010, adr/0015, features.md, glossary.md
+- 関連: adr/0015, features.md, glossary.md
 - 参考: NativeWind（https://www.nativewind.dev/）
 
 ## コンテキスト
@@ -22,7 +22,6 @@ RN + Expo で独自デザイン（チャロくんの世界観・ライトモー�
 - **ネイティブの部品を優先しつつ、戻る／編集／削除はネイティブヘッダーで描く**（`Issue #16`→`Issue #17`→`Issue #28` で更新）[確定]：プラン作成・編集（C-3/D-2）はシートやモーダルではなく、戻るで閉じる通常のプッシュ遷移のフル画面にする（デザイン TURN 5）。時刻選択は `@react-native-picker/picker` の iOS ネイティブのホイールピッカーを使う（Claude Design の色・書体に完全一致しない場合があるのは許容）。戻る／編集／削除は、当初ナビゲーションヘッダー（`Stack.Screen` の `header*` option）への統合とした（`Issue #16`）が、iOS 26 の Liquid Glass ではヘッダーボタンがガラスのカプセルに包まれてデザインと乖離する（編集と削除が1つのカプセルに繋がる）ため、`global/components/ui` の `BackHeader` で画面内に透明の円形ボタンとして描く方式に置き換えた（`Issue #17`）。react-native-screens のバーボタン各アイテムに `sharesBackground: false` を指定してカプセル融合を個別に抑止できるようになったため、`Issue #28` で再びネイティブヘッダー（`Stack.Screen` の `unstable_headerLeftItems`/`unstable_headerRightItems`。`global/utils/headerItems` が組み立てを担う）に統合し、`BackHeader` は廃止した。アイコンは SF Symbol 名を直接指定し（`Icon` コンポーネントは介さない）、iOS 26 未満では `sharesBackground` 等が無視されて通常表示にフォールバックする。バーボタンはネイティブ要素のため `testID` を持てず、E2E（Maestro）からは `accessibilityLabel` を `text` で参照する。戻るスワイプはネイティブのまま有効。ナビゲータの option は `className` 不可のため、下記「逃げ道」に従いオブジェクトで書く。
 - **ライトモードのみ**：ダークモードの variant（`dark:`）は使わない（`features.md` 10.4）。
 - **逃げ道**：ユーティリティで表現しづらい箇所のみ、StyleSheet／インラインを最小限に使う。
-- **対象外**：マスコットのアニメーションは Rive（`adr/0010`）が担い、本 ADR の対象外。
 
 セットアップは babel プラグイン・metro 設定・`global.css` 取り込みを行う（NativeWind 標準手順）。
 

@@ -1,16 +1,16 @@
 # ADR-0006: EAS の運用と eas update（OTA）の方針
 
-- ステータス: 採用 [確定]
-- 関連: adr/0010（Rive＝Dev Client必須）, non-functional.md
+- ステータス: 採用 [確定]（**OTA 配信は未設定**。`features.md`「未実装」11.5。EAS Build / Submit は稼働中）
+- 関連: non-functional.md
 
 ## コンテキスト
 
-EAS、特に **`eas update`** を積極活用したい。AI駆動開発で反復が速いので、ストア審査を待たずにJSの修正を届けられる体制が欲しい。一方、ネイティブ依存（Rive 等）は OTA では更新できない。
+EAS、特に **`eas update`** を積極活用したい。AI駆動開発で反復が速いので、ストア審査を待たずにJSの修正を届けられる体制が欲しい。一方、ネイティブ依存は OTA では更新できない。
 
 ## 決定
 
 ### ビルド（EAS Build）
-- ネイティブモジュール（`rive-react-native`、`expo-calendar`、`expo-notifications`、`expo-media-library`、`expo-haptics` 等）を使うため、**Expo Go ではなく Dev Client / EAS Build** で開発・配布する。
+- ネイティブモジュール（`expo-calendar`、`expo-notifications`、`expo-haptics` 等）を使うため、**Expo Go ではなく Dev Client / EAS Build** で開発・配布する。
 - チャネルを分ける：**`production`** と **`preview`**（社内検証用）。必要なら `development`。
 
 ### OTA 配信（eas update）
