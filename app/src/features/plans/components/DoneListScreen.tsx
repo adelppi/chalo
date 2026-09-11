@@ -19,7 +19,7 @@ import { formatClosedLabel } from "../model/format";
 import { groupDoneByMonth } from "../model/sections";
 import { deriveClosedDate } from "../model/status";
 
-// おしまい一覧（D-4。空状態は D-5）。月ごとにグループ化して新しい順に並べる。
+// おわったプラン（D-4。空状態は D-5）。月ごとにグループ化して新しい順に並べる。
 export function DoneListScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();

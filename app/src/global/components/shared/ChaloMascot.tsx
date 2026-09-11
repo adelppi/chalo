@@ -23,7 +23,7 @@ type PawPrintProps = {
   style?: StyleProp<ImageStyle>;
 };
 
-// チャロくんの足あと（空状態・カード装飾・おしまい一覧の行頭）。
+// チャロくんの足あと（空状態・カード装飾・おわったプランの行頭）。
 export function PawPrint({
   size,
   opacity = 1,

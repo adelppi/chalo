@@ -91,7 +91,7 @@ supabase secrets set --project-ref yqroflyjbokeegpryjdr \
 
 ### パス A: シミュレータ（Google の確認用・署名不要）
 
-**A-1. ローカルビルド（Mac + Xcode）**
+**1. ローカルビルド（Mac + Xcode）**
 
 ```bash
 cd app
@@ -101,7 +101,7 @@ xcrun simctl list devices booted
 npx expo run:ios -d "iPhone Air"
 ```
 
-**A-2. EAS ビルド（Mac / Xcode 不要）**
+**2. EAS ビルド（Mac / Xcode 不要）**
 
 ```bash
 cd app
@@ -112,7 +112,7 @@ npx expo start --dev-client   # JS を配信して dev client を起動
 
 ### パス B: 実機（Apple の確認用・Apple Developer アカウント必須）
 
-**B-1. EAS ビルド（推奨。証明書を EAS が自動管理）**
+**1. EAS ビルド（推奨。証明書を EAS が自動管理）**
 
 ```bash
 cd app
@@ -122,7 +122,7 @@ eas build -p ios --profile development   # Apple ログインを促され、証�
 npx expo start --dev-client
 ```
 
-**B-2. ローカルビルド（Xcode で署名）**
+**2. ローカルビルド（Xcode で署名）**
 
 ```bash
 cd app
@@ -160,7 +160,7 @@ npx expo run:ios -d "<実機名>" # 例: -d "○○ の iPhone"
 1. サインイン画面 → Google / Apple でサインイン。
 2. 初回サインイン後、Supabase の `profiles` に自分の行ができている（`display_name` が Google/Apple の氏名で埋まる）。
    - 確認 SQL 例: `select id, display_name, timezone, created_at from profiles;`
-3. **アプリを再起動** → サインイン画面を経由せず「やりたい一覧」に入る（セッション復元）。
+3. **アプリを再起動** → サインイン画面を経由せず「プラン」（ホーム）に入る（セッション復元）。
 4. サインアウト → サインイン画面へ自動で戻る。
 5. サインアウト状態でアプリ再起動 → サインイン画面が出る。
 
