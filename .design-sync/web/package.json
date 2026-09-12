@@ -1,0 +1,11 @@
+{
+  "name": "chalo-ds",
+  "private": true,
+  "version": "1.2.0",
+  "description": "chalo デザインシステムの Web(react-native-web) ビルド。design-sync 専用。",
+  "main": "dist/index.cjs",
+  "types": "dist/types/.design-sync/web/src/entry.d.ts",
+  "scripts": {
+    "build": "node build.mjs"
+  }
+}
