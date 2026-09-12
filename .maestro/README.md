@@ -7,6 +7,11 @@ chalo の E2E テストを Maestro で管理。
 - `auth/sign-in-screen-smoke.yaml` … サインイン画面の表示確認（動作確認用）
 - `plans/plan-crud.yaml` … プラン CRUD の王道シナリオ（Issue #18・Supabase 実装）
   - 作成（タイトルのみ）→ 一覧反映 → 編集 → 手動おしまい → おわったプラン → 削除
+- `plans/plan-album.yaml` … 自動アルバム（Issue #90）
+  - 写真権限を許可して起動 → `addMedia` で今日の写真を入れる → 日付なしプランを手動おしまい → 詳細に3列グリッド → タップでフルスクリーンビューワー → 横スワイプ → 閉じるボタン／下スワイプで閉じる
+  - **ズームの見え方は hierarchy から読めない**ため assert しない。拡大率・アニメーションは動画・手動で確認する
+  - 写真は `.maestro/fixtures/` の PNG。`addMedia` で入るため撮影日時は「実行した日」になる
+  - **空表示（0件・権限拒否・限定アクセス）は対象外**。過去日は日付ピッカーで選べず、`simctl privacy` の写真権限変更もアプリに反映されないため自動化できない。判定ロジックは Jest（`albumEmptyReason`）が担保する
 - `plans/plan-refresh.yaml` … pull-to-refresh の動作確認（Issue #22）
   - ホーム・プラン詳細・おわったプランの3画面で引っ張って再取得し、既存データの表示が維持されることを確認
 - `pairing/pairing-invite-and-errors.yaml` … 招待コード発行・コピー・コード入力エラー（Issue #20・Supabase 実装）

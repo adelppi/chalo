@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { PlanAlbum } from "@features/album";
 import {
   PlanCalendarButton,
   useRemovePlanFromCalendar,
@@ -27,8 +28,10 @@ import { usePlan } from "../hooks/usePlan";
 import { useClosePlan, useDeletePlan } from "../hooks/usePlanMutations";
 import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { useStartEditing } from "../hooks/useStartEditing";
+import { derivePlanAlbumRange } from "../model/album";
 import { evaluateEditLock } from "../model/editLock";
 import { formatCreatedByLabel, formatDateLong } from "../model/format";
+import { derivePlanStatus } from "../model/status";
 import type { Plan } from "../model/types";
 import { PlanLockedScreen } from "./PlanLockedScreen";
 
@@ -96,6 +99,11 @@ function PlanDetail({
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
 
   const displayUrl = plan.referenceUrl?.replace(/^https?:\/\//, "");
+  // おしまいのプランだけがアルバムを持つ。対象区間の導出は plans 側の責務（adr/0015）
+  const albumRange =
+    derivePlanStatus(plan, new Date()) === "done"
+      ? derivePlanAlbumRange(plan)
+      : null;
 
   // 詳細を開いた後に相手がロックを取ることもあるため、編集ボタン押下時にも
   // その1件だけ最新取得してロック判定する（adr/0005）。空いていればロックを立てて
@@ -256,6 +264,10 @@ function PlanDetail({
             {formatCreatedByLabel(plan.ownerName, plan.createdAt)}
           </Text>
         </View>
+
+        {/* 自動アルバム（6a）。おしまいになってからだけ見られる（domain/album.md
+            「表示タイミング」）。見出しは付けない（写真が自分で語る）。 */}
+        {albumRange ? <PlanAlbum range={albumRange} /> : null}
       </ScrollView>
 
       <View

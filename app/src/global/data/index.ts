@@ -4,6 +4,7 @@ export { asyncStorageOnboardingRepository } from "./asyncStorageOnboardingReposi
 export { expoCalendarRepository } from "./expoCalendarRepository";
 export { expoFileShareRepository } from "./expoFileShareRepository";
 export { expoNotificationRepository } from "./expoNotificationRepository";
+export { expoPhotoLibraryRepository } from "./expoPhotoLibraryRepository";
 export { supabaseAuthRepository } from "./supabaseAuthRepository";
 export { supabaseBugReportRepository } from "./supabaseBugReportRepository";
 export { supabasePairingRepository } from "./supabasePairingRepository";
