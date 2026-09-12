@@ -34,3 +34,15 @@ tmp/
 # Maestro E2E 実行動画（ローカル保存のみ。フロー・ディレクトリ構成は共有する）
 .maestro/recordings/*
 !.maestro/recordings/.gitkeep
+
+# design-sync（claude.ai/design への同期）
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+.design-sync/web/node_modules/
+.design-sync/web/dist/
+# build.mjs が毎回生成する（gen-symbols.mjs / gen-vocabulary.mjs）
+.design-sync/web/stubs/sf-symbols.generated.ts
+.design-sync/web/src/_vocabulary.txt

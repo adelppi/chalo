@@ -1,0 +1,51 @@
+{
+  "pkg": "chalo-ds",
+  "globalName": "Chalo",
+  "projectId": "6d017ca4-a674-4cb6-9759-01c7405b1f5c",
+  "shape": "package",
+  "buildCmd": "node .design-sync/web/build.mjs",
+  "srcDir": "../../app/src",
+  "cssEntry": "dist/ds.css",
+  "guidelinesGlob": [],
+  "readmeHeader": ".design-sync/conventions.md",
+  "componentSrcMap": {
+    "ChaloFace": "../../app/src/global/components/shared/ChaloMascot.tsx",
+    "PawPrint": "../../app/src/global/components/shared/ChaloMascot.tsx",
+    "SafeAreaInsetsContext": null
+  },
+  "provider": {
+    "component": "SafeAreaInsetsContext.Provider",
+    "props": {
+      "value": {
+        "top": 0,
+        "right": 0,
+        "bottom": 34,
+        "left": 0
+      }
+    }
+  },
+  "overrides": {
+    "Dialog": {
+      "cardMode": "single",
+      "primaryStory": "Destructive",
+      "viewport": "390x520"
+    },
+    "Sheet": {
+      "cardMode": "single",
+      "primaryStory": "DatePicker",
+      "viewport": "390x400"
+    },
+    "ChaloTabBar": {
+      "cardMode": "column"
+    },
+    "Icon": {
+      "cardMode": "column"
+    },
+    "IconButton": {
+      "cardMode": "column"
+    },
+    "ChaloFace": {
+      "cardMode": "column"
+    }
+  }
+}

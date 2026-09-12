@@ -1,0 +1,59 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist/types",
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "nativewind",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@global/*": [
+        "../../app/src/global/*"
+      ],
+      "@/*": [
+        "../../app/src/*"
+      ],
+      "expo-symbols": [
+        "./stubs/expo-symbols"
+      ],
+      "react-native": [
+        "../../app/node_modules/react-native"
+      ],
+      "react-native-safe-area-context": [
+        "../../app/node_modules/react-native-safe-area-context"
+      ],
+      "expo-router": [
+        "../../app/node_modules/expo-router"
+      ],
+      "@expo/ui/*": [
+        "../../app/node_modules/@expo/ui/*"
+      ],
+      "nativewind": [
+        "../../app/node_modules/nativewind"
+      ],
+      "sf-symbols-typescript": [
+        "../../app/node_modules/sf-symbols-typescript"
+      ],
+      "nativewind/types": [
+        "../../app/node_modules/nativewind/types.d.ts"
+      ]
+    },
+    "typeRoots": [
+      "../../app/node_modules/@types",
+      "./node_modules/@types"
+    ],
+    "types": []
+  },
+  "include": [
+    "src/entry.tsx",
+    "src/env.d.ts"
+  ]
+}
