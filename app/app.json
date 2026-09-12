@@ -41,8 +41,17 @@
           "remindersPermission": false
         }
       ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "おしまいになったプランに、その日に撮った写真をならべるために使います。写真が端末の外に出ることはありません。",
+          "savePhotosPermission": false,
+          "preventAutomaticLimitedAccessAlert": true
+        }
+      ],
       "expo-sharing",
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,

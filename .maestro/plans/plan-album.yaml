@@ -1,0 +1,93 @@
+# 自動アルバム（Issue #90）。おしまいのプランの詳細に、その日に撮った端末写真が
+# 3列グリッドで並び、タップでフルスクリーンビューワーが開くまでを通す。
+# 前提: アプリがサインイン済みであること（Google/Apple の外部認証は自動化しない）。
+appId: com.adelppi.chalo
+---
+# 写真権限を許可した状態で起動する（システムダイアログは Maestro から操作できないため）
+- launchApp:
+    permissions:
+      all: allow
+
+# アルバム対象日＝今日にするため、テスト用の写真を今日の日付で端末へ入れる
+- addMedia:
+    - "../fixtures/album-1.png"
+    - "../fixtures/album-2.png"
+    - "../fixtures/album-3.png"
+
+- assertVisible:
+    id: "home-screen"
+
+# 日付なしプランを作り、その場で手動おしまいにする（おしまい日＝今日＝アルバム対象日）
+- tapOn:
+    id: "home-create-button"
+- tapOn:
+    id: "plan-create-title-input"
+- inputText: "アルバムの日"
+- tapOn:
+    id: "plan-create-submit-button"
+- tapOn:
+    text: "アルバムの日.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn:
+    id: "plan-detail-close-button"
+- assertVisible:
+    id: "plan-closed-screen"
+- tapOn:
+    id: "plan-closed-done-button"
+
+# おしまいになった詳細を開くと、メモ・参考URLの下にアルバムが出る
+- tapOn:
+    id: "tab-done"
+- tapOn:
+    text: "アルバムの日.*"
+- assertVisible:
+    id: "plan-detail-screen"
+- extendedWaitUntil:
+    visible:
+      id: "plan-album-grid"
+    timeout: 10000
+# 取得中はスケルトンだけが出て、取れたらグリッドに変わる（キャッシュしないので毎回通る）
+- assertNotVisible:
+    id: "plan-album-skeleton"
+
+# 1枚目をタップするとフルスクリーンビューワーが開く
+- tapOn:
+    id: "plan-album-tile-0"
+- assertVisible:
+    id: "photo-viewer"
+
+# 横スワイプで同じ日の他の写真へ移り、閉じるボタンで戻る。
+# ズームの見え方は動画・手動で確認する（拡大率は hierarchy から読めない）
+- swipe:
+    start: "85%,50%"
+    end: "15%,50%"
+    duration: 400
+- tapOn:
+    id: "photo-viewer-close-button"
+- assertNotVisible:
+    id: "photo-viewer"
+- assertVisible:
+    id: "plan-detail-screen"
+
+# 下スワイプでも閉じられる
+- tapOn:
+    id: "plan-album-tile-1"
+- assertVisible:
+    id: "photo-viewer"
+- swipe:
+    start: "50%,40%"
+    end: "50%,90%"
+    duration: 300
+- assertNotVisible:
+    id: "photo-viewer"
+
+# 後片付け（このフローが作ったプランを消す）
+- tapOn:
+    text: "削除"
+- tapOn:
+    id: "plan-detail-delete-confirm-button"
+- assertVisible:
+    id: "done-screen"
+- assertNotVisible:
+    text: "アルバムの日.*"

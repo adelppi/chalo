@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
+import { AlbumProvider } from "@features/album";
 import { AuthProvider, useAuthStatus } from "@features/auth";
 import { CalendarProvider } from "@features/calendar";
 import {
@@ -28,6 +29,7 @@ import {
   expoCalendarRepository,
   expoFileShareRepository,
   expoNotificationRepository,
+  expoPhotoLibraryRepository,
   supabaseAuthRepository,
   supabaseBugReportRepository,
   supabasePairingRepository,
@@ -134,19 +136,23 @@ export default function RootLayout() {
                         }
                         pushTokenRepository={supabasePushTokenRepository}
                       >
-                        <StatusBar style="dark" />
-                        <RootNavigator />
-                        {/* 見た目は toastConfig（F-2 の角丸ピル）で再現。swipeable は
+                        <AlbumProvider
+                          photoLibraryRepository={expoPhotoLibraryRepository}
+                        >
+                          <StatusBar style="dark" />
+                          <RootNavigator />
+                          {/* 見た目は toastConfig（F-2 の角丸ピル）で再現。swipeable は
                           ライブラリ既定で true のためスワイプで手動で閉じられる（Issue #62）。
                           avoidKeyboard はキーボード表示中に確定した showToast 呼び出し
                           （例：プラン作成フォーム送信）でキーボード分オフセットがずれるため無効化し、
                           常に insets.bottom + 96 の固定位置を保つ。 */}
-                        <Toast
-                          config={toastConfig}
-                          position="bottom"
-                          bottomOffset={insets.bottom + 96}
-                          avoidKeyboard={false}
-                        />
+                          <Toast
+                            config={toastConfig}
+                            position="bottom"
+                            bottomOffset={insets.bottom + 96}
+                            avoidKeyboard={false}
+                          />
+                        </AlbumProvider>
                       </NotificationsProvider>
                     </CalendarProvider>
                   </FileShareProvider>
