@@ -23,6 +23,12 @@ type DialogProps = {
   children?: ReactNode;
   cancelLabel?: string;
   onCancel: () => void;
+  /**
+   * 背景タップ・端末の戻る操作で呼ぶ。省略すると onCancel と同じ扱い。
+   * キャンセル側が破棄など後戻りできない選択のとき（C-3/D-2 の保存確認。Issue #95）に、
+   * 「押さずに閉じただけ」を分けるために渡す。
+   */
+  onDismiss?: () => void;
   /** 省略すると1ボタン表示（閉じるだけ）になる。既定は2ボタン */
   confirm?: DialogAction;
   cancelTestID?: string;
@@ -38,6 +44,7 @@ export function Dialog({
   children,
   cancelLabel = "やめておく",
   onCancel,
+  onDismiss,
   confirm,
   cancelTestID,
   testID,
@@ -47,14 +54,14 @@ export function Dialog({
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onCancel}
+      onRequestClose={onDismiss ?? onCancel}
     >
       {/* accessible={false} にしないと Pressable が中身をフラット化し、
           ボタンの testID が E2E から見えなくなる */}
       <Pressable
         accessible={false}
         className="flex-1 items-center justify-center bg-ink/35 px-6"
-        onPress={onCancel}
+        onPress={onDismiss ?? onCancel}
       >
         <Pressable
           testID={testID}

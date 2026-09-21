@@ -43,6 +43,7 @@
 | テーブルの列・型・制約 | `app/supabase/migrations/`、`app/src/global/lib/supabase/database.types.ts` |
 | データの設計意図（status 導出・退会時の付け替え）・RLS 方針・ON DELETE 方針 | `data-model.md` |
 | 同期方式 ／ 編集ロック方式 | `adr/0004` ／ `adr/0005` |
+| 未保存のフォームから離れるときの確認の実現方式 | `adr/0024` |
 | ディレクトリ構成・レイヤ／依存ルール | `adr/0015` |
 | データアクセス抽象化・状態管理 | `adr/0003` |
 | ペア成立RPC・pair境界RLSの方針 | `adr/0017` |

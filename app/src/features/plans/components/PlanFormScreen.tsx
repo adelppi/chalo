@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
@@ -20,7 +20,7 @@ import {
   deadlineNotificationFieldsChanged,
   useSyncDeadlineNotification,
 } from "@features/notifications";
-import { Button, Icon, type IconName } from "@global/components/ui";
+import { Button, Dialog, Icon, type IconName } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useToastStore } from "@global/store/useToastStore";
 import { backHeaderOptions } from "@global/utils/headerItems";
@@ -28,6 +28,12 @@ import { backHeaderOptions } from "@global/utils/headerItems";
 import { usePlansContext } from "../hooks/PlansProvider";
 import { usePlan } from "../hooks/usePlan";
 import { useCreatePlan, useUpdatePlan } from "../hooks/usePlanMutations";
+import {
+  EMPTY_PLAN_DRAFT,
+  normalizePlanDraft,
+  planDraftChanged,
+  planToDraft,
+} from "../model/draft";
 import { formatDateShort } from "../model/format";
 import type { Plan, PlanDraft } from "../model/types";
 import { PlanDatePickerSheet } from "./PlanDatePickerSheet";
@@ -91,6 +97,8 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   );
   const [memo, setMemo] = useState<string | null>(plan?.memo ?? null);
   const [openSheet, setOpenSheet] = useState<OpenSheet>(null);
+  // 未保存のまま戻ろうとしたときの確認（Issue #95）
+  const [discardDialogVisible, setDiscardDialogVisible] = useState(false);
   // いまマウントしているシート。閉じても外さない：ネイティブのシートは表示中に
   // アンマウントすると画面に残ってしまう（adr/0022）。session は「開くたびに中身を
   // 作り直す」ための key で、開くたびに増やす。
@@ -135,14 +143,25 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
   // docs/domain/plan-lifecycle.md）。
   const deadlineLocked = date !== null;
 
-  const buildDraft = (): PlanDraft => ({
-    title: title.trim(),
-    date,
-    time: date ? time : null,
-    deadline: deadlineLocked ? null : deadline,
-    referenceUrl,
-    memo,
-  });
+  // 整形（前後空白・日付なしの時刻・日付ありの期限）は model/draft に寄せている（adr/0014）
+  const buildDraft = (): PlanDraft =>
+    normalizePlanDraft({ title, date, time, deadline, referenceUrl, memo });
+
+  // 開いた時点の値。これと今の入力を比べて「未保存の変更」を判定する（Issue #95）
+  const initialDraft = useMemo(
+    () => (plan ? planToDraft(plan) : EMPTY_PLAN_DRAFT),
+    [plan],
+  );
+  const hasUnsavedChanges = planDraftChanged(initialDraft, buildDraft());
+
+  // 戻るボタン（D-2/C-3）。未保存の変更があるときだけ確認を挟む。
+  const handleBack = () => {
+    if (hasUnsavedChanges) {
+      setDiscardDialogVisible(true);
+      return;
+    }
+    router.back();
+  };
 
   const handleSubmit = () => {
     const onError = () => {
@@ -205,7 +224,12 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
       keyboardVerticalOffset={insets.top + 8}
     >
       <Stack.Screen
-        options={backHeaderOptions({ onBack: () => router.back() })}
+        options={{
+          ...backHeaderOptions({ onBack: handleBack }),
+          // 未保存の変更があるあいだは左端スワイプで戻れないようにして、確認が必ず出る
+          // 戻るボタンに一本化する。expo-router の usePreventRemove は SDK 58 から（Issue #95）
+          gestureEnabled: !hasUnsavedChanges,
+        }}
       />
       <ScrollView
         className="flex-1"
@@ -368,6 +392,36 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           testID={`${screenName}-memo-sheet`}
         />
       ) : null}
+
+      {/* 未保存のまま戻ろうとしたときの確認（Issue #95）。
+          背景タップは「押さずに閉じただけ」＝編集にもどる（破棄しない）。 */}
+      <Dialog
+        visible={discardDialogVisible}
+        testID={`${screenName}-discard-dialog`}
+        title={
+          mode === "create"
+            ? "入力した内容を保存しますか？"
+            : "編集した内容を保存しますか？"
+        }
+        message="保存せずに戻ると、ここでの変更は消えます。"
+        cancelLabel="保存せず戻る"
+        cancelTestID={`${screenName}-discard-back-button`}
+        onCancel={() => {
+          setDiscardDialogVisible(false);
+          router.back();
+        }}
+        onDismiss={() => setDiscardDialogVisible(false)}
+        confirm={{
+          label: mode === "create" ? "作成する" : "保存する",
+          // タイトルが空のあいだは保存できない（保存条件は「保存する」ボタンと同じ）
+          disabled: !canSubmit,
+          testID: `${screenName}-discard-save-button`,
+          onPress: () => {
+            setDiscardDialogVisible(false);
+            handleSubmit();
+          },
+        }}
+      />
     </KeyboardAvoidingView>
   );
 }

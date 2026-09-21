@@ -34,6 +34,31 @@ appId: com.adelppi.chalo
     text: "編集"
 - assertVisible:
     id: "plan-edit-screen"
+
+# 未保存のまま戻ると保存するか聞かれる（Issue #95）。ここでは破棄を選ぶ
+- tapOn:
+    id: "plan-edit-memo-row"
+- tapOn:
+    id: "plan-edit-memo-sheet-input"
+- inputText: "やっぱりなし"
+- tapOn:
+    id: "plan-edit-memo-sheet-confirm-button"
+- tapOn:
+    text: "戻る"
+- assertVisible:
+    id: "plan-edit-discard-dialog"
+- tapOn:
+    id: "plan-edit-discard-back-button"
+- assertVisible:
+    id: "plan-detail-screen"
+- assertNotVisible:
+    text: ".*やっぱりなし.*"
+
+# もういちど編集して、今度は保存する
+- tapOn:
+    text: "編集"
+- assertVisible:
+    id: "plan-edit-screen"
 - tapOn:
     id: "plan-edit-memo-row"
 - tapOn:
