@@ -25,6 +25,7 @@ React Native + Expo + Supabase。日本語のみ・iOS のみ・ライトモー�
 | `/create-issue <一文>` | 大まかな要求から質問で詳細を掘り下げ、Issue を起票 |
 | `/implement-issue <番号>` | Issue を読み、ブランチ作成→実装→テスト→PR 作成まで実行 |
 | `/create-adr <テーマ>` | 既存形式・採番に従って ADR を作成し、目次を更新 |
+| `/release <major\|minor\|patch>` | バージョンを上げる。Issue 起票→バンプ→PR→(マージ後)タグ付け |
 | `/check-docs` | docs/ の整合性(リンク・重複・目次・未確定事項)を検査 |
 
 ## コーディング規約(正は各 ADR)
