@@ -8,21 +8,18 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
-import { photoDotWindow } from "../model/dots";
 import { formatPhotoCounter, formatTakenAt } from "../model/format";
 import type { Photo } from "../model/types";
 
 // フルスクリーン写真ビューワー（Claude Design 6b）。
 // ズーム・横スワイプ・下スワイプで閉じるはライブラリが持ち、その上に chalo の
-// クロム（閉じる・カウンター・撮影時刻・ドット・ヒント）を重ねる（adr/0023）。
+// クロム（閉じる・カウンター・撮影時刻）を重ねる（adr/0023）。
 
 /** 暗背景の上に置く linen。デザインの rgba(241,234,218,x) をトークンから作る */
 const ON_INK = {
   full: palette.linen,
   circle: "rgba(241, 234, 218, 0.12)",
   caption: "rgba(241, 234, 218, 0.6)",
-  hint: "rgba(241, 234, 218, 0.72)",
-  dotIdle: "rgba(241, 234, 218, 0.25)",
 };
 
 type PhotoViewerProps = {
@@ -105,48 +102,22 @@ export function PhotoViewer({
           <View className="h-10 w-10" />
         </View>
 
-        {/* 下：撮影時刻・ドット・ヒント */}
-        <View
-          pointerEvents="none"
-          className="absolute inset-x-0 bottom-0 items-center gap-3 px-6"
-          style={{ paddingBottom: insets.bottom + 20 }}
-        >
-          {takenAt ? (
-            <View className="flex-row items-center gap-1.5">
-              <Icon name="clock" size={12} color={ON_INK.caption} />
-              <Text
-                className="text-xs font-medium"
-                style={{ color: ON_INK.caption }}
-              >
-                {takenAt}
-              </Text>
-            </View>
-          ) : null}
-
-          {photos.length > 1 ? (
-            <View className="flex-row items-center gap-[5px]">
-              {photoDotWindow(index, photos.length).map((dotIndex) => (
-                <View
-                  key={dotIndex}
-                  className="h-[3px] w-[22px] rounded-full"
-                  style={{
-                    backgroundColor:
-                      dotIndex === index ? ON_INK.full : ON_INK.dotIdle,
-                  }}
-                />
-              ))}
-            </View>
-          ) : null}
-
-          {photos.length > 1 ? (
+        {/* 下：撮影時刻（Issue #94 でページドットとスワイプの案内は外した） */}
+        {takenAt ? (
+          <View
+            pointerEvents="none"
+            className="absolute inset-x-0 bottom-0 flex-row items-center justify-center gap-1.5 px-6"
+            style={{ paddingBottom: insets.bottom + 20 }}
+          >
+            <Icon name="clock" size={12} color={ON_INK.caption} />
             <Text
-              className="text-[11px] font-medium"
-              style={{ color: ON_INK.hint }}
+              className="text-xs font-medium"
+              style={{ color: ON_INK.caption }}
             >
-              スワイプでその日の他の写真へ
+              {takenAt}
             </Text>
-          ) : null}
-        </View>
+          </View>
+        ) : null}
       </View>
     </Modal>
   );
