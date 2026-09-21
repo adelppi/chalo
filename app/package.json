@@ -69,10 +69,12 @@
   "scripts": {
     "start": "expo start",
     "ios": "expo run:ios",
-    "lint": "expo lint",
+    "lint": "expo lint && eslint scripts",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "release:bump": "npm version --no-git-tag-version",
+    "release:tag": "node ./scripts/release-tag.js"
   },
   "jest": {
     "preset": "jest-expo",
