@@ -43,6 +43,11 @@ appId: com.adelppi.chalo
     text: "アルバムの日.*"
 - assertVisible:
     id: "plan-detail-screen"
+# おわったプランでは下部のアクション（カレンダー連携・おしまいにする）を出さない
+- assertNotVisible:
+    id: "plan-detail-calendar-button"
+- assertNotVisible:
+    id: "plan-detail-close-button"
 - extendedWaitUntil:
     visible:
       id: "plan-album-grid"
