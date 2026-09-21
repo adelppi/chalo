@@ -99,11 +99,10 @@ function PlanDetail({
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
 
   const displayUrl = plan.referenceUrl?.replace(/^https?:\/\//, "");
+  // 自動おしまい・手動おしまいのどちらも done（domain/plan-lifecycle.md）
+  const isDone = derivePlanStatus(plan, new Date()) === "done";
   // おしまいのプランだけがアルバムを持つ。対象区間の導出は plans 側の責務（adr/0015）
-  const albumRange =
-    derivePlanStatus(plan, new Date()) === "done"
-      ? derivePlanAlbumRange(plan)
-      : null;
+  const albumRange = isDone ? derivePlanAlbumRange(plan) : null;
 
   // 詳細を開いた後に相手がロックを取ることもあるため、編集ボタン押下時にも
   // その1件だけ最新取得してロック判定する（adr/0005）。空いていればロックを立てて
@@ -194,7 +193,11 @@ function PlanDetail({
 
       <ScrollView
         className="flex-1"
-        contentContainerClassName="grow pb-6"
+        contentContainerClassName="grow"
+        // おしまいのプランは下部エリアが無くなるので、その分の余白をここで持つ
+        contentContainerStyle={{
+          paddingBottom: isDone ? insets.bottom + 24 : 24,
+        }}
         showsVerticalScrollIndicator={false}
         alwaysBounceVertical
         refreshControl={
@@ -270,22 +273,26 @@ function PlanDetail({
         {albumRange ? <PlanAlbum range={albumRange} /> : null}
       </ScrollView>
 
-      <View
-        className="gap-3 px-6"
-        style={{ paddingBottom: insets.bottom + 24 }}
-      >
-        <PlanCalendarButton plan={plan} />
-        <Button
-          testID="plan-detail-close-button"
-          label="おしまいにする"
-          icon="check-circle"
-          iconSize={18}
-          variant="accent"
-          size="lg"
-          onPress={handleClose}
-          disabled={closePlan.isPending}
-        />
-      </View>
+      {/* おしまいのプランは振り返って見るだけの画面にする。カレンダー連携も
+          手動おしまいも出さない（domain/plan-lifecycle.md・domain/calendar.md） */}
+      {isDone ? null : (
+        <View
+          className="gap-3 px-6"
+          style={{ paddingBottom: insets.bottom + 24 }}
+        >
+          <PlanCalendarButton plan={plan} />
+          <Button
+            testID="plan-detail-close-button"
+            label="おしまいにする"
+            icon="check-circle"
+            iconSize={18}
+            variant="accent"
+            size="lg"
+            onPress={handleClose}
+            disabled={closePlan.isPending}
+          />
+        </View>
+      )}
 
       {/* F-1 削除ダイアログ */}
       <Dialog
