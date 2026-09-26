@@ -1,0 +1,47 @@
+# 利用規約・プライバシーポリシー（features.md 9.9・adr/0019・Issue #114）。
+# 設定の各行から外部ブラウザが開く。ブラウザの中は OS のアプリなので、
+# アプリが前面から外れたところまでを確認する。
+# 前提: アプリがサインイン済みであること（外部認証は自動化しない）。
+appId: com.adelppi.chalo
+tags:
+  - regression
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "tab-settings"
+- assertVisible:
+    id: "settings-screen"
+
+# 利用規約
+- scrollUntilVisible:
+    element:
+      id: "settings-terms-button"
+    direction: DOWN
+- tapOn:
+    id: "settings-terms-button"
+- extendedWaitUntil:
+    notVisible:
+      id: "settings-screen"
+    timeout: 10000
+- launchApp:
+    stopApp: false
+- assertVisible:
+    id: "settings-screen"
+
+# プライバシーポリシー
+- scrollUntilVisible:
+    element:
+      id: "settings-privacy-button"
+    direction: DOWN
+- tapOn:
+    id: "settings-privacy-button"
+- extendedWaitUntil:
+    notVisible:
+      id: "settings-screen"
+    timeout: 10000
+- launchApp:
+    stopApp: false
+- assertVisible:
+    id: "settings-screen"

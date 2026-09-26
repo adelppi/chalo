@@ -1,0 +1,46 @@
+# データ書き出し（features.md 4.8・9.6・F-1b・Issue #114）。
+# 設定 → プランを書き出す → キャンセル → 書き出す → 共有シートが開く、までを通す。
+# 共有シートの中は OS の UI なので、書き出したファイルが載っているところまでを確認する。
+# 前提: アプリがサインイン済みであること（外部認証は自動化しない）。
+appId: com.adelppi.chalo
+tags:
+  - regression
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "tab-settings"
+- assertVisible:
+    id: "settings-screen"
+
+# いったんキャンセル（誤操作で書き出されないこと）
+- tapOn:
+    id: "settings-export-button"
+- assertVisible:
+    text: "プランを書き出しますか？"
+- tapOn:
+    id: "settings-export-cancel-button"
+- assertNotVisible:
+    text: "プランを書き出しますか？"
+
+# 書き出す → 共有シートに書き出したファイルが載る
+- tapOn:
+    id: "settings-export-button"
+- tapOn:
+    id: "settings-export-confirm-button"
+- assertVisible:
+    text: "書き出しました"
+- tapOn:
+    id: "settings-export-share-button"
+- extendedWaitUntil:
+    visible:
+      text: "chalo-plans"
+    timeout: 10000
+
+# 共有シートを閉じ、完了ダイアログも閉じて設定に戻る
+- tapOn: "ポップアップを閉じる"
+- tapOn:
+    id: "settings-export-close-button"
+- assertVisible:
+    id: "settings-screen"
