@@ -1,0 +1,60 @@
+# 参考URL（features.md 8.1・Issue #114）。
+# 作成時に URL を登録 → 詳細に出る → タップで外部ブラウザが開く、までを通す。
+# ブラウザの中は OS のアプリなので、アプリが前面から外れたところまでを確認する。
+# 前提: アプリがサインイン済みであること（外部認証は自動化しない）。
+appId: com.adelppi.chalo
+tags:
+  - regression
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- evalScript: ${output.title = 'URLテスト' + String(Date.now()).slice(-5)}
+
+# URL 付きで作成する
+- tapOn:
+    id: "home-create-button"
+- tapOn:
+    id: "plan-create-title-input"
+- inputText: ${output.title}
+- hideKeyboard
+- tapOn:
+    id: "plan-create-url-row"
+- tapOn:
+    id: "plan-create-url-sheet-input"
+- inputText: "https://example.com/chalo"
+- tapOn:
+    id: "plan-create-url-sheet-confirm-button"
+- tapOn:
+    id: "plan-create-submit-button"
+- assertVisible:
+    id: "home-screen"
+
+# 詳細に参考URLが出る（行は1要素にまとまるので部分一致で当てる）
+- tapOn:
+    text: "${output.title}.*"
+- assertVisible:
+    id: "plan-detail-url-button"
+    text: ".*example.com/chalo.*"
+
+# タップで外部ブラウザが開き、アプリが前面から外れる
+- tapOn:
+    id: "plan-detail-url-button"
+- extendedWaitUntil:
+    notVisible:
+      id: "plan-detail-screen"
+    timeout: 10000
+
+# アプリに戻って後片付け（作ったプランを消す）
+- launchApp:
+    stopApp: false
+- assertVisible:
+    id: "plan-detail-screen"
+- tapOn:
+    text: "削除"
+- tapOn:
+    id: "plan-detail-delete-confirm-button"
+- assertVisible:
+    id: "home-screen"
+- assertNotVisible:
+    text: "${output.title}.*"

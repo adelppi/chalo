@@ -1,0 +1,43 @@
+# プラン作成フォームの入力不備（features.md 1.2 の異常系・Issue #114）。
+# タイトルが空、または空白だけのときは作成できない（作成ボタンが無効のまま）。
+# 前提: アプリがサインイン済みであること（外部認証は自動化しない）。
+appId: com.adelppi.chalo
+tags:
+  - regression
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- tapOn:
+    id: "home-create-button"
+- assertVisible:
+    id: "plan-create-screen"
+
+# タイトルが空のままでは作成できない
+- tapOn:
+    id: "plan-create-submit-button"
+- assertVisible:
+    id: "plan-create-screen"
+
+# 空白だけでも作成できない
+- tapOn:
+    id: "plan-create-title-input"
+- inputText: "   "
+- hideKeyboard
+- tapOn:
+    id: "plan-create-submit-button"
+- assertVisible:
+    id: "plan-create-screen"
+
+# 作らずに戻る。入力があると未保存の確認が出るので、破棄して戻る
+# 戻るはネイティブヘッダーのバーボタン(testID不可)のため text で参照する
+- tapOn: "戻る"
+- runFlow:
+    when:
+      visible:
+        id: "plan-create-discard-dialog"
+    commands:
+      - tapOn:
+          id: "plan-create-discard-back-button"
+- assertVisible:
+    id: "home-screen"

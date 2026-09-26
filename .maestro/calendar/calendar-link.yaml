@@ -1,0 +1,130 @@
+# カレンダー連携（features.md 6.1〜6.4・9.5・domain/calendar.md・Issue #114）。
+# 既定カレンダーの選択 → 日付なしプランは追加できない（異常系）→ 日付ありプランを追加
+# → 編集しても連携が続く → カレンダーから削除 → 連携したまま削除、を通す。
+# 端末カレンダー側のイベントは Maestro から見えないため、アプリの画面上の状態までを確認する。
+# 前提: アプリがサインイン済みであること（外部認証は自動化しない）。
+appId: com.adelppi.chalo
+tags:
+  - regression
+---
+# カレンダー権限を許可した状態で起動する（システムダイアログは Maestro から操作できないため）
+- launchApp:
+    permissions:
+      calendar: allow
+- assertVisible:
+    id: "home-screen"
+- evalScript: ${output.title = 'カレンダーテスト' + String(Date.now()).slice(-5)}
+- evalScript: ${output.tomorrow = (function(){ var d = new Date(Date.now() + 86400000); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); })()}
+
+# 既定の追加先カレンダーを選ぶ（シミュレータのカレンダーは端末ごとに id が違うので、先頭の1つを選ぶ）
+- tapOn:
+    id: "tab-settings"
+- tapOn:
+    id: "settings-default-calendar-button"
+- assertVisible:
+    id: "settings-default-calendar-sheet"
+- tapOn:
+    id: "settings-default-calendar-item-.*"
+    index: 0
+- assertVisible:
+    id: "settings-screen"
+- tapOn:
+    id: "tab-plans"
+
+# 日付なしのプランは追加できない（異常系）
+- tapOn:
+    id: "home-create-button"
+- tapOn:
+    id: "plan-create-title-input"
+- inputText: ${output.title}
+- hideKeyboard
+- tapOn:
+    id: "plan-create-submit-button"
+- tapOn:
+    text: "${output.title}.*"
+- tapOn:
+    id: "plan-detail-calendar-button"
+- assertVisible:
+    text: "日付がまだ入っていません"
+- tapOn:
+    id: "plan-detail-calendar-no-date-close-button"
+
+# 日付を入れると追加できる
+- tapOn: "編集"
+- tapOn:
+    id: "plan-edit-date-row"
+# 翌日が今の月に無ければ翌月へ送る（月末実行対策）
+- runFlow:
+    when:
+      notVisible:
+        id: "plan-date-picker-day-${output.tomorrow}"
+    commands:
+      - tapOn:
+          id: "plan-date-picker-next-month-button"
+- tapOn:
+    id: "plan-date-picker-day-${output.tomorrow}"
+- tapOn:
+    id: "plan-date-picker-confirm-button"
+- tapOn:
+    id: "plan-edit-submit-button"
+- assertVisible:
+    id: "plan-detail-screen"
+# トーストはカレンダーのボタンの真上に出て、出ている間はボタンを押せない。消えるのを待ってから押す
+- extendedWaitUntil:
+    notVisible:
+      text: "保存しました"
+    timeout: 8000
+- tapOn:
+    id: "plan-detail-calendar-button"
+- assertVisible:
+    id: "plan-detail-calendar-button"
+    text: ".*カレンダーから削除.*"
+- extendedWaitUntil:
+    notVisible:
+      text: "カレンダーに追加しました"
+    timeout: 8000
+
+# 連携したまま編集しても、連携は続く（イベントは裏で更新される）
+- tapOn: "編集"
+- tapOn:
+    id: "plan-edit-memo-row"
+- tapOn:
+    id: "plan-edit-memo-sheet-input"
+- inputText: "カレンダーも更新される"
+- tapOn:
+    id: "plan-edit-memo-sheet-confirm-button"
+- tapOn:
+    id: "plan-edit-submit-button"
+- assertVisible:
+    id: "plan-detail-calendar-button"
+    text: ".*カレンダーから削除.*"
+- extendedWaitUntil:
+    notVisible:
+      text: "保存しました"
+    timeout: 8000
+
+# カレンダーから削除すると、また追加できる状態に戻る
+- tapOn:
+    id: "plan-detail-calendar-button"
+- assertVisible:
+    id: "plan-detail-calendar-button"
+    text: ".*カレンダーに追加.*"
+- extendedWaitUntil:
+    notVisible:
+      text: "カレンダーから削除しました"
+    timeout: 8000
+
+# もう一度追加し、連携したままプランを削除する（イベントも裏で消える）
+- tapOn:
+    id: "plan-detail-calendar-button"
+- assertVisible:
+    id: "plan-detail-calendar-button"
+    text: ".*カレンダーから削除.*"
+- tapOn:
+    text: "削除"
+- tapOn:
+    id: "plan-detail-delete-confirm-button"
+- assertVisible:
+    id: "home-screen"
+- assertNotVisible:
+    text: "${output.title}.*"
