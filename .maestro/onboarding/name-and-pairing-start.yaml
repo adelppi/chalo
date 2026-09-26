@@ -3,9 +3,8 @@
 #
 # 前提: サインイン直後・オンボーディング未完了（端末ローカル進捗が無い）の
 # テストユーザーでアプリが起動していること。外部認証（Google/Apple）は自動化
-# しないため、この前提は手動で用意する（`docs/README.md` 記載の実 Supabase
-# セッション作成手順に準じる。既存の pairing/pairing-invite-and-errors.yaml と
-# 同じ制約）。
+# しないため、この前提は手動で用意する（`.maestro/README.md` の
+# 「テスト用アカウントの用意」。profiles の行は作らない）。
 #
 # 中断からの復帰（B の acceptance）はこのフローでは検証しない：アプリの
 # kill/relaunch を要するため、`.maestro/onboarding/resume-after-kill.yaml` を

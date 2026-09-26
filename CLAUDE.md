@@ -33,7 +33,7 @@ React Native + Expo + Supabase。日本語のみ・iOS のみ・ライトモー�
 
 - **ディレクトリ構成・依存方向**: `adr/0015`。`app → features → global` の一方向で、逆流させない。feature 間の直接 import は禁止(相手の `index.ts` バレル経由のみ)。
 - **データ層**: `adr/0003`。feature は Repository interface にのみ依存する。supabase-js を import してよいのは `src/global/lib/supabase/` のみ。
-- **テスト**: `adr/0014`。計算・判定ロジックは純粋関数に切り出して Jest でテストする。UI・フックの検証は Maestro E2E に委ねる。ロジックを書くときは常に「純粋関数に切り出せるか」を考える。
+- **テスト**: `adr/0014`。計算・判定ロジックは純粋関数に切り出して Jest でテストする。UI・フックの検証は Maestro E2E に委ねる。ロジックを書くときは常に「純粋関数に切り出せるか」を考える。画面が変わる変更では関係するフローを流し、PR に結果を書く。
 - **UI**: NativeWind(`adr/0016`)。ライトモードのみ。
 
 ## docs の更新ルール

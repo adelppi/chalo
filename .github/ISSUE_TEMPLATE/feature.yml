@@ -35,6 +35,13 @@ body:
     attributes:
       label: スコープ外
       description: この Issue ではやらないこと(あれば)
+  - type: checkboxes
+    id: regression
+    attributes:
+      label: 全体リグレッション
+      description: 複数機能にまたがる大規模改修・Expo SDK や React Native の更新なら付ける。PR で全フローと手動チェックリストを確認する(docs/adr/0014-test-strategy.md)
+      options:
+        - label: 全体リグレッションが要る
   - type: textarea
     id: notes
     attributes:

@@ -63,7 +63,7 @@ appId: com.adelppi.chalo
     id: "photo-viewer"
 
 # 横スワイプで同じ日の他の写真へ移り、閉じるボタンで戻る。
-# ズームの見え方は動画・手動で確認する（拡大率は hierarchy から読めない）
+# ズームの見え方は手動で確認する（拡大率は hierarchy から読めない）
 - swipe:
     start: "85%,50%"
     end: "15%,50%"
