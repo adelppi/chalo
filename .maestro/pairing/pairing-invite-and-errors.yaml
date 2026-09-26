@@ -26,8 +26,8 @@ tags:
     id: "pairing-invite-code-text"
 - tapOn:
     id: "pairing-invite-copy-button"
-- tapOn:
-    id: "pairing-invite-back-button"
+# 戻るはネイティブヘッダーのバーボタン(testID不可)のため text で参照する
+- tapOn: "戻る"
 - assertVisible:
     id: "settings-screen"
 
