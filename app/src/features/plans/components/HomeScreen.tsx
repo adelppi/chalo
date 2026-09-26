@@ -1,3 +1,4 @@
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import {
@@ -61,6 +62,7 @@ export function HomeScreen() {
       ) : isEmpty ? (
         // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
         <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
           className="flex-1"
           contentContainerClassName="flex-grow"
           showsVerticalScrollIndicator={false}
@@ -77,6 +79,7 @@ export function HomeScreen() {
         </ScrollView>
       ) : (
         <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
           className="flex-1 px-5 pt-1"
           contentContainerClassName="grow gap-2.5 pb-28"
           showsVerticalScrollIndicator={false}
@@ -154,14 +157,61 @@ export function HomeScreen() {
         </ScrollView>
       )}
 
+      <CreatePlanButton
+        onPress={() => router.push("/plan/new")}
+        bottom={insets.bottom + 16}
+      />
+    </View>
+  );
+}
+
+// プラン追加ボタン（FAB）。iOS 26 ではリキッドグラスの丸ボタンにし、純正タブバー
+// （NativeTabs）の上に浮かせる（Issue #106）。iOS 26 未満は従来の黒い丸。
+// タブ画面の insets.bottom はタブバーの高さを含む（NativeTabs が各タブに
+// SafeAreaProvider を敷くため）ので、それを基準にバーと重ならない位置へ置く。
+function CreatePlanButton({
+  onPress,
+  bottom,
+}: {
+  onPress: () => void;
+  bottom: number;
+}) {
+  if (!isLiquidGlassAvailable()) {
+    return (
       <Pressable
         testID="home-create-button"
-        onPress={() => router.push("/plan/new")}
-        className="absolute bottom-6 right-[22px] h-[58px] w-[58px] items-center justify-center rounded-full bg-ink shadow-fab active:opacity-80"
+        accessibilityLabel="プランをつくる"
+        onPress={onPress}
+        className="absolute right-[22px] h-[58px] w-[58px] items-center justify-center rounded-full bg-ink shadow-fab active:opacity-80"
+        style={{ bottom }}
       >
         <Icon name="plus" size={24} color={palette.linen} />
       </Pressable>
-    </View>
+    );
+  }
+
+  // 押下時の揺らぎ・光はネイティブのガラス（isInteractive）が出すため active:opacity は付けない。
+  return (
+    <Pressable
+      testID="home-create-button"
+      accessibilityLabel="プランをつくる"
+      onPress={onPress}
+      className="absolute right-[22px] h-[58px] w-[58px]"
+      style={{ bottom }}
+    >
+      <GlassView
+        isInteractive
+        glassEffectStyle="regular"
+        style={{
+          flex: 1,
+          borderRadius: 29,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Icon name="plus" size={24} color={palette.ink} />
+      </GlassView>
+    </Pressable>
   );
 }
 

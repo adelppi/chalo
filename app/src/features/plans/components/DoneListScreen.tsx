@@ -50,6 +50,7 @@ export function DoneListScreen() {
       ) : groups.length === 0 ? (
         // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
         <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
           className="flex-1"
           contentContainerClassName="flex-grow"
           showsVerticalScrollIndicator={false}
@@ -66,6 +67,7 @@ export function DoneListScreen() {
         </ScrollView>
       ) : (
         <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
           className="flex-1 px-5 pt-1"
           contentContainerClassName="grow gap-2.5 pb-10"
           showsVerticalScrollIndicator={false}
