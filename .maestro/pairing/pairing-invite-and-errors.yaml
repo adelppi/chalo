@@ -4,6 +4,8 @@
 # 成立（redeem 成功）は2アカウントが同時に必要なため、この単一デバイスのフローでは検証できない。
 # RPC・RLS（ペア境界）はレビュー観点として PR 側で確認する（adr/0014）。
 appId: com.adelppi.chalo
+tags:
+  - regression
 ---
 - launchApp
 - assertVisible:

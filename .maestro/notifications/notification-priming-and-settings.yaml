@@ -4,6 +4,8 @@
 # 「許可ずみ」でも通るように分岐する（拒否済みの端末は iOS 設定誘導になるため対象外）。
 # 前提: アプリがサインイン済みであること。
 appId: com.adelppi.chalo
+tags:
+  - regression
 ---
 - launchApp
 - assertVisible:

@@ -4,6 +4,8 @@
 # セッションで手動確認する（adr/0014。RLS の自動テストは持たない）。
 # 前提: アプリがサインイン済みであること（外部認証は自動化しない）。
 appId: com.adelppi.chalo
+tags:
+  - regression
 ---
 - launchApp
 - assertVisible:

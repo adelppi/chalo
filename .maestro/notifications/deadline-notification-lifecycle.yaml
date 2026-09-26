@@ -5,6 +5,8 @@
 # 予約日時・送らない条件の算出は Jest（features/notifications/model）が担保する（adr/0014）。
 # 前提: アプリがサインイン済みであること。
 appId: com.adelppi.chalo
+tags:
+  - regression
 ---
 - launchApp
 - assertVisible:
