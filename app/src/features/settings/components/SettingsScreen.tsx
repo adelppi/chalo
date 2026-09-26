@@ -102,6 +102,7 @@ export function SettingsScreen() {
       </View>
 
       <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
         className="flex-1 px-5"
         contentContainerClassName="gap-1.5 pb-8 pt-0.5"
         showsVerticalScrollIndicator={false}
