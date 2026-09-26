@@ -1,16 +1,12 @@
 # Maestro E2E
 
-いつ・どの範囲を流すか、録画、testID の命名、フローを書くときの注意は `docs/adr/0014-test-strategy.md` が正。ここには実行方法と手動チェックリストだけを置く。各フローが何を通すか・前提は、フローの先頭コメントを見る。
+いつ・どの範囲を流すか、testID の命名、フローを書くときの注意は `docs/adr/0014-test-strategy.md` が正。ここには実行方法と手動チェックリストだけを置く。各フローが何を通すか・前提は、フローの先頭コメントを見る。
 
 ## 実行
 
 前提：シミュレータで dev client が Metro に繋がり、テスト用アカウントでサインイン済みであること（Google/Apple の外部認証は自動化しない）。
 
 ```bash
-# 1本を録画しながら流す（動画は .maestro/recordings/ に保存。コミットしない）
-maestro record --local .maestro/plans/plan-crud.yaml .maestro/recordings/plan-crud.mp4
-
-# 録画せずに流す（フローを書いている途中の確認など）
 maestro test .maestro/plans/plan-crud.yaml
 ```
 

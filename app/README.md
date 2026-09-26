@@ -23,7 +23,7 @@ Supabase の URL / anon key は EAS Environments(`development` / `preview` / `pr
 
 ## テスト
 
-テストのルール(何をどちらでテストするか・いつ E2E を流すか・録画)は [`docs/adr/0014-test-strategy.md`](../docs/adr/0014-test-strategy.md) が正。E2E の実行方法と手動チェックリストは [`../.maestro/README.md`](../.maestro/README.md)。
+テストのルール(何をどちらでテストするか・いつ E2E を流すか)は [`docs/adr/0014-test-strategy.md`](../docs/adr/0014-test-strategy.md) が正。E2E の実行方法と手動チェックリストは [`../.maestro/README.md`](../.maestro/README.md)。
 
 E2E に使う Maestro はスタンドアロンの CLI で、npm パッケージとしては導入しない。バージョンを固定してインストールする(環境間でのブレを防ぐため)。
 
