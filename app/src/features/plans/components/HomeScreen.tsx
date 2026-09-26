@@ -43,119 +43,106 @@ export function HomeScreen() {
     sections.upcoming.length === 0 &&
     sections.wishes.length === 0;
 
+  // 見出しは純正の大タイトル（(tabs)/(plans)/_layout.tsx）。大タイトルをスクロールに
+  // 連動させるため、読み込み中・空状態・一覧のどれでも ScrollView を画面ルートの
+  // 最初の子に置き、中身だけを切り替える。ルートの collapsable={false} も連動に必須
+  // （global/utils/headerItems の largeTitleHeaderOptions を参照。Issue #107）。
+  // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
   return (
-    <View
-      testID="home-screen"
-      className="flex-1 bg-linen"
-      style={{ paddingTop: insets.top + 16 }}
-    >
-      <View className="px-6 pb-3">
-        <Text className="text-[38px] font-bold leading-tight text-ink">
-          プラン
-        </Text>
-      </View>
-
-      {isPending ? (
-        <View className="flex-1 items-center justify-center">
+    <View testID="home-screen" collapsable={false} className="flex-1 bg-linen">
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        className="flex-1"
+        contentContainerClassName={
+          isPending
+            ? "grow items-center justify-center"
+            : isEmpty
+              ? "grow"
+              : "grow gap-2.5 px-5 pt-1 pb-28"
+        }
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical
+        refreshControl={
+          isPending ? undefined : (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={palette.ink}
+            />
+          )
+        }
+      >
+        {isPending ? (
           <ActivityIndicator color={palette.ink} />
-        </View>
-      ) : isEmpty ? (
-        // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          className="flex-1"
-          contentContainerClassName="flex-grow"
-          showsVerticalScrollIndicator={false}
-          alwaysBounceVertical
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={palette.ink}
-            />
-          }
-        >
+        ) : isEmpty ? (
           <HomeEmptyState />
-        </ScrollView>
-      ) : (
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          className="flex-1 px-5 pt-1"
-          contentContainerClassName="grow gap-2.5 pb-28"
-          showsVerticalScrollIndicator={false}
-          alwaysBounceVertical
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={palette.ink}
-            />
-          }
-        >
-          {sections.next ? (
-            <Pressable
-              testID={`plans-list-item-${sections.next.id}`}
-              onPress={() => openPlan(sections.next as Plan)}
-              className="relative overflow-hidden rounded-hero bg-ink px-5 py-[18px] shadow-hero active:opacity-90"
-            >
-              <PawPrint
-                size={104}
-                light
-                opacity={0.16}
-                rotate="-18deg"
-                style={{ position: "absolute", right: -12, bottom: -20 }}
-              />
-              <View className="gap-2.5">
-                <Text className="text-[11px] font-bold tracking-[1.5px] text-latte">
-                  つぎの予定
-                </Text>
-                <Text className="text-[19px] font-bold text-linen">
-                  {sections.next.title}
-                </Text>
-                <Chip
-                  icon="calendar"
-                  tone="on-dark"
-                  label={formatDateLong(
-                    sections.next.date as string,
-                    sections.next.time,
-                  )}
+        ) : (
+          <>
+            {sections.next ? (
+              <Pressable
+                testID={`plans-list-item-${sections.next.id}`}
+                onPress={() => openPlan(sections.next as Plan)}
+                className="relative overflow-hidden rounded-hero bg-ink px-5 py-[18px] shadow-hero active:opacity-90"
+              >
+                <PawPrint
+                  size={104}
+                  light
+                  opacity={0.16}
+                  rotate="-18deg"
+                  style={{ position: "absolute", right: -12, bottom: -20 }}
                 />
-              </View>
-            </Pressable>
-          ) : null}
+                <View className="gap-2.5">
+                  <Text className="text-[11px] font-bold tracking-[1.5px] text-latte">
+                    つぎの予定
+                  </Text>
+                  <Text className="text-[19px] font-bold text-linen">
+                    {sections.next.title}
+                  </Text>
+                  <Chip
+                    icon="calendar"
+                    tone="on-dark"
+                    label={formatDateLong(
+                      sections.next.date as string,
+                      sections.next.time,
+                    )}
+                  />
+                </View>
+              </Pressable>
+            ) : null}
 
-          {sections.upcoming.length > 0 ? (
-            <View className="overflow-hidden rounded-card bg-paper shadow-card">
-              {sections.upcoming.map((plan, index) => (
-                <PlanListRow
-                  key={plan.id}
-                  plan={plan}
-                  onPress={() => openPlan(plan)}
-                  showSeparator={index < sections.upcoming.length - 1}
-                />
-              ))}
-            </View>
-          ) : null}
-
-          {sections.wishes.length > 0 ? (
-            <>
-              <Text className="px-1.5 pt-2.5 text-xs font-bold tracking-[1.5px] text-stone">
-                いつかいく
-              </Text>
+            {sections.upcoming.length > 0 ? (
               <View className="overflow-hidden rounded-card bg-paper shadow-card">
-                {sections.wishes.map((plan, index) => (
+                {sections.upcoming.map((plan, index) => (
                   <PlanListRow
                     key={plan.id}
                     plan={plan}
                     onPress={() => openPlan(plan)}
-                    showSeparator={index < sections.wishes.length - 1}
+                    showSeparator={index < sections.upcoming.length - 1}
                   />
                 ))}
               </View>
-            </>
-          ) : null}
-        </ScrollView>
-      )}
+            ) : null}
+
+            {sections.wishes.length > 0 ? (
+              <>
+                <Text className="px-1.5 pt-2.5 text-xs font-bold tracking-[1.5px] text-stone">
+                  いつかいく
+                </Text>
+                <View className="overflow-hidden rounded-card bg-paper shadow-card">
+                  {sections.wishes.map((plan, index) => (
+                    <PlanListRow
+                      key={plan.id}
+                      plan={plan}
+                      onPress={() => openPlan(plan)}
+                      showSeparator={index < sections.wishes.length - 1}
+                    />
+                  ))}
+                </View>
+              </>
+            ) : null}
+          </>
+        )}
+      </ScrollView>
 
       <CreatePlanButton
         onPress={() => router.push("/plan/new")}

@@ -8,7 +8,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { PawPrint } from "@global/components/shared";
 import { palette } from "@global/constants/palette";
@@ -21,7 +20,6 @@ import { deriveClosedDate } from "../model/status";
 
 // おわったプラン（D-4。空状態は D-5）。月ごとにグループ化して新しい順に並べる。
 export function DoneListScreen() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { data: plans, isPending, refetch } = usePlans();
   const { refreshing, onRefresh } = usePullToRefresh(refetch);
@@ -31,56 +29,42 @@ export function DoneListScreen() {
     [plans],
   );
 
-  return (
-    <View
-      testID="done-screen"
-      className="flex-1 bg-linen"
-      style={{ paddingTop: insets.top + 16 }}
-    >
-      <View className="px-6 pb-3">
-        <Text className="text-[38px] font-bold leading-tight text-ink">
-          おわったプラン
-        </Text>
-      </View>
+  // 見出しは純正の大タイトル（(tabs)/(done)/_layout.tsx）。ホームと同じく、
+  // ScrollView を常に画面ルートの最初の子に置き、中身だけを切り替える。ルートは
+  // collapsable={false}（Issue #107）。
+  // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
+  const isEmpty = groups.length === 0;
 
-      {isPending ? (
-        <View className="flex-1 items-center justify-center">
+  return (
+    <View testID="done-screen" collapsable={false} className="flex-1 bg-linen">
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        className="flex-1"
+        contentContainerClassName={
+          isPending
+            ? "grow items-center justify-center"
+            : isEmpty
+              ? "grow"
+              : "grow gap-2.5 px-5 pt-1 pb-10"
+        }
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical
+        refreshControl={
+          isPending ? undefined : (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={palette.ink}
+            />
+          )
+        }
+      >
+        {isPending ? (
           <ActivityIndicator color={palette.ink} />
-        </View>
-      ) : groups.length === 0 ? (
-        // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          className="flex-1"
-          contentContainerClassName="flex-grow"
-          showsVerticalScrollIndicator={false}
-          alwaysBounceVertical
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={palette.ink}
-            />
-          }
-        >
+        ) : isEmpty ? (
           <DoneEmptyState />
-        </ScrollView>
-      ) : (
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          className="flex-1 px-5 pt-1"
-          contentContainerClassName="grow gap-2.5 pb-10"
-          showsVerticalScrollIndicator={false}
-          alwaysBounceVertical
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={palette.ink}
-            />
-          }
-        >
-          {groups.map((group) => (
+        ) : (
+          groups.map((group) => (
             <View key={group.label} className="gap-2.5">
               <Text className="px-1.5 pt-1.5 text-xs font-bold tracking-[1.5px] text-stone">
                 {group.label}
@@ -113,9 +97,9 @@ export function DoneListScreen() {
                 ))}
               </View>
             </View>
-          ))}
-        </ScrollView>
-      )}
+          ))
+        )}
+      </ScrollView>
     </View>
   );
 }

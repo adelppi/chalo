@@ -22,6 +22,7 @@ import {
 } from "@features/notifications";
 import { Button, Dialog, Icon, type IconName } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
+import { useCompactHeaderTitle } from "@global/hooks/useCompactHeaderTitle";
 import { useToastStore } from "@global/store/useToastStore";
 import { backHeaderOptions } from "@global/utils/headerItems";
 
@@ -87,6 +88,9 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
 
   const [title, setTitle] = useState(plan?.title ?? "");
   const [titleFocused, setTitleFocused] = useState(false);
+  const heading = mode === "create" ? "あたらしいプラン" : "プランを編集";
+  // 画面内の見出しがスクロールで隠れたら、ナビバーに出す（Issue #107）
+  const compactTitle = useCompactHeaderTitle(heading);
   const [date, setDate] = useState<string | null>(plan?.date ?? null);
   const [time, setTime] = useState<string | null>(plan?.time ?? null);
   const [deadline, setDeadline] = useState<string | null>(
@@ -229,17 +233,23 @@ function PlanForm({ mode, plan }: { mode: "create" | "edit"; plan?: Plan }) {
           // 未保存の変更があるあいだは左端スワイプで戻れないようにして、確認が必ず出る
           // 戻るボタンに一本化する。expo-router の usePreventRemove は SDK 58 から（Issue #95）
           gestureEnabled: !hasUnsavedChanges,
+          title: compactTitle.headerTitle,
         }}
       />
       <ScrollView
+        onScroll={compactTitle.onScroll}
+        scrollEventThrottle={16}
         className="flex-1"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
         <View className="px-6 pt-2.5">
-          <Text className="text-[28px] font-bold text-ink">
-            {mode === "create" ? "あたらしいプラン" : "プランを編集"}
+          <Text
+            onLayout={compactTitle.onHeadingLayout}
+            className="text-[28px] font-bold text-ink"
+          >
+            {heading}
           </Text>
         </View>
 

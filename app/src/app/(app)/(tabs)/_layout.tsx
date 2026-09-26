@@ -7,6 +7,8 @@ import { palette } from "@global/constants/palette";
 // スクロールでの最小化はしない：タブ3つだけなので常に見えている方が分かりやすく、
 // ホームの追加ボタンとの位置関係も安定する。
 // testID は UITabBarItem の accessibilityIdentifier になり、Maestro から引ける。
+// 各タブは純正の大タイトルを出すため、グループ（(plans) 等）ごとにスタックを持つ
+// （Issue #107）。グループ名は URL に出ないので、パスは /・/done・/settings のまま。
 export default function TabsLayout() {
   return (
     <NativeTabs
@@ -14,13 +16,13 @@ export default function TabsLayout() {
       iconColor={{ default: palette.stone, selected: palette.ink }}
       minimizeBehavior="never"
     >
-      <NativeTabs.Trigger name="index" testID="tab-plans">
+      <NativeTabs.Trigger name="(plans)" testID="tab-plans">
         <NativeTabs.Trigger.Icon
           sf={{ default: "pawprint", selected: "pawprint.fill" }}
         />
         <NativeTabs.Trigger.Label>プラン</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="done" testID="tab-done">
+      <NativeTabs.Trigger name="(done)" testID="tab-done">
         <NativeTabs.Trigger.Icon
           sf={{
             default: "checkmark.circle",
@@ -29,7 +31,7 @@ export default function TabsLayout() {
         />
         <NativeTabs.Trigger.Label>おわったプラン</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings" testID="tab-settings">
+      <NativeTabs.Trigger name="(settings)" testID="tab-settings">
         <NativeTabs.Trigger.Icon
           sf={{ default: "gearshape", selected: "gearshape.fill" }}
         />
