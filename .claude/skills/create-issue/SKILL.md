@@ -21,6 +21,7 @@ GitHub の操作は GitHub MCP ツール(リポジトリ: `adelppi/chalo`)で行
    - design: 決めたい論点の正確な範囲、すでに頭にある選択肢、決定を急ぐ背景
    - ユーザーがすでに答えたことや docs から分かることは聞き直さない。
 5. **ドラフト提示**: `.github/ISSUE_TEMPLATE/` の該当テンプレートのセクション構成に従って本文を書き、タイトルと合わせてユーザーに見せて承認を得る。
+   - feature・bug では「全体リグレッションが要る」かを判断して本文に書く。複数機能にまたがる大規模改修・Expo SDK や React Native の更新なら要る(`docs/adr/0014`)。
 6. **起票**: GitHub MCP の `issue_write` で作成し、URL を報告する。
    - タイトルとラベル: feature → `[feat] …` + `feature` / bug → `[bug] …` + `bug` / design → `[design] …` + `design`。
 

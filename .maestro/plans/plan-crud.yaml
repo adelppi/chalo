@@ -2,6 +2,8 @@
 # 作成（タイトルのみ）→一覧反映→編集→おしまい→おわったプラン→削除 を通す。
 # 前提: アプリがサインイン済みであること（Google/Apple の外部認証は自動化しない）。
 appId: com.adelppi.chalo
+tags:
+  - regression
 ---
 - launchApp
 - assertVisible:

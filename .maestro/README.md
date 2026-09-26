@@ -7,8 +7,14 @@
 前提：シミュレータで dev client が Metro に繋がり、テスト用アカウントでサインイン済みであること（Google/Apple の外部認証は自動化しない）。
 
 ```bash
+# 1本を流す
 maestro test .maestro/plans/plan-crud.yaml
+
+# 全体リグレッションの自動部分(regression タグのフローをまとめて流す。app/ で実行)
+npm run e2e:regression
 ```
+
+全体リグレッションは `/regression-test` で、手動チェックリストと結果表づくりまで通しで行える。`regression` タグは、テスト用アカウント(ソロ・サインイン済み)のまま流せるフローに付ける。新規ユーザー・サインアウト状態が要るフローや、アカウントを消すフローには付けない。
 
 起動中のデバイスが複数あるときは `maestro --device <DEVICE_ID> test ...` のように、サブコマンドの前で指定する。
 

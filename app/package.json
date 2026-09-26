@@ -74,7 +74,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "release:bump": "npm version --no-git-tag-version",
-    "release:tag": "node ./scripts/release-tag.js"
+    "release:tag": "node ./scripts/release-tag.js",
+    "e2e:regression": "touch ../.maestro/fixtures/*.png && maestro test ../.maestro --include-tags regression"
   },
   "jest": {
     "preset": "jest-expo",

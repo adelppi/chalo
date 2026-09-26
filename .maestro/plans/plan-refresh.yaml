@@ -3,6 +3,8 @@
 # 既存データの表示が維持される（画面が壊れない・全画面スピナーに戻らない）ことを確認する。
 # 前提: アプリがサインイン済みであること（Google/Apple の外部認証は自動化しない）。
 appId: com.adelppi.chalo
+tags:
+  - regression
 ---
 - launchApp
 - assertVisible:
