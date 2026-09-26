@@ -39,11 +39,18 @@ appId: com.adelppi.chalo
 - assertVisible:
     id: "settings-edit-name-dialog"
 
-# 保存すると即反映される
+# 保存すると即反映される。
+# 名前は実行ごとに変える：固定値だと前回の実行で既にその名前になっていて、
+# 保存に失敗しても確認が通ってしまう（Issue #109）。
+- evalScript: ${output.newName = 'なまえ' + String(Date.now()).slice(-5)}
 - eraseText
-- inputText: "編集後の名前"
+- inputText: ${output.newName}
 - tapOn:
     id: "settings-edit-name-confirm-button"
 - assertVisible:
     id: "settings-screen"
-- assertVisible: "編集後の名前"
+# 行は Pressable で1要素にまとまり、テキストが「あなたの名前, <名前>, 進む」の
+# 結合文字列になる。text: は完全一致の正規表現なので、行の id と部分一致で当てる。
+- assertVisible:
+    id: "settings-edit-name-button"
+    text: ".*${output.newName}.*"
