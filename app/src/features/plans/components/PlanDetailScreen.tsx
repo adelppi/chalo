@@ -18,6 +18,7 @@ import {
 } from "@features/calendar";
 import { useCancelDeadlineNotification } from "@features/notifications";
 import { PawPrint } from "@global/components/shared";
+import { useCompactHeaderTitle } from "@global/hooks/useCompactHeaderTitle";
 import { Avatar, Button, Chip, Dialog, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 import { useAuthStore } from "@global/store/useAuthStore";
@@ -97,6 +98,8 @@ function PlanDetail({
   const removeFromCalendar = useRemovePlanFromCalendar();
   const cancelDeadlineNotification = useCancelDeadlineNotification();
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  // 画面内のタイトルがスクロールで隠れたら、ナビバーにプラン名を出す（Issue #107）
+  const compactTitle = useCompactHeaderTitle(plan.title);
 
   const displayUrl = plan.referenceUrl?.replace(/^https?:\/\//, "");
   // 自動おしまい・手動おしまいのどちらも done（domain/plan-lifecycle.md）
@@ -172,26 +175,31 @@ function PlanDetail({
           編集・削除は sharesBackground: false で個別の背景にし、
           iOS 26 の Liquid Glass でも1つのカプセルに融合しないようにする。 */}
       <Stack.Screen
-        options={backHeaderOptions({
-          onBack: () => router.back(),
-          right: [
-            iconHeaderItem({
-              symbol: "pencil",
-              onPress: handleEdit,
-              accessibilityLabel: "編集",
-              disabled: startEditing.isPending,
-            }),
-            iconHeaderItem({
-              symbol: "trash",
-              onPress: () => setDeleteDialogVisible(true),
-              accessibilityLabel: "削除",
-              tintColor: palette.rust,
-            }),
-          ],
-        })}
+        options={{
+          ...backHeaderOptions({
+            onBack: () => router.back(),
+            right: [
+              iconHeaderItem({
+                symbol: "pencil",
+                onPress: handleEdit,
+                accessibilityLabel: "編集",
+                disabled: startEditing.isPending,
+              }),
+              iconHeaderItem({
+                symbol: "trash",
+                onPress: () => setDeleteDialogVisible(true),
+                accessibilityLabel: "削除",
+                tintColor: palette.rust,
+              }),
+            ],
+          }),
+          title: compactTitle.headerTitle,
+        }}
       />
 
       <ScrollView
+        onScroll={compactTitle.onScroll}
+        scrollEventThrottle={16}
         className="flex-1"
         contentContainerClassName="grow"
         // おしまいのプランは下部エリアが無くなるので、その分の余白をここで持つ
@@ -209,7 +217,10 @@ function PlanDetail({
         }
       >
         <View className="gap-3.5 px-7 pt-6">
-          <Text className="text-[28px] font-bold leading-10 text-ink">
+          <Text
+            onLayout={compactTitle.onHeadingLayout}
+            className="text-[28px] font-bold leading-10 text-ink"
+          >
             {plan.title}
           </Text>
           <View className="flex-row flex-wrap gap-2">

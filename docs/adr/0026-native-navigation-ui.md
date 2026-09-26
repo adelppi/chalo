@@ -21,7 +21,11 @@
    - 自作の `ChaloTabBar` は削除する。
 2. **ホームの追加ボタン（FAB）は `expo-glass-effect` の `GlassView`（`isInteractive`）で描くリキッドグラスの丸ボタンにする。** 押下時の反応はネイティブのガラスに任せる。`isLiquidGlassAvailable()` が偽の環境（iOS 26 未満）では、従来の黒い丸ボタンで描く。
    - NativeTabs は各タブの中身に `SafeAreaProvider` を敷くため、タブ画面の `useSafeAreaInsets().bottom` はタブバーの高さを含む。FAB はこれを基準にしてバーの上に浮かせる。
-3. **タブ画面の見出しは純正の largeTitle（`headerLargeTitleEnabled`）にする**（`Issue #107` で実施）。詳細・作成・編集は画面内の見出しを残し、スクロールしたときナビバーに小さなタイトルを出すだけにとどめる。
+3. **タブ画面の見出しは純正の largeTitle（`headerLargeTitleEnabled`）にする**（`Issue #107`）。詳細・作成・編集は画面内の見出しを残し、スクロールしたときナビバーに小さなタイトルを出すだけにとどめる。
+   - NativeTabs のタブはヘッダーを持たないため、各タブをグループ（`(plans)` / `(done)` / `(settings)`）にしてスタックを1つずつ持たせる。グループ名は URL に出ないので、パスは `/`・`/done`・`/settings` のまま変わらない。ヘッダー設定は `global/utils/headerItems` の `largeTitleHeaderOptions` に集約する。
+   - ヘッダーは透明（`headerTransparent`）にして画面の linen になじませ、スクロールで縮んだ後は iOS 26 のスクロールエッジ効果（ぼかし）に任せる。
+   - 大タイトルをスクロールに連動させるには、ScrollView を画面ルートの最初の子に置き、`contentInsetAdjustmentBehavior="automatic"` を付け、ルートの View に `collapsable={false}` を付ける。`collapsable={false}` が無いと、背景色のある View でも連動しなかった（UIKit が最初の子の連鎖で ScrollView を見つけられないため。Expo の NativeTabs ドキュメントにも同じ注意がある）。読み込み中・空状態でも ScrollView を出したままにし、中身だけを切り替える。
+   - 詳細・作成・編集の小さなタイトルは、画面内の見出しの下端を越えてスクロールしたかどうか（純粋関数 `isHeadingScrolledPast`）で出し分ける。
 4. **デザインモックとの差の扱い**：上記によって、タブバーの見た目（背景・罫線・ラベルの書体）、FAB の色、見出しの大きさは、Claude Design のモックと一致しなくなる。ナビゲーションの枠についてはコードの側を正とし、モックは更新しない。画面の中身（カード・行・文言）は、これまでどおりモックを正とする。
 
 ## 結果

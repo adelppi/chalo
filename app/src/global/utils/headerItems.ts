@@ -54,6 +54,8 @@ export const backHeaderStaticOptions: NativeStackNavigationOptions = {
   title: "",
   headerShadowVisible: false,
   headerStyle: { backgroundColor: palette.linen },
+  // 詳細・作成・編集でスクロール後にだけ出す小さなタイトル（Issue #107）の色
+  headerTitleStyle: { color: palette.ink },
   headerBackVisible: false,
 };
 
@@ -73,5 +75,25 @@ export function backHeaderOptions({
       }),
     ],
     ...(right ? { unstable_headerRightItems: () => right } : {}),
+  };
+}
+
+// タブ画面（プラン・おわったプラン・設定）の純正大タイトル（Issue #107・adr/0026）。
+// 背景は透明にして画面の linen になじませ、スクロールで縮んだ後は iOS 26 の
+// スクロールエッジ効果（ぼかし）に任せる。大タイトルを縮ませるには、画面ルートの
+// 最初の子を ScrollView にし、contentInsetAdjustmentBehavior="automatic" を付ける。
+// ルートを View で包むときは collapsable={false} を付ける（NativeTabs 内のスタックでは、
+// これが無いと UIKit が ScrollView を見つけられず、大タイトルがスクロールに連動しない）。
+export function largeTitleHeaderOptions(
+  title: string,
+): NativeStackNavigationOptions {
+  return {
+    title,
+    headerLargeTitleEnabled: true,
+    headerTransparent: true,
+    headerShadowVisible: false,
+    headerLargeTitleShadowVisible: false,
+    headerTitleStyle: { color: palette.ink },
+    headerLargeTitleStyle: { color: palette.ink },
   };
 }

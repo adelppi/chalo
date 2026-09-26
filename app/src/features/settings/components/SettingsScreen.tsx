@@ -2,7 +2,6 @@ import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Linking, Pressable, ScrollView, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useDeleteAccount, useSignOut } from "@features/auth";
 import { CalendarPermissionRow, DefaultCalendarRow } from "@features/calendar";
@@ -37,7 +36,6 @@ type OpenDialog =
 
 // 設定（E-1。ソロ利用中はペアセクション付きの E-1b）。
 export function SettingsScreen() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const showToast = useToastStore((state) => state.show);
 
@@ -89,22 +87,19 @@ export function SettingsScreen() {
     });
   };
 
+  // 見出しは純正の大タイトル（(tabs)/(settings)/_layout.tsx）。大タイトルをスクロールに
+  // 連動させるため、ScrollView を画面ルートの最初の子に置き、ルートは collapsable={false}
+  // にする（Issue #107）。
   return (
     <View
       testID="settings-screen"
+      collapsable={false}
       className="flex-1 bg-linen"
-      style={{ paddingTop: insets.top + 12 }}
     >
-      <View className="px-6 pb-2">
-        <Text className="text-[38px] font-bold leading-tight text-ink">
-          設定
-        </Text>
-      </View>
-
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         className="flex-1 px-5"
-        contentContainerClassName="gap-1.5 pb-8 pt-0.5"
+        contentContainerClassName="gap-1.5 pb-8 pt-2"
         showsVerticalScrollIndicator={false}
       >
         {/* プロフィール */}
