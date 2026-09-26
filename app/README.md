@@ -23,36 +23,14 @@ Supabase の URL / anon key は EAS Environments(`development` / `preview` / `pr
 
 ## テスト
 
-テスト戦略の正は [`docs/adr/0014-test-strategy.md`](../docs/adr/0014-test-strategy.md)。
+テストのルール(何をどちらでテストするか・いつ E2E を流すか・録画)は [`docs/adr/0014-test-strategy.md`](../docs/adr/0014-test-strategy.md) が正。E2E の実行方法と手動チェックリストは [`../.maestro/README.md`](../.maestro/README.md)。
 
-### ロジックテスト(Jest)
-
-```bash
-npm test
-```
-
-純粋関数・ユーティリティのみを対象にする。UI・フックのテストは書かない(E2E に委ねる)。
-
-### E2E テスト(Maestro)
-
-Maestro はスタンドアロンの CLI で、npm パッケージとしては導入しない。バージョンを固定してインストールする(チーム・CI 間でのブレを防ぐため)。
+E2E に使う Maestro はスタンドアロンの CLI で、npm パッケージとしては導入しない。バージョンを固定してインストールする(環境間でのブレを防ぐため)。
 
 ```bash
 export MAESTRO_VERSION=2.6.1
 curl -Ls "https://get.maestro.mobile.dev" | bash
 maestro --version
-```
-
-フローは `.maestro/` 配下に機能ごとのサブフォルダで配置する(例: `.maestro/auth/`)。要素特定は `testID`(accessibility identifier)を使う。命名規則は `docs/adr/0014-test-strategy.md` を参照。
-
-```bash
-maestro test .maestro/auth/sign-in-screen-smoke.yaml
-```
-
-失敗時に画面の動きから原因をたどれるよう、フロー内で `startRecording` / `stopRecording` を使って録画する(`adr/0014`)。出力先は `--test-output-dir` でローカルの `.maestro/recordings/` を指定する(`.gitignore` 対象。リポジトリにはコミットしない)。
-
-```bash
-maestro test --test-output-dir .maestro/recordings .maestro/auth/sign-in-screen-smoke.yaml
 ```
 
 Claude Code からは Maestro 公式の MCP サーバー(`.mcp.json` の `maestro`)経由でフロー実行・UI 階層取得ができる。

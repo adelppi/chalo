@@ -41,3 +41,10 @@ body:
     id: evidence
     attributes:
       label: スクリーンショット・ログ
+  - type: checkboxes
+    id: regression
+    attributes:
+      label: 全体リグレッション
+      description: 直すと複数機能にまたがる大きな変更になるなら付ける。PR で全フローと手動チェックリストを確認する(docs/adr/0014-test-strategy.md)
+      options:
+        - label: 全体リグレッションが要る

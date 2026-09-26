@@ -1,63 +1,44 @@
-# Maestro E2E テスト
+# Maestro E2E
 
-chalo の E2E テストを Maestro で管理。
+いつ・どの範囲を流すか、録画、testID の命名、フローを書くときの注意は `docs/adr/0014-test-strategy.md` が正。ここには実行方法と手動チェックリストだけを置く。各フローが何を通すか・前提は、フローの先頭コメントを見る。
 
-## テスト構成
+## 実行
 
-- `auth/sign-in-screen-smoke.yaml` … サインイン画面の表示確認（動作確認用）
-- `plans/plan-crud.yaml` … プラン CRUD の王道シナリオ（Issue #18・Supabase 実装）
-  - 作成（タイトルのみ）→ 一覧反映 → 編集 → 手動おしまい → おわったプラン → 削除
-- `plans/plan-album.yaml` … 自動アルバム（Issue #90）
-  - 写真権限を許可して起動 → `addMedia` で今日の写真を入れる → 日付なしプランを手動おしまい → 詳細に3列グリッド → タップでフルスクリーンビューワー → 横スワイプ → 閉じるボタン／下スワイプで閉じる
-  - **ズームの見え方は hierarchy から読めない**ため assert しない。拡大率・アニメーションは動画・手動で確認する
-  - 写真は `.maestro/fixtures/` の PNG。`addMedia` で入るため撮影日時は「実行した日」になる
-  - **空表示（0件・権限拒否・限定アクセス）は対象外**。過去日は日付ピッカーで選べず、`simctl privacy` の写真権限変更もアプリに反映されないため自動化できない。判定ロジックは Jest（`albumEmptyReason`）が担保する
-- `plans/plan-refresh.yaml` … pull-to-refresh の動作確認（Issue #22）
-  - ホーム・プラン詳細・おわったプランの3画面で引っ張って再取得し、既存データの表示が維持されることを確認
-- `pairing/pairing-invite-and-errors.yaml` … 招待コード発行・コピー・コード入力エラー（Issue #20・Supabase 実装）
-  - 発行 → コピー → own-code エラー → not-found エラー
-  - **成立（redeem 成功）は2アカウント同時が必要なため対象外。** RPC・RLS（ペア境界）はレビューで確認する（`adr/0014`・`adr/0017`）
-- `onboarding/name-and-pairing-start.yaml` … A3「名前の確認」→ A4「ペアの開始」→ スキップで「プラン」（ホーム）へ（Issue #40）
-  - 名前を編集して確認 → A4（招待コードをつくる／コードをもっています）が見える → 「ひとりではじめる」で一覧へ着地 → 設定に編集した名前が反映
-  - **前提が厳しめ**：サインイン直後・オンボーディング未完了のテストユーザーが必要（外部認証は自動化しないため手動で用意する）
-- `onboarding/resume-after-kill.yaml` … 中断からの復帰（Issue #40）
-  - A3 を終えた直後にアプリをキル→再起動し、A3 ではなく A4 から再開することを確認
-- `settings/edit-profile-name.yaml` … 設定「あなたの名前」の編集（Issue #40）
-  - キャンセル → 空欄バリデーション → 保存して反映
-  - 「相手のよびかた」の編集はペア成立後のみのため、ソロのテストアカウントでは対象外
-- `notifications/notification-priming-and-settings.yaml` … 通知権限プライミング B-6 と設定 E-1 の通知行（Issue #30）
-  - 「あとで」で要求せず閉じる → 「許可する」で実要求（未確認/許可ずみの両状態で通る。拒否済み端末は対象外）→ 許可ずみなら設定の通知行が消える
-- `notifications/deadline-notification-lifecycle.yaml` … 期限通知のライフサイクル（Issue #30）
-  - 期限追加 → 期限変更 → 日付追加 → 日付クリア → 期限削除 → 手動おしまい → 削除 → 2週間未満の期限、を UI から一巡
-  - **予約そのもの（端末ローカル通知）は Maestro から観測できない**（SpringBoard の通知 UI に触れない）ため、通知タップ→詳細遷移は手動で確認する。予約日時・送らない条件の算出は Jest が担保（`adr/0014`）
-
-## ローカルでの実行
-
-前提：アプリがサインイン済みであること（Google/Apple の外部認証は自動化しない）。
+前提：シミュレータで dev client が Metro に繋がり、テスト用アカウントでサインイン済みであること（Google/Apple の外部認証は自動化しない）。
 
 ```bash
-# 通常実行（テスト結果のみ）
-maestro test .maestro/plans/plan-crud.yaml --device <DEVICE_ID>
-
-# 全フロー実行
-maestro test .maestro/
-
-# 動画付きで実行（adr/0014：E2E は実行の動画を記録して格納する）
+# 1本を録画しながら流す（動画は .maestro/recordings/ に保存。コミットしない）
 maestro record --local .maestro/plans/plan-crud.yaml .maestro/recordings/plan-crud.mp4
+
+# 録画せずに流す（フローを書いている途中の確認など）
+maestro test .maestro/plans/plan-crud.yaml
 ```
 
-`maestro record --local` は起動中のデバイスが1台なら自動選択される。複数台起動時は対話的に選ぶ。
+起動中のデバイスが複数あるときは `maestro --device <DEVICE_ID> test ...` のように、サブコマンドの前で指定する。
 
-## 記録について
+## 手動チェックリスト（全体リグレッション用）
 
-- **実行動画**：`maestro record --local` で `.maestro/recordings/` に mp4 として保存する（`adr/0014`）。リポジトリにはコミットしない（`.gitignore` で除外・`.gitkeep` のみコミット）。テスト失敗時は動画から画面の動きをたどって原因調査する。
-- **コマンドログ・スクリーンショット**：`maestro test --test-output-dir .maestro/recordings` でも取得できる（JSON 形式のコマンド実行記録）。動画と使い分けたい場合に利用する。
+Maestro から流せない項目。全体リグレッション（`adr/0014`）のときに人が確認し、結果を PR の結果表に書く。
 
-## E2E テストの設計（adr/0014）
+| 項目 | 確認すること | 流せない理由 |
+|---|---|---|
+| サインイン（Google / Apple） | それぞれでサインインでき、ホームに着く。Apple は実機で確認する | 外部認証 |
+| ログアウト | 設定 → ログアウトでサインイン画面に戻り、再サインインで同じデータが見える | 以降のフローがサインインを失う |
+| 新規ユーザーのオンボーディング | 未使用のアカウントで `onboarding/name-and-pairing-start.yaml` と `onboarding/resume-after-kill.yaml` が通る | 新規ユーザーを毎回用意する必要がある |
+| ペア成立 | 2アカウントで招待コードを発行・入力して成立し、ソロのプランが合流する。成立後、相手のよびかたを変更できる | 2アカウントが要る |
+| 作成通知 | 相手がプランを作ると push が届き、タップでそのプランの詳細が開く | 2アカウントが要る・OS の通知 UI |
+| 期限通知 | 期限の2週間前に通知が届き、タップで詳細が開く（予約日時の算出は Jest が担保） | OS の通知 UI・時間経過 |
+| 編集ロック | 相手が編集中のプランを開くと編集ロックの画面（F-9）になる | 2アカウントが要る |
+| アカウント削除（ソロ） | 使い捨てのアカウントで `settings/account-deletion-solo.yaml` が通る | アカウントが消える |
+| アカウント削除（ペア） | 片方が削除すると、残った側がロック画面になり、書き出しと削除だけができる | 2アカウントが要る・アカウントが消える |
+| アルバムの空表示 | 写真の権限を拒否・限定にしたとき、空表示と案内が出る（判定は Jest が担保） | 権限の変更がアプリに反映されない |
 
-正常系・異常系を機能単位でカバー。ただし：
+## テスト用アカウントの用意
 
-- **RLS の自動テストは持たない**：ペア境界のアクセス制御はレビューで担保する（`data-model.md` の `[確定]` 事項）。
-- **外部認証（Google/Apple）は自動化しない**：フロー内で自動サインインできないため、本人の手動操作で確認する。
+2アカウント・使い捨て・新規ユーザーが要るときは、Supabase にテスト用ユーザーを作り、パスワードでサインインする。
 
-詳細は `.maestro/` ファイルと関連する ADR を参照。
+1. `POST {SUPABASE_URL}/auth/v1/signup`(anon key)でユーザーを作る。`example.com` のアドレスは弾かれるので、Gmail の `+` エイリアスなどを使う。組み込み SMTP は1時間に2通までなので、2人目以降は `auth.users` に SQL で直接 insert する方が早い
+2. SQL で `auth.users.email_confirmed_at` を埋めてメール確認済みにする
+3. オンボーディング済みのユーザーにするなら、`public.profiles` の行も SQL で作る(`display_name`・`timezone` が必須)。新規ユーザーとして使うなら作らない
+4. `app/src/app/_layout.tsx` に、一時的に `supabase.auth.signInWithPassword(...)` を呼ぶ処理を入れてサインインする。**この変更はコミットしない**
+5. 終わったらアプリからログアウトし、一時的な処理を戻す。SQL で `plans` → `auth.users` の順に消す(`plans.owner_id` はカスケードしない)
