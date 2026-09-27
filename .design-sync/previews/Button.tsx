@@ -4,14 +4,15 @@ import { Button } from "chalo-ds";
 
 export const Variants = () => (
   <div style={{ display: "flex", flexDirection: "column", gap: 10, width: 260 }}>
-    <Button label="つづける" variant="primary" />
+    <Button label="作成する" variant="primary" />
     <Button label="おしまいにする" variant="accent" icon="check-circle" />
     <Button label="カレンダーに追加" variant="outline" icon="calendar-plus" />
-    <Button label="削除する" variant="destructive" icon="trash" />
+    <Button label="削除する" variant="destructive" />
     <Button label="あとで" variant="ghost" />
   </div>
 );
 
+// おしまい完了（D-3）の暗い画面。
 export const OnDark = () => (
   <div
     style={{
@@ -24,8 +25,7 @@ export const OnDark = () => (
       borderRadius: 20,
     }}
   >
-    <Button label="コードをコピーする" variant="cream" icon="copy" />
-    <Button label="とじる" variant="ghost" />
+    <Button label="とじる" variant="cream" />
   </div>
 );
 
@@ -40,6 +40,6 @@ export const Sizes = () => (
 export const Disabled = () => (
   <div style={{ display: "flex", flexDirection: "column", gap: 10, width: 260 }}>
     <Button label="つながる" disabled />
-    <Button label="追加する" disabled icon="plus" />
+    <Button label="作成する" disabled />
   </div>
 );

@@ -10,19 +10,7 @@
   "readmeHeader": ".design-sync/conventions.md",
   "componentSrcMap": {
     "ChaloFace": "../../app/src/global/components/shared/ChaloMascot.tsx",
-    "PawPrint": "../../app/src/global/components/shared/ChaloMascot.tsx",
-    "SafeAreaInsetsContext": null
-  },
-  "provider": {
-    "component": "SafeAreaInsetsContext.Provider",
-    "props": {
-      "value": {
-        "top": 0,
-        "right": 0,
-        "bottom": 34,
-        "left": 0
-      }
-    }
+    "PawPrint": "../../app/src/global/components/shared/ChaloMascot.tsx"
   },
   "overrides": {
     "Dialog": {
@@ -32,16 +20,10 @@
     },
     "Sheet": {
       "cardMode": "single",
-      "primaryStory": "DatePicker",
+      "primaryStory": "TextField",
       "viewport": "390x400"
     },
-    "ChaloTabBar": {
-      "cardMode": "column"
-    },
     "Icon": {
-      "cardMode": "column"
-    },
-    "IconButton": {
       "cardMode": "column"
     },
     "ChaloFace": {

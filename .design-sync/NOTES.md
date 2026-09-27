@@ -31,7 +31,7 @@ chalo は React Native + Expo の **iOS アプリ**で、ブラウザで動く D
 - **パッケージの二重解決で React Context が壊れる。** `app/node_modules` と
   `.design-sync/web/node_modules` の両方から同じパッケージが入ると Context の
   同一性が失われる。`react-native-safe-area-context` が二重になり
-  `ChaloTabBar` が「No safe area value available」で落ちた。`build.mjs` の
+  （当時の）`ChaloTabBar` が「No safe area value available」で落ちた。`build.mjs` の
   `DEDUPE` 配列（safe-area-context / react-native-css-interop / nativewind）で固定。
   **依存を足したら `dist/meta.json` で重複チェックをやり直すこと。**
 - **Tailwind は JIT なので `app/src` に出ないクラスは CSS に入らない。**
@@ -72,11 +72,16 @@ DS_CHROMIUM_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" 
 
 ## 対象範囲
 
-- 同期しているのは 10 個: Avatar / Button / Chip / Dialog / Icon / IconButton / Sheet
-  （`components/global/`）、ChaloFace / PawPrint / ChaloTabBar（`components/shared/`）。
-- `SafeAreaInsetsContext` はバンドルには入れているが `componentSrcMap` で
-  コンポーネント一覧から除外している。`ChaloTabBar` が `useSafeAreaInsets` を
-  読むため、`cfg.provider` から insets を差し込むためだけのエクスポート。
+- 同期しているのは 8 個: Avatar / Button / Chip / Dialog / Icon / Sheet
+  （`components/global/`）、ChaloFace / PawPrint（`components/shared/`）。
+- **画面で使われていない部品は同期しない。** `IconButton` はコードに残っているが、
+  ヘッダーのボタンがネイティブのバーボタン（`global/utils/headerItems`）に置き換わって
+  どの画面からも使われていないため、2026-09-27 に DS から外した。`ChaloTabBar` は
+  #108 で純正 NativeTabs に置き換わって削除済み（それに伴い `SafeAreaInsetsContext` の
+  エクスポートと `cfg.provider` も外した）。
+- **プレビューの文言・組み合わせは実アプリで使っているものだけにする。** 架空の文言や、
+  アプリに無い使い方（場所チップ・共有ボタン等）を置くと、デザイン側がそれを正として
+  画面を組んでしまう。
 - `Sheet` は `@expo/ui/community/bottom-sheet` だが、**Web 実装（vaul）を持っていた**ので
   そのまま描画できている。ネイティブ専用だと決めつけない。
 
@@ -110,7 +115,4 @@ DS_CHROMIUM_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" 
   `.design-sync/conventions.md` の色一覧は手書きなので追従が必要。
 - **`ChaloFace` は 9 フレーム・約 3 秒ループの GIF**。キャプチャのタイミングで
   掴むフレームが変わるため、見た目が毎回わずかに違う（顔の表情の揺れ。欠けではない）。
-- **プレビューの `ChaloTabBar` は react-navigation の state を手で組んでいる**。
-  `ChaloTabBar` が `descriptors`/`navigation` の別フィールドを読むようになったら
-  プレビューを直す必要がある。
 - **未検証**: ホバー・スワイプ・キーボード回避などの操作は静的プレビューでは確認していない。

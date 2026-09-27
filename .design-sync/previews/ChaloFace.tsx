@@ -31,8 +31,5 @@ export const Celebration = () => (
     <span style={{ marginTop: 22, fontSize: 28, fontWeight: 700, color: "#261f19" }}>
       つながりました！
     </span>
-    <span style={{ marginTop: 8, fontSize: 13, fontWeight: 500, color: "#8B7D6A" }}>
-      ふたりでプランを貯めていきましょう
-    </span>
   </div>
 );
