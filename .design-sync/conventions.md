@@ -7,17 +7,9 @@
 ## セットアップ
 
 **Provider は不要。** どのコンポーネントもそのまま置けば所定の見た目になる。
-例外は `ChaloTabBar` だけで、これは safe-area の値を読むため
-`SafeAreaInsetsContext.Provider`（バンドルからエクスポート済み）で囲む:
-
-```jsx
-<SafeAreaInsetsContext.Provider value={{ top: 0, right: 0, bottom: 34, left: 0 }}>
-  <ChaloTabBar state={...} descriptors={...} navigation={...} />
-</SafeAreaInsetsContext.Provider>
-```
 
 **イベントは React Native 流。`onClick` ではなく `onPress`。** 中身は react-native-web で、
-`Button` `IconButton` `Dialog` `Sheet` はすべて `onPress` / `onClose` / `onCancel` を取る。
+`Button` `Dialog` `Sheet` はすべて `onPress` / `onClose` / `onCancel` を取る。
 
 ## スタイルの書き方
 
@@ -57,10 +49,10 @@ className を使えない箇所（SVG の `fill` 等）は CSS 変数を使う: 
 ```jsx
 <div className="bg-linen p-5 flex flex-col gap-4">
   <div className="bg-paper rounded-card p-5 shadow-card flex flex-col gap-2.5">
-    <span className="text-[17px] font-bold text-ink">箱根の温泉</span>
+    <span className="text-[17px] font-bold text-ink">紅葉を見に京都へ</span>
     <div className="flex flex-row gap-2">
       <Chip icon="calendar" label="3月14日（金）18:00" />
-      <Chip icon="pin" label="箱根" tone="blush" />
+      <Chip icon="clock" label="10/31 まで" tone="blush" />
     </div>
   </div>
   <Button label="カレンダーに追加" variant="outline" icon="calendar-plus" onPress={...} />
