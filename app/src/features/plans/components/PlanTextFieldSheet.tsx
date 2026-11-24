@@ -66,6 +66,7 @@ export function PlanTextFieldSheet({
         <Button
           testID={testID ? `${testID}-confirm-button` : undefined}
           label="決定"
+          glass={false}
           onPress={() => {
             const trimmed = value.trim();
             onConfirm(trimmed.length > 0 ? trimmed : null);

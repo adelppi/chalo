@@ -1,16 +1,13 @@
-import { Pressable, Text } from "react-native";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
+import { Pressable, Text, View } from "react-native";
 
 import { palette } from "@global/constants/palette";
+import {
+  resolveButtonGlass,
+  type ButtonVariant,
+} from "@global/utils/buttonGlass";
 
 import { Icon, type IconName } from "./Icon";
-
-type ButtonVariant =
-  | "primary" // 焦げ茶ベタ（主要アクション）
-  | "accent" // plum ベタ（おしまいにする）
-  | "outline" // 枠線のみ
-  | "cream" // 明色ベタ（暗背景の上で使う）
-  | "destructive" // rust ベタ（削除）
-  | "ghost"; // テキストのみ（あとで 等）
 
 type ButtonSize = "sm" | "md" | "lg";
 
@@ -22,6 +19,11 @@ type ButtonProps = {
   icon?: IconName;
   iconSize?: number;
   disabled?: boolean;
+  /**
+   * iOS 26 以上でリキッドグラスにするか（adr/0026）。既定は true。
+   * ダイアログ・シートの中では false にして平面のまま描く
+   */
+  glass?: boolean;
   testID?: string;
   className?: string;
 };
@@ -60,6 +62,14 @@ const containerBySize: Record<ButtonSize, string> = {
   lg: "h-[56px] rounded-field",
 };
 
+// GlassView は className を受け取れないため、containerBySize と同じ角丸を数値でも持つ
+// （adr/0016 の逃げ道。値は tailwind.config の control / button / field）
+const glassRadiusBySize: Record<ButtonSize, number> = {
+  sm: 14,
+  md: 16,
+  lg: 18,
+};
+
 const labelBySize: Record<ButtonSize, string> = {
   sm: "text-sm",
   md: "text-base",
@@ -84,6 +94,7 @@ export function Button({
   icon,
   iconSize = 16,
   disabled = false,
+  glass = true,
   testID,
   className = "",
 }: ButtonProps) {
@@ -96,13 +107,8 @@ export function Button({
   const labelSize =
     variant === "outline" && size === "md" ? "text-[15px]" : labelBySize[size];
 
-  return (
-    <Pressable
-      testID={testID}
-      onPress={onPress}
-      disabled={disabled}
-      className={`flex-row items-center justify-center gap-2 active:opacity-70 ${container} ${className}`}
-    >
+  const content = (
+    <>
       {icon ? (
         <Icon
           name={icon}
@@ -115,6 +121,44 @@ export function Button({
       >
         {label}
       </Text>
+    </>
+  );
+
+  const glassStyle = resolveButtonGlass({
+    variant,
+    disabled,
+    enabled: glass,
+    available: isLiquidGlassAvailable(),
+  });
+
+  // 押下時の揺らぎ・光はネイティブのガラス（isInteractive）が出すため active:opacity は付けない
+  if (glassStyle) {
+    return (
+      <Pressable testID={testID} onPress={onPress}>
+        <GlassView
+          isInteractive
+          glassEffectStyle="regular"
+          tintColor={glassStyle.tintColor}
+          style={{ borderRadius: glassRadiusBySize[size] }}
+        >
+          <View
+            className={`flex-row items-center justify-center gap-2 ${containerBySize[size]} ${className}`}
+          >
+            {content}
+          </View>
+        </GlassView>
+      </Pressable>
+    );
+  }
+
+  return (
+    <Pressable
+      testID={testID}
+      onPress={onPress}
+      disabled={disabled}
+      className={`flex-row items-center justify-center gap-2 active:opacity-70 ${container} ${className}`}
+    >
+      {content}
     </Pressable>
   );
 }

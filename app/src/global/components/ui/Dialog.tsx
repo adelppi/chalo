@@ -90,6 +90,7 @@ export function Dialog({
                 onPress={onCancel}
                 variant={confirm ? "outline" : "primary"}
                 size="sm"
+                glass={false}
                 testID={cancelTestID}
               />
             </View>
@@ -102,6 +103,7 @@ export function Dialog({
                   icon={confirm.icon}
                   iconSize={15}
                   size="sm"
+                  glass={false}
                   disabled={confirm.disabled}
                   testID={confirm.testID}
                 />
