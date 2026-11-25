@@ -55,19 +55,26 @@ const iconColorByVariant: Record<ButtonVariant, string> = {
   ghost: palette.stone,
 };
 
-// 高さと角丸は Claude Design のセット（ダイアログ内 46/14・画面 CTA 54/16・おしまい 56/18）
-const containerBySize: Record<ButtonSize, string> = {
-  sm: "h-[46px] rounded-control",
-  md: "h-[54px] rounded-button",
-  lg: "h-[56px] rounded-field",
+// 高さと角丸は Claude Design のセット（ダイアログ内 46/14・画面 CTA 54/16・おしまい 56/18）。
+// 角丸は平面のボタンだけに使い、ガラスのボタンは高さを保ったままカプセル形にする（adr/0026）
+const heightBySize: Record<ButtonSize, string> = {
+  sm: "h-[46px]",
+  md: "h-[54px]",
+  lg: "h-[56px]",
 };
 
-// GlassView は className を受け取れないため、containerBySize と同じ角丸を数値でも持つ
-// （adr/0016 の逃げ道。値は tailwind.config の control / button / field）
-const glassRadiusBySize: Record<ButtonSize, number> = {
-  sm: 14,
-  md: 16,
-  lg: 18,
+const flatRadiusBySize: Record<ButtonSize, string> = {
+  sm: "rounded-control",
+  md: "rounded-button",
+  lg: "rounded-field",
+};
+
+// GlassView は className を受け取れないため、カプセルの角丸（高さの半分）を数値で渡す
+// （adr/0016 の逃げ道）
+const capsuleRadiusBySize: Record<ButtonSize, number> = {
+  sm: 23,
+  md: 27,
+  lg: 28,
 };
 
 const labelBySize: Record<ButtonSize, string> = {
@@ -98,10 +105,11 @@ export function Button({
   testID,
   className = "",
 }: ButtonProps) {
+  const available = isLiquidGlassAvailable();
+  // 非活性の間もカプセル形にし、ガラスに変わるときに形が跳ねないようにする
+  const radius = glass && available ? "rounded-full" : flatRadiusBySize[size];
   // 非活性は焦げ茶の薄塗り（B-3 つながる・C-3 追加する のデザイン）
-  const container = disabled
-    ? `bg-ink/25 ${containerBySize[size]}`
-    : `${containerByVariant[variant]} ${containerBySize[size]}`;
+  const container = `${disabled ? "bg-ink/25" : containerByVariant[variant]} ${heightBySize[size]} ${radius}`;
   const labelColor = disabled ? "text-paper" : labelColorByVariant[variant];
   // 枠線ボタンの md はデザインでは 15px（D-1 カレンダーに追加）
   const labelSize =
@@ -128,7 +136,7 @@ export function Button({
     variant,
     disabled,
     enabled: glass,
-    available: isLiquidGlassAvailable(),
+    available,
   });
 
   // 押下時の揺らぎ・光はネイティブのガラス（isInteractive）が出すため active:opacity は付けない
@@ -139,10 +147,10 @@ export function Button({
           isInteractive
           glassEffectStyle="regular"
           tintColor={glassStyle.tintColor}
-          style={{ borderRadius: glassRadiusBySize[size] }}
+          style={{ borderRadius: capsuleRadiusBySize[size] }}
         >
           <View
-            className={`flex-row items-center justify-center gap-2 ${containerBySize[size]} ${className}`}
+            className={`flex-row items-center justify-center gap-2 ${heightBySize[size]} ${className}`}
           >
             {content}
           </View>
