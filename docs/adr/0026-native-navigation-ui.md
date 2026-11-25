@@ -1,6 +1,6 @@
 # ADR-0026: ナビゲーション UI を iOS 純正に寄せる
 
-- 関連: adr/0002, adr/0016, Issue #106, Issue #107, Issue #125
+- 関連: adr/0002, adr/0016, Issue #106, Issue #107, Issue #125, Issue #127
 
 ## コンテキスト
 
@@ -23,8 +23,9 @@
    - NativeTabs は各タブの中身に `SafeAreaProvider` を敷くため、タブ画面の `useSafeAreaInsets().bottom` はタブバーの高さを含む。FAB はこれを基準にしてバーの上に浮かせる。
 3. **タブ画面の見出しは純正の largeTitle（`headerLargeTitleEnabled`）にする**（`Issue #107`）。詳細・作成・編集は画面内の見出しを残し、スクロールしたときナビバーに小さなタイトルを出すだけにとどめる。
    - NativeTabs のタブはヘッダーを持たないため、各タブをグループ（`(plans)` / `(done)` / `(settings)`）にしてスタックを1つずつ持たせる。グループ名は URL に出ないので、パスは `/`・`/done`・`/settings` のまま変わらない。ヘッダー設定は `global/utils/headerItems` の `largeTitleHeaderOptions` に集約する。
-   - ヘッダーは透明（`headerTransparent`）にして画面の linen になじませ、スクロールで縮んだ後は iOS 26 のスクロールエッジ効果（ぼかし）に任せる。
-   - 大タイトルをスクロールに連動させるには、ScrollView を画面ルートの最初の子に置き、`contentInsetAdjustmentBehavior="automatic"` を付け、ルートの View に `collapsable={false}` を付ける。`collapsable={false}` が無いと、背景色のある View でも連動しなかった（UIKit が最初の子の連鎖で ScrollView を見つけられないため。Expo の NativeTabs ドキュメントにも同じ注意がある）。読み込み中・空状態でも ScrollView を出したままにし、中身だけを切り替える。
+   - ヘッダーは透明（`headerTransparent`）にして画面の linen になじませ、スクロールで縮んだ後は iOS 26 のスクロールエッジ効果（ぼかし）に任せる。効果は `scrollEdgeEffects` で上端を `soft` に固定する。既定の `automatic` では、iOS 27 で大タイトルが縮むときに薄い背景が上から降りてくるため（`Issue #127`）。
+   - スクロールエッジ効果は下を通る中身の明るさに合わせて色を変え、暗いカードが通ると灰色になってタイトルが読めなくなる。3つのタブ画面は共通の `LargeTitleScrollView` を使い、linen のグラデーションを中身に重ねて、バーの下をいつも明るく保つ。純正のぼかしの下に入るよう、グラデーションはスクロールの中に置く。
+   - 大タイトルをスクロールに連動させるには、ScrollView（`LargeTitleScrollView`）を画面ルートの最初の子に置き、`contentInsetAdjustmentBehavior="automatic"` を付け、ルートの View に `collapsable={false}` を付ける。`collapsable={false}` が無いと、背景色のある View でも連動しなかった（UIKit が最初の子の連鎖で ScrollView を見つけられないため。Expo の NativeTabs ドキュメントにも同じ注意がある）。読み込み中・空状態でも ScrollView を出したままにし、中身だけを切り替える。
    - 詳細・作成・編集の小さなタイトルは、画面内の見出しの下端を越えてスクロールしたかどうか（純粋関数 `isHeadingScrolledPast`）で出し分ける。
 4. **画面に直接置くボタン（`global/components/ui` の `Button`）も、iOS 26 以上では `GlassView`（`isInteractive`）のリキッドグラスで描く**（`Issue #125`）。バーと FAB だけがガラスで、画面内のボタンが平面のままだと質感が揃わないため。
    - 役割の色分けは `tintColor` で保つ（主ボタンは ink、「おしまいにする」は plum、暗い背景の上は linen）。枠線のボタン（`outline`）は枠線をやめ、色なしのガラスにする。

@@ -1,13 +1,14 @@
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Linking, Pressable, ScrollView, Text, View } from "react-native";
+import { Linking, Pressable, Text, View } from "react-native";
 
 import { useDeleteAccount, useSignOut } from "@features/auth";
 import { CalendarPermissionRow, DefaultCalendarRow } from "@features/calendar";
 import { NotificationPermissionRow } from "@features/notifications";
 import { usePairState } from "@features/pairing";
 import { ExportPlansDialog, usePlans } from "@features/plans";
+import { LargeTitleScrollView } from "@global/components/shared";
 import { Dialog, Icon } from "@global/components/ui";
 import { legalLinks } from "@global/constants/legalLinks";
 import { palette } from "@global/constants/palette";
@@ -96,11 +97,9 @@ export function SettingsScreen() {
       collapsable={false}
       className="flex-1 bg-linen"
     >
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        className="flex-1 px-5"
-        contentContainerClassName="gap-1.5 pb-8 pt-2"
-        showsVerticalScrollIndicator={false}
+      <LargeTitleScrollView
+        className="flex-1"
+        contentContainerClassName="gap-1.5 px-5 pb-8 pt-2"
       >
         {/* プロフィール */}
         <View className="overflow-hidden rounded-field bg-paper shadow-card">
@@ -228,7 +227,7 @@ export function SettingsScreen() {
         <Text className="py-2.5 text-center text-xs font-medium text-latte">
           chalo バージョン {appVersion}
         </Text>
-      </ScrollView>
+      </LargeTitleScrollView>
 
       {/* あなたの名前を編集（E-1） */}
       {openDialog === "edit-name" && profile ? (

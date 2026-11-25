@@ -80,8 +80,9 @@ export function backHeaderOptions({
 
 // タブ画面（プラン・おわったプラン・設定）の純正大タイトル（Issue #107・adr/0026）。
 // 背景は透明にして画面の linen になじませ、スクロールで縮んだ後は iOS 26 の
-// スクロールエッジ効果（ぼかし）に任せる。大タイトルを縮ませるには、画面ルートの
-// 最初の子を ScrollView にし、contentInsetAdjustmentBehavior="automatic" を付ける。
+// スクロールエッジ効果（ぼかし）に任せる。効果は soft に固定する（既定の automatic では、
+// iOS 27 で薄い背景が上から降りてくる。Issue #127）。大タイトルを縮ませるには、画面ルートの
+// 最初の子を LargeTitleScrollView（global/components/shared）にする。
 // ルートを View で包むときは collapsable={false} を付ける（NativeTabs 内のスタックでは、
 // これが無いと UIKit が ScrollView を見つけられず、大タイトルがスクロールに連動しない）。
 export function largeTitleHeaderOptions(
@@ -93,6 +94,7 @@ export function largeTitleHeaderOptions(
     headerTransparent: true,
     headerShadowVisible: false,
     headerLargeTitleShadowVisible: false,
+    scrollEdgeEffects: { top: "soft" },
     headerTitleStyle: { color: palette.ink },
     headerLargeTitleStyle: { color: palette.ink },
   };
