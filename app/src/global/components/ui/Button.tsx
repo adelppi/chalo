@@ -1,16 +1,13 @@
-import { Pressable, Text } from "react-native";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
+import { Pressable, Text, View } from "react-native";
 
 import { palette } from "@global/constants/palette";
+import {
+  resolveButtonGlass,
+  type ButtonVariant,
+} from "@global/utils/buttonGlass";
 
 import { Icon, type IconName } from "./Icon";
-
-type ButtonVariant =
-  | "primary" // 焦げ茶ベタ（主要アクション）
-  | "accent" // plum ベタ（おしまいにする）
-  | "outline" // 枠線のみ
-  | "cream" // 明色ベタ（暗背景の上で使う）
-  | "destructive" // rust ベタ（削除）
-  | "ghost"; // テキストのみ（あとで 等）
 
 type ButtonSize = "sm" | "md" | "lg";
 
@@ -22,6 +19,11 @@ type ButtonProps = {
   icon?: IconName;
   iconSize?: number;
   disabled?: boolean;
+  /**
+   * iOS 26 以上でリキッドグラスにするか（adr/0026）。既定は true。
+   * ダイアログ・シートの中では false にして平面のまま描く
+   */
+  glass?: boolean;
   testID?: string;
   className?: string;
 };
@@ -53,11 +55,26 @@ const iconColorByVariant: Record<ButtonVariant, string> = {
   ghost: palette.stone,
 };
 
-// 高さと角丸は Claude Design のセット（ダイアログ内 46/14・画面 CTA 54/16・おしまい 56/18）
-const containerBySize: Record<ButtonSize, string> = {
-  sm: "h-[46px] rounded-control",
-  md: "h-[54px] rounded-button",
-  lg: "h-[56px] rounded-field",
+// 高さと角丸は Claude Design のセット（ダイアログ内 46/14・画面 CTA 54/16・おしまい 56/18）。
+// 角丸は平面のボタンだけに使い、ガラスのボタンは高さを保ったままカプセル形にする（adr/0026）
+const heightBySize: Record<ButtonSize, string> = {
+  sm: "h-[46px]",
+  md: "h-[54px]",
+  lg: "h-[56px]",
+};
+
+const flatRadiusBySize: Record<ButtonSize, string> = {
+  sm: "rounded-control",
+  md: "rounded-button",
+  lg: "rounded-field",
+};
+
+// GlassView は className を受け取れないため、カプセルの角丸（高さの半分）を数値で渡す
+// （adr/0016 の逃げ道）
+const capsuleRadiusBySize: Record<ButtonSize, number> = {
+  sm: 23,
+  md: 27,
+  lg: 28,
 };
 
 const labelBySize: Record<ButtonSize, string> = {
@@ -84,25 +101,22 @@ export function Button({
   icon,
   iconSize = 16,
   disabled = false,
+  glass = true,
   testID,
   className = "",
 }: ButtonProps) {
+  const available = isLiquidGlassAvailable();
+  // 非活性の間もカプセル形にし、ガラスに変わるときに形が跳ねないようにする
+  const radius = glass && available ? "rounded-full" : flatRadiusBySize[size];
   // 非活性は焦げ茶の薄塗り（B-3 つながる・C-3 追加する のデザイン）
-  const container = disabled
-    ? `bg-ink/25 ${containerBySize[size]}`
-    : `${containerByVariant[variant]} ${containerBySize[size]}`;
+  const container = `${disabled ? "bg-ink/25" : containerByVariant[variant]} ${heightBySize[size]} ${radius}`;
   const labelColor = disabled ? "text-paper" : labelColorByVariant[variant];
   // 枠線ボタンの md はデザインでは 15px（D-1 カレンダーに追加）
   const labelSize =
     variant === "outline" && size === "md" ? "text-[15px]" : labelBySize[size];
 
-  return (
-    <Pressable
-      testID={testID}
-      onPress={onPress}
-      disabled={disabled}
-      className={`flex-row items-center justify-center gap-2 active:opacity-70 ${container} ${className}`}
-    >
+  const content = (
+    <>
       {icon ? (
         <Icon
           name={icon}
@@ -115,6 +129,44 @@ export function Button({
       >
         {label}
       </Text>
+    </>
+  );
+
+  const glassStyle = resolveButtonGlass({
+    variant,
+    disabled,
+    enabled: glass,
+    available,
+  });
+
+  // 押下時の揺らぎ・光はネイティブのガラス（isInteractive）が出すため active:opacity は付けない
+  if (glassStyle) {
+    return (
+      <Pressable testID={testID} onPress={onPress}>
+        <GlassView
+          isInteractive
+          glassEffectStyle="regular"
+          tintColor={glassStyle.tintColor}
+          style={{ borderRadius: capsuleRadiusBySize[size] }}
+        >
+          <View
+            className={`flex-row items-center justify-center gap-2 ${heightBySize[size]} ${className}`}
+          >
+            {content}
+          </View>
+        </GlassView>
+      </Pressable>
+    );
+  }
+
+  return (
+    <Pressable
+      testID={testID}
+      onPress={onPress}
+      disabled={disabled}
+      className={`flex-row items-center justify-center gap-2 active:opacity-70 ${container} ${className}`}
+    >
+      {content}
     </Pressable>
   );
 }
