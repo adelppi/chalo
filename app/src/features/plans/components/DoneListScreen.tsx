@@ -4,12 +4,11 @@ import {
   ActivityIndicator,
   Pressable,
   RefreshControl,
-  ScrollView,
   Text,
   View,
 } from "react-native";
 
-import { PawPrint } from "@global/components/shared";
+import { LargeTitleScrollView, PawPrint } from "@global/components/shared";
 import { palette } from "@global/constants/palette";
 
 import { usePlans } from "../hooks/usePlans";
@@ -37,8 +36,7 @@ export function DoneListScreen() {
 
   return (
     <View testID="done-screen" collapsable={false} className="flex-1 bg-linen">
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
+      <LargeTitleScrollView
         className="flex-1"
         contentContainerClassName={
           isPending
@@ -47,7 +45,6 @@ export function DoneListScreen() {
               ? "grow"
               : "grow gap-2.5 px-5 pt-1 pb-10"
         }
-        showsVerticalScrollIndicator={false}
         alwaysBounceVertical
         refreshControl={
           isPending ? undefined : (
@@ -99,7 +96,7 @@ export function DoneListScreen() {
             </View>
           ))
         )}
-      </ScrollView>
+      </LargeTitleScrollView>
     </View>
   );
 }

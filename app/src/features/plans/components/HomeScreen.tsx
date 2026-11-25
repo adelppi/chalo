@@ -5,13 +5,16 @@ import {
   ActivityIndicator,
   Pressable,
   RefreshControl,
-  ScrollView,
   Text,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ChaloFace, PawPrint } from "@global/components/shared";
+import {
+  ChaloFace,
+  LargeTitleScrollView,
+  PawPrint,
+} from "@global/components/shared";
 import { Chip, Icon } from "@global/components/ui";
 import { palette } from "@global/constants/palette";
 
@@ -50,8 +53,7 @@ export function HomeScreen() {
   // 空状態でも引っ張って再取得できるようスクロール可能にする（相手の追加を拾う）。
   return (
     <View testID="home-screen" collapsable={false} className="flex-1 bg-linen">
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
+      <LargeTitleScrollView
         className="flex-1"
         contentContainerClassName={
           isPending
@@ -60,7 +62,6 @@ export function HomeScreen() {
               ? "grow"
               : "grow gap-2.5 px-5 pt-1 pb-28"
         }
-        showsVerticalScrollIndicator={false}
         alwaysBounceVertical
         refreshControl={
           isPending ? undefined : (
@@ -142,7 +143,7 @@ export function HomeScreen() {
             ) : null}
           </>
         )}
-      </ScrollView>
+      </LargeTitleScrollView>
 
       <CreatePlanButton
         onPress={() => router.push("/plan/new")}
