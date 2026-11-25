@@ -252,6 +252,7 @@ export function PlanDatePickerSheet({
         <Button
           testID="plan-date-picker-confirm-button"
           label="決定"
+          glass={false}
           disabled={!selectedDate}
           onPress={() => {
             if (selectedDate) {
