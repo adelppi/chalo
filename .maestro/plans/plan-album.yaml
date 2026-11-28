@@ -11,8 +11,10 @@ tags:
       all: allow
 
 # アルバム対象日＝今日にするため、テスト用の写真を今日の日付で端末へ入れる。
-# addMedia で入る写真の撮影日時は PNG ファイルの更新日時になるので、流す前に
-# fixtures を touch しておく（`npm run e2e:regression` は自動で行う）
+# addMedia で入る写真の撮影日時は PNG ファイルの作成日時(birthtime)になる。touch は
+# 更新日時しか変えないので、流す前に app/ で `npm run e2e:fixtures` を実行して fixtures を
+# 作り直しておく（`npm run e2e:regression` は自動で行う）。日付をまたぐ直前に流すと、
+# 写真の日付とおしまい日がずれて落ちることがある
 - addMedia:
     - "../fixtures/album-1.png"
     - "../fixtures/album-2.png"

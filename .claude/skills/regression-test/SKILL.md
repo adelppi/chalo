@@ -25,7 +25,7 @@ description: 全機能の E2E リグレッションを回す。regression タグ
 1. `app/` で `npm run e2e:regression` を実行する。10分以上かかるので、Bash は
    `run_in_background` で起動し、完了の通知を待つ。
    - `regression` タグのフローだけが対象(`.maestro/config.yaml` がサブフォルダを拾う)。
-   - アルバムの fixtures は、スクリプトが先に touch して今日の日付にする。
+   - アルバムの fixtures は、スクリプトが先に作り直して(`npm run e2e:fixtures`)作成日時を今にする。
    - 流している間は Maestro MCP のツール(`run`・`inspect_screen`・`take_screenshot` など)を
      使わない。同じシミュレータのテストドライバを取り合い、全フローが
      `Failed to connect to /127.0.0.1:<port>` で落ちる。
