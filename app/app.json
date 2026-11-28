@@ -7,6 +7,12 @@
     "scheme": "chalo",
     "userInterfaceStyle": "light",
     "backgroundColor": "#F1EADA",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4b369ede-5850-4729-94d8-9117b3f12638"
+    },
     "platforms": [
       "ios"
     ],

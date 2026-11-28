@@ -9,8 +9,7 @@ tags:
   - regression
 ---
 - launchApp
-- assertVisible:
-    id: "home-screen"
+- runFlow: ../common/wait-for-home.yaml
 
 # 日付はテスト実行日から相対で組み立てる（翌月15日＝常に2週間以上先・翌日＝常に2週間未満）
 - evalScript: ${output.deadlineFirst = (function(){ var d = new Date(); var y = d.getFullYear(); var m = d.getMonth() + 2; if (m > 12) { m -= 12; y += 1; } return y + '-' + ('0' + m).slice(-2) + '-15'; })()}

@@ -1,0 +1,21 @@
+# launchApp の直後に呼び、ホームが出るまで待つ共通サブフロー(runFlow で呼ぶ。単体のテストではない)。
+# expo-updates を入れた dev client(Issue #130)は、Metro への接続が expo-updates の読み込みを
+# 経由するため、起動からホームまで 10〜20 秒かかり、その間ランチャー画面が見える。前回のプロジェクトへの
+# 自動接続は 10 秒で打ち切られ、ランチャーで止まることがある。止まっていたら Metro を開き直す。
+# 前提: テスト用アカウントでサインイン済みであること。
+appId: com.adelppi.chalo
+---
+- extendedWaitUntil:
+    visible:
+      id: "home-screen"
+    timeout: 30000
+    optional: true
+- runFlow:
+    when:
+      visible: "Enter URL manually"
+    commands:
+      - tapOn: "http://.*:8081"
+- extendedWaitUntil:
+    visible:
+      id: "home-screen"
+    timeout: 60000

@@ -8,8 +8,7 @@ tags:
   - regression
 ---
 - launchApp
-- assertVisible:
-    id: "home-screen"
+- runFlow: ../common/wait-for-home.yaml
 
 # B-6 はペア成立直後に出る画面。単体では deep link で直接開く（adr/0002）
 - openLink: chalo://pairing/notifications

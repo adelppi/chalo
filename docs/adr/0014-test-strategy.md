@@ -44,6 +44,7 @@ E2E（Maestro）の要素特定には `testID`（iOS の accessibility identifie
 - **Pressable の行は1要素にまとまる**。中のテキストが「ラベル, 値, 進む」のような結合文字列になり、Maestro の `text:` は完全一致の正規表現のため部分では当たらない。行の `id` と部分一致の正規表現（`text: ".*値.*"`）で確認する。
 - **実データを書き換えるフローは、入力する値を実行ごとに変える**（`evalScript` で時刻などから作る）。固定値だと前回の実行で既にその値になっていて、保存に失敗しても確認が通ってしまう。
 - ネイティブのヘッダーボタンは `testID` を持てないため、`accessibilityLabel` を `text:` で参照する（`adr/0016`）。
+- **サインイン済みで起動するフローは、`launchApp` の直後に `runFlow: ../common/wait-for-home.yaml` を置く**（`Issue #130` で追加）。expo-updates を入れた dev client は Metro への接続が遅く（10〜20 秒）、ランチャー画面で止まることもあるため、`assertVisible: home-screen` だけでは落ちる。`.maestro/common/` は共通サブフローの置き場で、単体のテストではない（`regression` タグを付けない）。
 
 ## 対象外
 

@@ -11,8 +11,7 @@ tags:
 - launchApp:
     permissions:
       calendar: allow
-- assertVisible:
-    id: "home-screen"
+- runFlow: ../common/wait-for-home.yaml
 - evalScript: ${output.title = 'カレンダーテスト' + String(Date.now()).slice(-5)}
 - evalScript: ${output.tomorrow = (function(){ var d = new Date(Date.now() + 86400000); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); })()}
 
