@@ -6,8 +6,7 @@ tags:
   - regression
 ---
 - launchApp
-- assertVisible:
-    id: "home-screen"
+- runFlow: ../common/wait-for-home.yaml
 - tapOn:
     id: "home-create-button"
 - assertVisible:

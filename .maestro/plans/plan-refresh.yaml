@@ -7,8 +7,7 @@ tags:
   - regression
 ---
 - launchApp
-- assertVisible:
-    id: "home-screen"
+- runFlow: ../common/wait-for-home.yaml
 
 # データを用意（タイトルのみで作成）
 - tapOn:

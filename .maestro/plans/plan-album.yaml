@@ -18,8 +18,7 @@ tags:
     - "../fixtures/album-2.png"
     - "../fixtures/album-3.png"
 
-- assertVisible:
-    id: "home-screen"
+- runFlow: ../common/wait-for-home.yaml
 
 # 日付なしプランを作り、その場で手動おしまいにする（おしまい日＝今日＝アルバム対象日）
 - tapOn:

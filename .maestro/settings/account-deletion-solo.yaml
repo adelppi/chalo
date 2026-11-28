@@ -6,8 +6,7 @@
 appId: com.adelppi.chalo
 ---
 - launchApp
-- assertVisible:
-    id: "home-screen"
+- runFlow: ../common/wait-for-home.yaml
 - tapOn:
     id: "tab-settings"
 - assertVisible:
