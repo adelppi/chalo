@@ -76,6 +76,7 @@
     "test": "jest",
     "release:bump": "npm version --no-git-tag-version",
     "release:tag": "node ./scripts/release-tag.js",
+    "release:legal-check": "node ./scripts/release-legal-check.js",
     "e2e:regression": "touch ../.maestro/fixtures/*.png && maestro test ../.maestro --include-tags regression"
   },
   "jest": {
